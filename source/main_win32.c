@@ -38,10 +38,20 @@ static void fatal_error(const nkChar* fmt, ...)
     fprintf(stderr, "%s\n", message_buffer);
     #endif
 
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-        "Fatal Error", message_buffer, g_window);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", message_buffer, g_window);
 
     abort();
+}
+
+static nkBool get_fullscreen(void)
+{
+    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
+static void set_fullscreen(nkBool enable)
+{
+    SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
 }
 
 int main(int argc, char** argv)
@@ -51,8 +61,7 @@ int main(int argc, char** argv)
         fatal_error("Failed to initialize SDL systems: %s", SDL_GetError());
     }
 
-    g_window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS,
-        WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
+    g_window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS, WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
     if(!g_window)
     {
         fatal_error("Failed to create application window: %s", SDL_GetError());
@@ -86,9 +95,23 @@ int main(int argc, char** argv)
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
-            if(event.type == SDL_QUIT)
+            switch(event.type)
             {
-                running = NK_FALSE;
+                case(SDL_KEYDOWN):
+                {
+                    switch(event.key.keysym.sym)
+                    {
+                        case(SDLK_RETURN): if(!(SDL_GetModState()&KMOD_ALT)) break;
+                        case(SDLK_F11):
+                        {
+                            set_fullscreen(!get_fullscreen());
+                        } break;
+                    }
+                } break;
+                case(SDL_QUIT):
+                {
+                    running = NK_FALSE;
+                } break;
             }
         }
 
@@ -101,7 +124,7 @@ int main(int argc, char** argv)
         }
         if(did_update)
         {
-            glClearColor(0.0f,0.0f,0.0f,1.0f);
+            glClearColor(0.0f,0.0f,0.0f,1.0f); // @Incomplete: Do we want these here?
             glClear(GL_COLOR_BUFFER_BIT);
 
             game_render();
