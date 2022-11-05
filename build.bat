@@ -13,7 +13,7 @@ echo ----------------------------------------
 set defs=-D BUILD_DEBUG -D SDL_MAIN_HANDLED
 set idir=-I ../../depends/sdl/include -I ../../depends/sdl_mixer/include
 set ldir=-libpath:../../depends/sdl/lib -libpath:../../depends/sdl_mixer/lib
-set libs=SDL2main.lib SDL2.lib SDL2_mixer.lib
+set libs=SDL2main.lib SDL2.lib SDL2_mixer.lib opengl32.lib
 set cflg=
 set lflg=-incremental:no
 
