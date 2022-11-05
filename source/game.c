@@ -17,7 +17,7 @@ static void game_update(nkF32 dt)
 
 static void game_render(void)
 {
-    // @Incomplete: ...
+    clear_screen_f(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

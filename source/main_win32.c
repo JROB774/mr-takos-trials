@@ -1,3 +1,5 @@
+/*////////////////////////////////////////////////////////////////////////////*/
+
 #define NK_STATIC
 
 #include <stdlib.h>
@@ -5,13 +7,16 @@
 #include <stdint.h>
 
 #include <nk_define.h>
+#include <nk_math.h>
 
 #include <SDL.h>
 #include <SDL_mixer.h>
 #include <SDL_opengl.h>
 
+#include "render.h"
 #include "game.h"
 
+#include "render.c"
 #include "game.c"
 
 #define WINDOW_TITLE  "Tako Typing Teacher"
@@ -124,9 +129,6 @@ int main(int argc, char** argv)
         }
         if(did_update)
         {
-            glClearColor(0.0f,0.0f,0.0f,1.0f); // @Incomplete: Do we want these here?
-            glClear(GL_COLOR_BUFFER_BIT);
-
             game_render();
         }
 
@@ -163,3 +165,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+/*////////////////////////////////////////////////////////////////////////////*/
