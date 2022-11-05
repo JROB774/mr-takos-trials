@@ -1,0 +1,23 @@
+/*////////////////////////////////////////////////////////////////////////////*/
+
+static void game_init(void)
+{
+    // @Incomplete: ...
+}
+
+static void game_quit(void)
+{
+    // @Incomplete: ...
+}
+
+static void game_update(nkF32 dt)
+{
+    // @Incomplete: ...
+}
+
+static void game_render(void)
+{
+    // @Incomplete: ...
+}
+
+/*////////////////////////////////////////////////////////////////////////////*/

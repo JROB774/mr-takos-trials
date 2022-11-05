@@ -10,6 +10,10 @@
 #include <SDL_mixer.h>
 #include <SDL_opengl.h>
 
+#include "game.h"
+
+#include "game.c"
+
 #define WINDOW_TITLE  "Tako Typing Teacher"
 #define WINDOW_XPOS   SDL_WINDOWPOS_CENTERED
 #define WINDOW_YPOS   SDL_WINDOWPOS_CENTERED
@@ -20,9 +24,9 @@
 static SDL_Window*   g_window;
 static SDL_GLContext g_glcontext;
 
-static void fatal_error(const char* fmt, ...)
+static void fatal_error(const nkChar* fmt, ...)
 {
-    char message_buffer[1024] = NK_ZERO_MEM;
+    nkChar message_buffer[1024] = NK_ZERO_MEM;
 
     va_list args;
 
@@ -60,7 +64,21 @@ int main(int argc, char** argv)
         fatal_error("Failed to create OpenGL context: %s", SDL_GetError());
     }
 
-    SDL_ShowWindow(g_window);
+    // Enable VSync by default, if we don't get it then oh well.
+    if(SDL_GL_SetSwapInterval(1) == 0)
+    {
+        printf("VSync Enabled!\n");
+    }
+
+    game_init();
+
+    nkU64 perf_frequency = SDL_GetPerformanceFrequency();
+    nkU64 last_counter = SDL_GetPerformanceCounter();
+    nkU64 end_counter = 0;
+    nkU64 elapsed_counter = 0;
+    nkF32 update_timer = 0.0f;
+
+    nkF32 dt = 1.0f / 60.0f; // We use a fixed update rate to keep things deterministic.
 
     nkBool running = NK_TRUE;
     while(running)
@@ -74,11 +92,46 @@ int main(int argc, char** argv)
             }
         }
 
-        glClearColor(1,0,1,1);
-        glClear(GL_COLOR_BUFFER_BIT);
+        nkBool did_update = NK_FALSE;
+        while(update_timer >= dt)
+        {
+            did_update = NK_TRUE;
+            game_update(dt);
+            update_timer -= dt;
+        }
+        if(did_update)
+        {
+            glClearColor(0.0f,0.0f,0.0f,1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+
+            game_render();
+        }
 
         SDL_GL_SwapWindow(g_window);
+
+        end_counter = SDL_GetPerformanceCounter();
+        elapsed_counter = end_counter - last_counter;
+        last_counter = SDL_GetPerformanceCounter();
+
+        nkF32 elapsed_time = NK_CAST(nkF32,elapsed_counter) / NK_CAST(nkF32,perf_frequency);
+
+        update_timer += elapsed_time;
+
+        #if defined(BUILD_DEBUG)
+        nkF32 current_fps = NK_CAST(nkF32,perf_frequency) / NK_CAST(nkF32,elapsed_counter);
+        nkChar title_buffer[1024] = NK_ZERO_MEM;
+        snprintf(title_buffer, NK_ARRAY_SIZE(title_buffer), "%s (FPS: %f)", WINDOW_TITLE, current_fps);
+        SDL_SetWindowTitle(g_window, title_buffer);
+        #endif // BUILD_DEBUG
+
+        // The window starts out hidden, after the first draw we unhide the window as this looks quite clean.
+        if(NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_HIDDEN))
+        {
+            SDL_ShowWindow(g_window);
+        }
     }
+
+    game_quit();
 
     SDL_GL_DeleteContext(g_glcontext);
     SDL_DestroyWindow(g_window);
