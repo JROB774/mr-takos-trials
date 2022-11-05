@@ -11,7 +11,7 @@ goto end
 echo ----------------------------------------
 
 set defs=-D BUILD_DEBUG -D SDL_MAIN_HANDLED
-set idir=-I ../../depends/sdl/include -I ../../depends/sdl_mixer/include
+set idir=-I ../../depends/sdl/include -I ../../depends/sdl_mixer/include -I ../../depends/nksdk/nklibs
 set ldir=-libpath:../../depends/sdl/lib -libpath:../../depends/sdl_mixer/lib
 set libs=SDL2main.lib SDL2.lib SDL2_mixer.lib opengl32.lib
 set cflg=

@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdint.h>
+
+#include <nk_define.h>
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -19,12 +20,12 @@ static SDL_GLContext g_glcontext;
 
 static void fatal_error(const char* fmt, ...)
 {
-    char message_buffer[1024] = {0};
+    char message_buffer[1024] = NK_ZERO_MEM;
 
     va_list args;
 
     va_start(args, fmt);
-    vsnprintf(message_buffer, sizeof(message_buffer), fmt, args);
+    vsnprintf(message_buffer, NK_ARRAY_SIZE(message_buffer), fmt, args);
     va_end(args);
 
     #if defined(BUILD_DEBUG)
@@ -59,7 +60,7 @@ int main(int argc, char** argv)
 
     SDL_ShowWindow(g_window);
 
-    bool running = true;
+    nkBool running = NK_TRUE;
     while(running)
     {
         SDL_Event event;
@@ -67,7 +68,7 @@ int main(int argc, char** argv)
         {
             if(event.type == SDL_QUIT)
             {
-                running = false;
+                running = NK_FALSE;
             }
         }
 
