@@ -1,3 +1,5 @@
+#define NK_STATIC
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
