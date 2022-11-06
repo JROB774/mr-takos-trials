@@ -18,11 +18,11 @@ set cflg=
 set lflg=-incremental:no
 
 if "%~2"=="release" (
-
     set cflg=%cflg% -O2
     set lflg=%lflg% -release -subsystem:windows
 ) else (
     set defs=%defs% -D BUILD_DEBUG -D SDL_MAIN_HANDLED
+    set cflg=%cflg% -Z7
 )
 
 set defs=%defs% -D BUILD_NATIVE
