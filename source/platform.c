@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <time.h>
 
 #include <nk_define.h>
 #include <nk_math.h>
@@ -119,6 +120,11 @@ static void set_fullscreen(nkBool enable)
 static nkBool get_fullscreen(void)
 {
     return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_ctx.window), SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
+static void show_cursor(nkBool show)
+{
+    SDL_ShowCursor((show ? SDL_ENABLE : SDL_DISABLE));
 }
 
 static void begin_render_frame(void)
