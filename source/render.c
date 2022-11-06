@@ -249,6 +249,12 @@ static void render_target_resize(RenderTarget target, nkS32 w, nkS32 h)
     glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
 }
 
+static void render_target_bind(RenderTarget target)
+{
+    if(!target) glBindFramebuffer(GL_FRAMEBUFFER, GL_NONE);
+    else glBindFramebuffer(GL_FRAMEBUFFER, target->handle);
+}
+
 static GLuint shader_compile(const nkChar* source, GLenum type)
 {
     const nkChar* sources[2] = { NULL, source };
@@ -476,6 +482,13 @@ static void texture_destroy(Texture texture)
     if(!texture) return;
     glDeleteTextures(1, &texture->handle);
     free(texture);
+}
+
+static void texture_bind(Texture texture, nkS32 unit)
+{
+    glActiveTexture(GL_TEXTURE0 + unit);
+    if(!texture) glBindTexture(GL_TEXTURE_2D, GL_NONE);
+    else glBindTexture(GL_TEXTURE_2D, texture->handle);
 }
 
 static nkVec2 texture_get_size(Texture texture)

@@ -70,7 +70,7 @@ static void         vertex_buffer_draw          (VertexBuffer vbuf, DrawMode dra
 static RenderTarget render_target_create (nkS32 w, nkS32 h, SamplerFilter filter, SamplerWrap wrap);
 static void         render_target_destroy(RenderTarget target);
 static void         render_target_resize (RenderTarget target, nkS32 w, nkS32 h);
-
+static void         render_target_bind   (RenderTarget target);
 
 static Shader  shader_create   (void* data, nkU64 bytes);
 static void    shader_destroy  (Shader shader);
@@ -87,7 +87,7 @@ static void    shader_set_mat4 (Shader shader, const nkChar* name, nkMat4 val);
 
 static Texture texture_create    (nkS32 w, nkS32 h, nkS32 bpp, void* data, SamplerFilter filter, SamplerWrap wrap);
 static void    texture_destroy   (Texture texture);
-static nkF32  texture_get_width (Texture texture);
+static void    texture_bind      (Texture texture, nkS32 unit);
 static nkVec2  texture_get_size  (Texture texture);
 static nkF32   texture_get_width (Texture texture);
 static nkF32   texture_get_height(Texture texture);
