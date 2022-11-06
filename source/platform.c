@@ -50,11 +50,13 @@
 #include "game.h"
 #include "render.h"
 #include "immdraw.h"
+#include "input.h"
 
 #include "audio.c"
 #include "game.c"
 #include "render.c"
 #include "immdraw.c"
+#include "input.c"
 
 typedef struct PlatformContext
 {
@@ -291,6 +293,7 @@ static void main_loop(void)
     while(update_timer >= dt)
     {
         did_update = NK_TRUE;
+        update_input_state();
         game_update(dt);
         update_timer -= dt;
     }
