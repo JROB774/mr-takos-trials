@@ -212,6 +212,8 @@ static RenderTarget render_target_create(nkS32 w, nkS32 h, SamplerFilter filter,
     RenderTarget target = ALLOCATE_RENDER_TYPE(RenderTarget);
     if(!target)
         fatal_error("Failed to allocate render target!");
+    target->handle = GL_NONE;
+    target->color_target = NULL;
     target->filter = filter;
     target->wrap = wrap;
     render_target_resize(target, w, h);
