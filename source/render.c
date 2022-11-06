@@ -420,8 +420,12 @@ static GLenum sampler_filter_to_gl(SamplerFilter filter)
 {
     switch(filter)
     {
-        case SamplerFilter_Nearest: return GL_NEAREST; break;
-        case SamplerFilter_Linear: return GL_LINEAR; break;
+        case SamplerFilter_Nearest: return GL_NEAREST;
+        case SamplerFilter_Linear: return GL_LINEAR;
+        case SamplerFilter_NearestWithNearestMips: return GL_NEAREST_MIPMAP_NEAREST;
+        case SamplerFilter_LinearWithNearestMips: return GL_LINEAR_MIPMAP_NEAREST;
+        case SamplerFilter_NearestWithLinearMips: return GL_NEAREST_MIPMAP_LINEAR;
+        case SamplerFilter_LinearWithLinearMips: return GL_LINEAR_MIPMAP_LINEAR;
         default:
         {
             // Unsupported texture filter.
@@ -435,8 +439,8 @@ static GLenum sampler_wrap_to_gl(SamplerWrap wrap)
 {
     switch(wrap)
     {
-        case SamplerWrap_Repeat: return GL_REPEAT; break;
-        case SamplerWrap_Clamp: return GL_CLAMP_TO_EDGE; break;
+        case SamplerWrap_Repeat: return GL_REPEAT;
+        case SamplerWrap_Clamp: return GL_CLAMP_TO_EDGE;
         default:
         {
             // Unsupported texture wrap.
@@ -450,8 +454,8 @@ static GLenum bpp_to_gl_format(nkS32 bpp)
 {
     switch(bpp)
     {
-        case(3): return GL_RGB; break;
-        case(4): return GL_RGBA; break;
+        case(3): return GL_RGB;
+        case(4): return GL_RGBA;
         default:
         {
             // Unsupported BPP that has no appropriate format.
@@ -479,6 +483,11 @@ static Texture texture_create(nkS32 w, nkS32 h, nkS32 bpp, void* data, SamplerFi
 
     GLenum gl_format = bpp_to_gl_format(bpp);
     glTexImage2D(GL_TEXTURE_2D, 0, gl_format, w,h, 0, gl_format, GL_UNSIGNED_BYTE, data);
+
+    if(filter > SamplerFilter_Linear)
+    {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
 
     texture->size.x = NK_CAST(nkF32, w);
     texture->size.y = NK_CAST(nkF32, h);

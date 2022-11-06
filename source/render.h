@@ -46,7 +46,11 @@ NK_ENUM(BufferType, nkS32)
 NK_ENUM(SamplerFilter, nkS32)
 {
     SamplerFilter_Nearest,
-    SamplerFilter_Linear
+    SamplerFilter_Linear,
+    SamplerFilter_NearestWithNearestMips,
+    SamplerFilter_LinearWithNearestMips,
+    SamplerFilter_NearestWithLinearMips,
+    SamplerFilter_LinearWithLinearMips
 };
 
 NK_ENUM(SamplerWrap, nkS32)
