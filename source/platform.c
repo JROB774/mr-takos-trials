@@ -29,6 +29,18 @@
 #include <GLES2/gl2.h>
 #endif // BUILD_WEB
 
+#define WINDOW_TITLE  "Tako Typing Teacher"
+#define WINDOW_XPOS   SDL_WINDOWPOS_CENTERED
+#define WINDOW_YPOS   SDL_WINDOWPOS_CENTERED
+#define WINDOW_WIDTH  1920 // @Incomplete: Change to be something smalle...
+#define WINDOW_HEIGHT 1080 // @Incomplete: Change to be something smalle...
+#define WINDOW_FLAGS  SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_OPENGL
+
+#define ASSET_PATH "../../assets/"
+
+#define SCREEN_WIDTH  480
+#define SCREEN_HEIGHT 270
+
 #include "platform.h"
 #include "game.h"
 #include "render.h"
@@ -37,16 +49,6 @@
 #include "game.c"
 #include "render.c"
 #include "immdraw.c"
-
-#define WINDOW_TITLE  "Tako Typing Teacher"
-#define WINDOW_XPOS   SDL_WINDOWPOS_CENTERED
-#define WINDOW_YPOS   SDL_WINDOWPOS_CENTERED
-#define WINDOW_WIDTH  1920 // @Incomplete: Change to be something smalle...
-#define WINDOW_HEIGHT 1080 // @Incomplete: Change to be something smalle...
-#define WINDOW_FLAGS  SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_OPENGL
-
-#define SCREEN_WIDTH  480
-#define SCREEN_HEIGHT 270
 
 typedef struct PlatformContext
 {
@@ -188,7 +190,7 @@ static void main_init(void)
     imm_init();
 
     g_ctx.screentarget = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
-    g_ctx.screenshader = imm_load_shader_from_file("../../assets/shaders/gl_330/screen.shader");
+    g_ctx.screenshader = imm_load_shader_from_file("screen.shader");
     g_ctx.screenbuffer = vertex_buffer_create();
 
     vertex_buffer_set_stride   (g_ctx.screenbuffer, sizeof(nkF32)*4);
