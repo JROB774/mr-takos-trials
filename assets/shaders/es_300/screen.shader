@@ -6,9 +6,7 @@ uniform sampler2D u_texture;
 
 #ifdef VERT_SHADER /*/////////////////////////////////////////////////////////*/
 
-in vec2 i_xyuv;
-in vec2 i_tex;
-in vec4 i_col;
+in vec4 i_xyuv;
 
 out vec2 v_texcoord;
 

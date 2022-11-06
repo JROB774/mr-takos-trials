@@ -24,7 +24,6 @@
 #if defined(BUILD_NATIVE)
 #include <glew.c>
 #endif // BUILD_NATIVE
-
 #if defined(BUILD_WEB)
 #include <GLES2/gl2.h>
 #endif // BUILD_WEB
@@ -36,7 +35,12 @@
 #define WINDOW_HEIGHT 1080 // @Incomplete: Change to be something smalle...
 #define WINDOW_FLAGS  SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_OPENGL
 
+#if defined(BUILD_NATIVE)
 #define ASSET_PATH "../../assets/"
+#endif // BUILD_NATIVE
+#if defined(BUILD_WEB)
+#define ASSET_PATH ""
+#endif // BUILD_WEB
 
 #define SCREEN_WIDTH  480
 #define SCREEN_HEIGHT 270
@@ -58,10 +62,16 @@ typedef struct PlatformContext
     RenderTarget  screentarget;
     VertexBuffer  screenbuffer;
     Shader        screenshader;
+    nkChar*       base_path;
 }
 PlatformContext;
 
 static PlatformContext g_ctx;
+
+static const nkChar* get_base_path(void)
+{
+    return g_ctx.base_path;
+}
 
 static void fatal_error(const nkChar* fmt, ...)
 {
@@ -168,6 +178,18 @@ static void main_init(void)
         fatal_error("Failed to initialize SDL systems: %s", SDL_GetError());
     }
 
+    #if defined(BUILD_NATIVE)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    #endif // BUILD_NATIVE
+
+    #if defined(BUILD_WEB)
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+    #endif // BUILD_WEB
+
     g_ctx.window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS, WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
     if(!g_ctx.window)
     {
@@ -179,6 +201,8 @@ static void main_init(void)
     {
         fatal_error("Failed to create OpenGL context: %s", SDL_GetError());
     }
+
+    g_ctx.base_path = SDL_GetBasePath();
 
     // Enable VSync by default, if we don't get it then oh well.
     if(SDL_GL_SetSwapInterval(1) == 0)
@@ -211,6 +235,8 @@ static void main_quit(void)
 
     imm_quit();
     renderer_quit();
+
+    SDL_free(g_ctx.base_path);
 
     SDL_GL_DeleteContext(g_ctx.glcontext);
     SDL_DestroyWindow(g_ctx.window);

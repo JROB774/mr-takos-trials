@@ -41,7 +41,8 @@ static void imm_quit(void)
 static Texture imm_load_texture_from_file(const nkChar* file_name, SamplerFilter filter, SamplerWrap wrap)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
-    strcpy(buffer, ASSET_PATH);
+    strcpy(buffer, get_base_path());
+    strcat(buffer, ASSET_PATH);
     strcat(buffer, "textures/");
     strcat(buffer, file_name);
 
@@ -57,7 +58,8 @@ static Texture imm_load_texture_from_file(const nkChar* file_name, SamplerFilter
 static Shader imm_load_shader_from_file(const nkChar* file_name)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
-    strcpy(buffer, ASSET_PATH);
+    strcpy(buffer, get_base_path());
+    strcat(buffer, ASSET_PATH);
     strcat(buffer, "shaders/");
     strcat(buffer, SHADER_PATH);
     strcat(buffer, file_name);
