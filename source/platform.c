@@ -58,6 +58,20 @@ static void fatal_error(const nkChar* fmt, ...)
     abort();
 }
 
+static nkS32 window_get_width(void)
+{
+    nkS32 width;
+    SDL_GetWindowSize(g_window,&width,NULL);
+    return width;
+}
+
+static nkS32 window_get_height(void)
+{
+    nkS32 height;
+    SDL_GetWindowSize(g_window,NULL,&height);
+    return height;
+}
+
 static void set_fullscreen(nkBool enable)
 {
     SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
