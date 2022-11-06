@@ -50,7 +50,7 @@ static Texture imm_load_texture_from_file(const nkChar* file_name, SamplerFilter
     nkU8* data = stbi_load(buffer, &w,&h,&bpp, 4);
     if(!data)
         fatal_error("Failed to load texture from file: %s", buffer);
-    Texture texture = texture_create(w,h,bpp, data, filter, wrap);
+    Texture texture = texture_create(w,h,4, data, filter, wrap);
     stbi_image_free(data);
     return texture;
 }
