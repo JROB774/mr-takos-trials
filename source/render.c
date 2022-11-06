@@ -259,8 +259,15 @@ static GLuint shader_compile(const nkChar* source, GLenum type)
 {
     const nkChar* sources[2] = { NULL, source };
 
+    #if defined(BUILD_NATIVE)
     if(type == GL_VERTEX_SHADER) sources[0] = "#version 330\n#define VERT_SHADER 1\n";
     if(type == GL_FRAGMENT_SHADER) sources[0] = "#version 330\n#define FRAG_SHADER 1\n";
+    #endif // BUILD_NATIVE
+
+    #if defined(BUILD_WEB)
+    if(type == GL_VERTEX_SHADER) sources[0] = "#version 300 es\n#define VERT_SHADER 1\n";
+    if(type == GL_FRAGMENT_SHADER) sources[0] = "#version 300 es\n#define FRAG_SHADER 1\n";
+    #endif // BUILD_WEB
 
     GLuint shader = glCreateShader(type);
     glShaderSource(shader, 2, sources, NULL);
