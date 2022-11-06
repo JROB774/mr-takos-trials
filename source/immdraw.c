@@ -38,16 +38,25 @@ static void imm_quit(void)
     shader_destroy(g_imm.shader);
 }
 
-static Texture imm_load_texture_from_file(const nkChar* file_name)
+static Texture imm_load_texture_from_file(const nkChar* file_name, SamplerFilter filter, SamplerWrap wrap)
 {
-    // @Incomplete: ...
-    return NULL;
+    nkS32 w,h,bpp;
+    nkU8* data = stbi_load(file_name, &w,&h,&bpp, 4);
+    if(!data)
+        fatal_error("Failed to load texture from file: %s", file_name);
+    Texture texture = texture_create(w,h,bpp, data, filter, wrap);
+    stbi_image_free(data);
+    return texture;
 }
 
 static Shader imm_load_shader_from_file(const nkChar* file_name)
 {
-    // @Incomplete: ...
-    return NULL;
+    nkFileContent file_content = NK_ZERO_MEM;
+    if(!nk_read_file_content(&file_content, file_name, nkFileReadMode_Text))
+        fatal_error("Failed to load shader from file: %s", file_name);
+    Shader shader = shader_create(file_content.data, file_content.size);
+    nk_free_file_content(&file_content);
+    return shader;
 }
 
 static nkMat4 imm_get_projection(void)

@@ -18,7 +18,7 @@ ImmRect;
 static void imm_init(void);
 static void imm_quit(void);
 
-static Texture imm_load_texture_from_file(const nkChar* file_name);
+static Texture imm_load_texture_from_file(const nkChar* file_name, SamplerFilter filter, SamplerWrap wrap);
 static Shader  imm_load_shader_from_file (const nkChar* file_name);
 
 static nkMat4 imm_get_projection(void);
