@@ -274,16 +274,16 @@ static GLuint shader_compile(const nkChar* source, GLenum type)
     glCompileShader(shader);
 
     GLint success;
-    glGetProgramiv(shader, GL_COMPILE_STATUS, &success);
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
     if(!success)
     {
         GLint info_log_length;
-        glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &info_log_length);
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &info_log_length);
         nkChar* info_log = malloc(info_log_length * sizeof(nkChar));
         if(info_log)
         {
-            glGetProgramInfoLog(shader, info_log_length, NULL, info_log);
-            printf("Failed to link shader:\n%s\n", info_log);
+            glGetShaderInfoLog(shader, info_log_length, NULL, info_log);
+            printf("Failed to compile shader:\n%s\n", info_log);
             free(info_log);
         }
         return GL_NONE;
