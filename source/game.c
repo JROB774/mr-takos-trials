@@ -1,6 +1,7 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
 Texture sponge_texture;
+Texture cursor_texture;
 
 static nkF32 random_float(void)
 {
@@ -14,6 +15,9 @@ static nkF32 random_float_range(nkF32 min, nkF32 max)
 static void game_init(void)
 {
     sponge_texture = imm_load_texture_from_file("sponge.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+    cursor_texture = imm_load_texture_from_file("cursor.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+
+    show_cursor(NK_FALSE);
 
     enable_alpha_blend();
 }
@@ -59,6 +63,17 @@ static void game_render(void)
         imm_texture_batched_ex(px,py, sc,sc, ar, NULL, NULL);
     }
     imm_end_texture_batch();
+
+    nkVec2 mp = get_screen_mouse_pos();
+
+    ImmRect cursor_clip = { 0,0,32,32 };
+    if(is_mouse_button_down(MouseButton_Left))
+    {
+        cursor_clip.x += 32.0f;
+    }
+
+    imm_set_texture_color((nkVec4){ 1,1,1,1 });
+    imm_texture(cursor_texture, mp.x, mp.y, &cursor_clip);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

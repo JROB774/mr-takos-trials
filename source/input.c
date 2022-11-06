@@ -164,26 +164,26 @@ static nkVec2 get_screen_mouse_pos(void)
     return screen_mouse;
 }
 
-static nkBool IsMouseButtonDown(MouseButton button)
+static nkBool is_mouse_button_down(MouseButton button)
 {
     if(button == MouseButton_Invalid) return NK_FALSE;
     return (g_input.curr_button_state[button] != 0);
 }
 
-static nkBool IsMouseButtonUp(MouseButton button)
+static nkBool is_mouse_button_up(MouseButton button)
 {
     if(button == MouseButton_Invalid) return NK_FALSE;
     return (g_input.curr_button_state[button] == 0);
 }
 
-static nkBool IsMouseButtonPressed(MouseButton button)
+static nkBool is_mouse_button_pressed(MouseButton button)
 {
     if(button == MouseButton_Invalid) return NK_FALSE;
     return (g_input.curr_button_state[button] != 0 &&
             g_input.prev_button_state[button] == 0);
 }
 
-static nkBool IsMouseButtonReleased(MouseButton button)
+static nkBool is_mouse_button_released(MouseButton button)
 {
     if(button == MouseButton_Invalid) return NK_FALSE;
     return (g_input.curr_button_state[button] == 0 &&
