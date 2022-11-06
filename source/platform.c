@@ -130,6 +130,10 @@ static void begin_render_frame(void)
 
     render_target_bind(g_ctx.screentarget);
     set_viewport(vx,vy,vw,vh);
+
+    imm_set_projection(nk_orthographic(0,vw,vh,0,0,1));
+    imm_set_view(nk_m4_identity());
+    imm_set_model(nk_m4_identity());
 }
 
 static void end_render_frame(void)
@@ -196,9 +200,8 @@ static void main_init(void)
 
     g_ctx.window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS, WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
     if(!g_ctx.window)
-    {
         fatal_error("Failed to create application window: %s", SDL_GetError());
-    }
+    SDL_SetWindowMinimumSize(g_ctx.window, SCREEN_WIDTH,SCREEN_HEIGHT);
 
     g_ctx.glcontext = SDL_GL_CreateContext(g_ctx.window);
     if(!g_ctx.glcontext)
