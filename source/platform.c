@@ -1,5 +1,6 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define GLEW_STATIC
 #define NK_STATIC
 
 #include <stdlib.h>
@@ -11,7 +12,10 @@
 
 #include <SDL.h>
 #include <SDL_mixer.h>
-#include <SDL_opengl.h>
+
+#if defined(BUILD_NATIVE)
+#include <glew.c>
+#endif // BUILD_NATIVE
 
 #include "platform.h"
 #include "render.h"
@@ -31,17 +35,6 @@ static SDL_Window*   g_window;
 static SDL_GLContext g_glcontext;
 static nkBool        g_running;
 
-static void set_fullscreen(nkBool enable)
-{
-    SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
-}
-
-static nkBool get_fullscreen(void)
-{
-    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_FULLSCREEN_DESKTOP);
-}
-
 static void fatal_error(const nkChar* fmt, ...)
 {
     nkChar message_buffer[1024] = NK_ZERO_MEM;
@@ -59,6 +52,17 @@ static void fatal_error(const nkChar* fmt, ...)
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", message_buffer, g_window);
 
     abort();
+}
+
+static void set_fullscreen(nkBool enable)
+{
+    SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
+}
+
+static nkBool get_fullscreen(void)
+{
+    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
 static void main_init(void)
@@ -86,6 +90,9 @@ static void main_init(void)
         printf("VSync Enabled!\n");
     }
 
+    glewInit();
+
+    renderer_init();
     game_init();
 
     g_running = NK_TRUE;
@@ -94,6 +101,7 @@ static void main_init(void)
 static void main_quit(void)
 {
     game_quit();
+    renderer_quit();
 
     SDL_GL_DeleteContext(g_glcontext);
     SDL_DestroyWindow(g_window);
