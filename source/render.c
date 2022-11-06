@@ -98,13 +98,14 @@ static void clear_screen_f(nkF32 r, nkF32 g, nkF32 b, nkF32 a)
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-static void vertex_buffer_create(VertexBuffer vbuf)
+static VertexBuffer vertex_buffer_create(void)
 {
-    vbuf = ALLOCATE_RENDER_TYPE(VertexBuffer);
+    VertexBuffer vbuf = ALLOCATE_RENDER_TYPE(VertexBuffer);
     if(!vbuf)
         fatal_error("Failed to allocate vertex buffer!");
     glGenBuffers(1, &vbuf->handle);
     memset(vbuf->attribs, 0, sizeof(vbuf->attribs));
+    return vbuf;
 }
 
 static void vertex_buffer_destroy(VertexBuffer vbuf)
@@ -206,14 +207,15 @@ static void vertex_buffer_draw(VertexBuffer vbuf, DrawMode draw_mode, nkU64 vert
     glBindBuffer(GL_ARRAY_BUFFER, GL_NONE);
 }
 
-static void render_target_create(RenderTarget target, nkS32 w, nkS32 h, SamplerFilter filter, SamplerWrap wrap)
+static RenderTarget render_target_create(nkS32 w, nkS32 h, SamplerFilter filter, SamplerWrap wrap)
 {
-    target = ALLOCATE_RENDER_TYPE(RenderTarget);
+    RenderTarget target = ALLOCATE_RENDER_TYPE(RenderTarget);
     if(!target)
         fatal_error("Failed to allocate render target!");
     target->filter = filter;
     target->wrap = wrap;
     render_target_resize(target, w, h);
+    return target;
 }
 
 static void render_target_destroy(RenderTarget target)
@@ -237,7 +239,7 @@ static void render_target_resize(RenderTarget target, nkS32 w, nkS32 h)
     glGenFramebuffers(1, &target->handle);
     glBindFramebuffer(GL_FRAMEBUFFER, target->handle);
 
-    texture_create(target->color_target, w,h, 4, NULL, target->filter, target->wrap);
+    target->color_target = texture_create(w,h, 4, NULL, target->filter, target->wrap);
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, target->color_target->handle, 0);
 
@@ -277,9 +279,9 @@ static GLuint shader_compile(const nkChar* source, GLenum type)
     return shader;
 }
 
-static void shader_create(Shader shader, void* data, nkU64 bytes)
+static Shader shader_create(void* data, nkU64 bytes)
 {
-    shader = ALLOCATE_RENDER_TYPE(Shader);
+    Shader shader = ALLOCATE_RENDER_TYPE(Shader);
     if(!shader)
         fatal_error("Failed to allocate shader!");
 
@@ -310,6 +312,8 @@ static void shader_create(Shader shader, void* data, nkU64 bytes)
             free(info_log);
         }
     }
+
+    return shader;
 }
 
 static void shader_destroy(Shader shader)
@@ -442,9 +446,9 @@ static GLenum bpp_to_gl_format(nkS32 bpp)
     return GL_NONE;
 }
 
-static void texture_create(Texture texture, nkS32 w, nkS32 h, nkS32 bpp, void* data, SamplerFilter filter, SamplerWrap wrap)
+static Texture texture_create(nkS32 w, nkS32 h, nkS32 bpp, void* data, SamplerFilter filter, SamplerWrap wrap)
 {
-    texture = ALLOCATE_RENDER_TYPE(Texture);
+    Texture texture = ALLOCATE_RENDER_TYPE(Texture);
     if(!texture)
         fatal_error("Failed to allocate texture!");
 
@@ -463,6 +467,8 @@ static void texture_create(Texture texture, nkS32 w, nkS32 h, nkS32 bpp, void* d
 
     texture->size.x = NK_CAST(nkF32, w);
     texture->size.y = NK_CAST(nkF32, h);
+
+    return texture;
 }
 
 static void texture_destroy(Texture texture)
