@@ -13,6 +13,7 @@
 #include <SDL_mixer.h>
 #include <SDL_opengl.h>
 
+#include "platform.h"
 #include "render.h"
 #include "game.h"
 
@@ -28,6 +29,17 @@
 
 static SDL_Window*   g_window;
 static SDL_GLContext g_glcontext;
+
+static void set_fullscreen(nkBool enable)
+{
+    SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
+}
+
+static nkBool get_fullscreen(void)
+{
+    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
 
 static void fatal_error(const nkChar* fmt, ...)
 {
@@ -46,17 +58,6 @@ static void fatal_error(const nkChar* fmt, ...)
     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", message_buffer, g_window);
 
     abort();
-}
-
-static nkBool get_fullscreen(void)
-{
-    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_FULLSCREEN_DESKTOP);
-}
-
-static void set_fullscreen(nkBool enable)
-{
-    SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
 }
 
 int main(int argc, char** argv)

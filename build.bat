@@ -29,7 +29,7 @@ copy depends\sdl_mixer\bin\*.dll binary\win32\ > NUL
 copy depends\sdl\bin\*.dll binary\win32\ > NUL
 
 pushd binary\win32
-cl ../../source/main_win32.c %cflg% %defs% %idir% -Fe:tako.exe -link %lflg% %ldir% %libs%
+cl ../../source/platform_win32.c %cflg% %defs% %idir% -Fe:tako.exe -link %lflg% %ldir% %libs%
 popd
 
 goto end
@@ -50,7 +50,7 @@ set lflg=-s EXPORTED_FUNCTIONS="['_main']" -s EXPORTED_RUNTIME_METHODS="['ccall'
 if not exist binary\web mkdir binary\web
 
 pushd binary\web
-emcc %libs% %idir% %cflg% %lflg% ../../source/main_web.c -o tako.html
+emcc %libs% %idir% %cflg% %lflg% ../../source/platform_web.c -o tako.html
 popd
 
 goto end
