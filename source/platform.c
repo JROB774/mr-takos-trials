@@ -17,6 +17,10 @@
 #include <glew.c>
 #endif // BUILD_NATIVE
 
+#if defined(BUILD_WEB)
+#include <GLES2/gl2.h>
+#endif // BUILD_WEB
+
 #include "platform.h"
 #include "render.h"
 #include "game.h"
@@ -89,8 +93,6 @@ static void main_init(void)
     {
         printf("VSync Enabled!\n");
     }
-
-    glewInit();
 
     renderer_init();
     game_init();
