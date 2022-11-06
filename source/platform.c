@@ -46,10 +46,12 @@
 #define SCREEN_HEIGHT 270
 
 #include "platform.h"
+#include "audio.h"
 #include "game.h"
 #include "render.h"
 #include "immdraw.h"
 
+#include "audio.c"
 #include "game.c"
 #include "render.c"
 #include "immdraw.c"
@@ -212,6 +214,7 @@ static void main_init(void)
 
     renderer_init();
     imm_init();
+    audio_init();
 
     g_ctx.screentarget = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
     g_ctx.screenshader = imm_load_shader_from_file("screen.shader");
@@ -233,6 +236,7 @@ static void main_quit(void)
     shader_destroy(g_ctx.screenshader);
     render_target_destroy(g_ctx.screentarget);
 
+    audio_quit();
     imm_quit();
     renderer_quit();
 
