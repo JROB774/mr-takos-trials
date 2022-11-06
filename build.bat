@@ -46,7 +46,7 @@ call depends\emsdk\emsdk activate latest
 call depends\emsdk\emsdk_env.bat
 
 set defs=-D BUILD_WEB
-set idir=-I ../../depends/nksdk/nklibs
+set idir=-I ../../depends/nksdk/nklibs -I ../../depends/stb
 set libs=-s WASM=1 -s USE_SDL=2 -s USE_SDL_MIXER=2 -s USE_OGG=1 -s USE_VORBIS=1 -lidbfs.js
 set cflg=
 set lflg=-s EXPORTED_FUNCTIONS="['_main', '_main_callback']" -s EXPORTED_RUNTIME_METHODS="['ccall']"

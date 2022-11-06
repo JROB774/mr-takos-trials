@@ -20,7 +20,7 @@ static ImmContext g_imm;
 
 static void imm_init(void)
 {
-    g_imm.shader = imm_load_shader_from_file("imm.shader");
+    g_imm.shader = imm_load_shader_from_file("../../assets/shaders/gl_330/imm.shader");
     g_imm.buffer = vertex_buffer_create();
     vertex_buffer_set_stride   (g_imm.buffer, sizeof(ImmVertex));
     vertex_buffer_enable_attrib(g_imm.buffer, 0, AttribType_Float, 2, offsetof(ImmVertex, pos));
@@ -188,7 +188,7 @@ static void imm_circle_filled(nkF32 x, nkF32 y, nkF32 r, nkS32 n, nkVec4 color)
         nkF32 yy = r * sinf(theta);
         imm_vertex((ImmVertex){ (nkVec2){ xx+x,yy+y }, (nkVec2){ 0,0 }, color });
     }
-    EndDraw();
+    imm_end();
 }
 
 static void imm_texture(Texture tex, nkF32 x, nkF32 y, ImmRect* clip)
@@ -336,7 +336,7 @@ static void imm_draw_batched_texture_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nk
     NK_ASSERT(g_imm.texture);
 
     nkF32 w = texture_get_width(g_imm.texture);
-    nkF32 h = texture_get_heigth(g_imm.texture);
+    nkF32 h = texture_get_height(g_imm.texture);
 
     nkF32 s1 = 0;
     nkF32 t1 = 0;

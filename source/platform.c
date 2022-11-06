@@ -1,7 +1,12 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define STB_IMAGE_STATIC
 #define GLEW_STATIC
 #define NK_STATIC
+
+#define STB_IMAGE_IMPLEMENTATION
+#define NK_MATH_IMPLEMENTATION
+#define NK_FILESYS_IMPLEMENTATION
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,6 +14,9 @@
 
 #include <nk_define.h>
 #include <nk_math.h>
+#include <nk_filesys.h>
+
+#include <stb_image.h>
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -22,22 +30,36 @@
 #endif // BUILD_WEB
 
 #include "platform.h"
-#include "render.h"
 #include "game.h"
+#include "render.h"
+#include "immdraw.h"
 
-#include "render.c"
 #include "game.c"
+#include "render.c"
+#include "immdraw.c"
 
 #define WINDOW_TITLE  "Tako Typing Teacher"
 #define WINDOW_XPOS   SDL_WINDOWPOS_CENTERED
 #define WINDOW_YPOS   SDL_WINDOWPOS_CENTERED
-#define WINDOW_WIDTH  1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH  1920 // @Incomplete: Change to be something smalle...
+#define WINDOW_HEIGHT 1080 // @Incomplete: Change to be something smalle...
 #define WINDOW_FLAGS  SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_OPENGL
 
-static SDL_Window*   g_window;
-static SDL_GLContext g_glcontext;
-static nkBool        g_running;
+#define SCREEN_WIDTH  480
+#define SCREEN_HEIGHT 270
+
+typedef struct PlatformContext
+{
+    SDL_Window*   window;
+    SDL_GLContext glcontext;
+    nkBool        running;
+    RenderTarget  screentarget;
+    VertexBuffer  screenbuffer;
+    Shader        screenshader;
+}
+PlatformContext;
+
+static PlatformContext g_ctx;
 
 static void fatal_error(const nkChar* fmt, ...)
 {
@@ -53,7 +75,7 @@ static void fatal_error(const nkChar* fmt, ...)
     fprintf(stderr, "%s\n", message_buffer);
     #endif
 
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", message_buffer, g_window);
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Fatal Error", message_buffer, g_ctx.window);
 
     abort();
 }
@@ -61,26 +83,80 @@ static void fatal_error(const nkChar* fmt, ...)
 static nkS32 window_get_width(void)
 {
     nkS32 width;
-    SDL_GetWindowSize(g_window,&width,NULL);
+    SDL_GetWindowSize(g_ctx.window, &width,NULL);
     return width;
 }
 
 static nkS32 window_get_height(void)
 {
     nkS32 height;
-    SDL_GetWindowSize(g_window,NULL,&height);
+    SDL_GetWindowSize(g_ctx.window, NULL,&height);
     return height;
 }
 
 static void set_fullscreen(nkBool enable)
 {
-    SDL_SetWindowFullscreen(g_window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+    SDL_SetWindowFullscreen(g_ctx.window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
     SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
 }
 
 static nkBool get_fullscreen(void)
 {
-    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_FULLSCREEN_DESKTOP);
+    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_ctx.window), SDL_WINDOW_FULLSCREEN_DESKTOP);
+}
+
+static void begin_render_frame(void)
+{
+    nkF32 vx = 0.0f;
+    nkF32 vy = 0.0f;
+    nkF32 vw = texture_get_width(g_ctx.screentarget->color_target);
+    nkF32 vh = texture_get_height(g_ctx.screentarget->color_target);
+
+    render_target_bind(g_ctx.screentarget);
+    set_viewport(vx,vy,vw,vh);
+}
+
+static void end_render_frame(void)
+{
+    render_target_bind(NULL);
+
+    nkF32 ww = NK_CAST(nkF32, window_get_width());
+    nkF32 wh = NK_CAST(nkF32, window_get_height());
+
+    set_viewport(0.0f,0.0f,ww,wh);
+
+    clear_screen_f(0.0f,0.0f,0.0f,1.0f);
+
+    nkF32 dstw = SCREEN_WIDTH;
+    nkF32 dsth = SCREEN_HEIGHT;
+
+    while((dstw+SCREEN_WIDTH <= ww) && (dsth+SCREEN_HEIGHT <= wh))
+    {
+        dstw += SCREEN_WIDTH;
+        dsth += SCREEN_HEIGHT;
+    }
+
+    nkF32 dstx0 = (ww-dstw)*0.5f;
+    nkF32 dsty0 = (wh-dsth)*0.5f;
+    nkF32 dstx1 = dstx0+dstw;
+    nkF32 dsty1 = dsty0+dsth;
+
+    nkVec4 vertices[4];
+
+    vertices[0] = (nkVec4){ dstx0,dsty1, 0.0f,0.0f };
+    vertices[1] = (nkVec4){ dstx0,dsty0, 0.0f,1.0f };
+    vertices[2] = (nkVec4){ dstx1,dsty1, 1.0f,0.0f };
+    vertices[3] = (nkVec4){ dstx1,dsty0, 1.0f,1.0f };
+
+    nkMat4 projection = nk_orthographic(0,ww,wh,0,0,1);
+
+    texture_bind(g_ctx.screentarget->color_target, 0);
+    shader_bind(g_ctx.screenshader);
+
+    shader_set_mat4(g_ctx.screenshader, "u_projection", projection);
+
+    vertex_buffer_update(g_ctx.screenbuffer, vertices, sizeof(vertices), BufferType_Dynamic);
+    vertex_buffer_draw(g_ctx.screenbuffer, DrawMode_TriangleStrip, NK_ARRAY_SIZE(vertices));
 }
 
 static void main_init(void)
@@ -90,14 +166,14 @@ static void main_init(void)
         fatal_error("Failed to initialize SDL systems: %s", SDL_GetError());
     }
 
-    g_window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS, WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
-    if(!g_window)
+    g_ctx.window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS, WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
+    if(!g_ctx.window)
     {
         fatal_error("Failed to create application window: %s", SDL_GetError());
     }
 
-    g_glcontext = SDL_GL_CreateContext(g_window);
-    if(!g_glcontext)
+    g_ctx.glcontext = SDL_GL_CreateContext(g_ctx.window);
+    if(!g_ctx.glcontext)
     {
         fatal_error("Failed to create OpenGL context: %s", SDL_GetError());
     }
@@ -109,18 +185,33 @@ static void main_init(void)
     }
 
     renderer_init();
+    imm_init();
+
+    g_ctx.screentarget = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
+    g_ctx.screenshader = imm_load_shader_from_file("../../assets/shaders/gl_330/screen.shader");
+    g_ctx.screenbuffer = vertex_buffer_create();
+
+    vertex_buffer_set_stride   (g_ctx.screenbuffer, sizeof(nkF32)*4);
+    vertex_buffer_enable_attrib(g_ctx.screenbuffer, 0, AttribType_Float, 4, 0);
+
     game_init();
 
-    g_running = NK_TRUE;
+    g_ctx.running = NK_TRUE;
 }
 
 static void main_quit(void)
 {
     game_quit();
+
+    vertex_buffer_destroy(g_ctx.screenbuffer);
+    shader_destroy(g_ctx.screenshader);
+    render_target_destroy(g_ctx.screentarget);
+
+    imm_quit();
     renderer_quit();
 
-    SDL_GL_DeleteContext(g_glcontext);
-    SDL_DestroyWindow(g_window);
+    SDL_GL_DeleteContext(g_ctx.glcontext);
+    SDL_DestroyWindow(g_ctx.window);
 
     SDL_Quit();
 }
@@ -159,7 +250,7 @@ static void main_loop(void)
             } break;
             case(SDL_QUIT):
             {
-                g_running = NK_FALSE;
+                g_ctx.running = NK_FALSE;
             } break;
         }
     }
@@ -173,10 +264,12 @@ static void main_loop(void)
     }
     if(did_update)
     {
+        begin_render_frame();
         game_render();
     }
+    end_render_frame();
 
-    SDL_GL_SwapWindow(g_window);
+    SDL_GL_SwapWindow(g_ctx.window);
 
     end_counter = SDL_GetPerformanceCounter();
     elapsed_counter = end_counter - last_counter;
@@ -190,13 +283,13 @@ static void main_loop(void)
     nkF32 current_fps = NK_CAST(nkF32,perf_frequency) / NK_CAST(nkF32,elapsed_counter);
     nkChar title_buffer[1024] = NK_ZERO_MEM;
     snprintf(title_buffer, NK_ARRAY_SIZE(title_buffer), "%s (FPS: %f)", WINDOW_TITLE, current_fps);
-    SDL_SetWindowTitle(g_window, title_buffer);
+    SDL_SetWindowTitle(g_ctx.window, title_buffer);
     #endif // BUILD_DEBUG
 
     // The window starts out hidden, after the first draw we unhide the window as this looks quite clean.
-    if(NK_CHECK_FLAGS(SDL_GetWindowFlags(g_window), SDL_WINDOW_HIDDEN))
+    if(NK_CHECK_FLAGS(SDL_GetWindowFlags(g_ctx.window), SDL_WINDOW_HIDDEN))
     {
-        SDL_ShowWindow(g_window);
+        SDL_ShowWindow(g_ctx.window);
     }
 }
 
@@ -206,7 +299,7 @@ static void main_loop(void)
 int main(int argc, char** argv)
 {
     main_init();
-    while(g_running)
+    while(g_ctx.running)
         main_loop();
     main_quit();
     return 0;
