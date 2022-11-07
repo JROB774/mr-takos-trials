@@ -32,10 +32,21 @@ static Font font_create(void* data, nkBool owns_data, nkF32 px_height)
 
     stbtt_BakeFontBitmap(font->data_buffer, 0, px_height, pixels, FONT_ATLAS_SIZE,FONT_ATLAS_SIZE, 32,96, font->chars);
 
-    font->atlas = texture_create(FONT_ATLAS_SIZE,FONT_ATLAS_SIZE, 1, pixels, SamplerFilter_Linear, SamplerWrap_Clamp);
+    // @Incomplete: We shouldn't need this... not sure why it's not working currently though
+    nkU8* final_pixels = malloc(FONT_ATLAS_SIZE*FONT_ATLAS_SIZE*4);
+    for(nkS32 i=0; i<FONT_ATLAS_SIZE*FONT_ATLAS_SIZE*4; i+=4)
+    {
+        final_pixels[i+0] = 0xFF;
+        final_pixels[i+1] = 0xFF;
+        final_pixels[i+2] = 0xFF;
+        final_pixels[i+3] = pixels[i/4];
+    }
+
+    font->atlas = texture_create(FONT_ATLAS_SIZE,FONT_ATLAS_SIZE, 4, final_pixels, SamplerFilter_Linear, SamplerWrap_Clamp);
     font->px_height = px_height;
 
     free(pixels);
+    free(final_pixels);
 
     return font;
 }
@@ -49,7 +60,7 @@ static void font_destroy(Font font)
     free(font);
 }
 
-static stbtt_aligned_quad get_font_glyph_quad(Font font, nkChar c, nkF32* x, nkF32* y)
+static stbtt_aligned_quad font_get_glyph_quad(Font font, nkChar c, nkF32* x, nkF32* y)
 {
     NK_ASSERT(font);
 
@@ -69,6 +80,7 @@ static nkVec2 font_get_text_bounds(Font font, const nkChar* text)
 {
     NK_ASSERT(font);
 
+    // @Incomplete: This is innacurate and a bit rubbish right now...
     nkVec2 bounds = NK_ZERO_MEM;
     for(nkU64 i=0,n=strlen(text); i<n; ++i)
     {
@@ -107,7 +119,7 @@ static void font_draw_text(Font font, nkF32 x, nkF32 y, const nkChar* text, nkVe
     {
         if(*text >= 32 && *text < 128)
         {
-            stbtt_aligned_quad q = get_font_glyph_quad(font, *text, &x,&y);
+            stbtt_aligned_quad q = font_get_glyph_quad(font, *text, &x,&y);
 
             imm_vertex((ImmVertex){ (nkVec2){ q.x0,q.y1 }, (nkVec2){ q.s0,q.t1 }, color }); // BL
             imm_vertex((ImmVertex){ (nkVec2){ q.x0,q.y0 }, (nkVec2){ q.s0,q.t0 }, color }); // TL

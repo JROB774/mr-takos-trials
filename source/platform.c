@@ -39,13 +39,6 @@
 #define WINDOW_HEIGHT 1080 // @Incomplete: Change to be something smalle...
 #define WINDOW_FLAGS  SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_OPENGL
 
-#if defined(BUILD_NATIVE)
-#define ASSET_PATH "../../assets/"
-#endif // BUILD_NATIVE
-#if defined(BUILD_WEB)
-#define ASSET_PATH ""
-#endif // BUILD_WEB
-
 #define SCREEN_WIDTH  480
 #define SCREEN_HEIGHT 270
 

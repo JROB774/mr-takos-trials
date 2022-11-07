@@ -1,7 +1,9 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-Texture sponge_texture;
-Texture cursor_texture;
+static Texture sponge_texture;
+static Texture cursor_texture;
+
+static Font test_font;
 
 static nkF32 random_float(void)
 {
@@ -17,6 +19,8 @@ static void game_init(void)
     sponge_texture = load_asset_texture("sponge.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
     cursor_texture = load_asset_texture("cursor.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
 
+    test_font = load_asset_font("olive.ttf", 48.0f);
+
     show_cursor(NK_FALSE);
 
     enable_alpha_blend();
@@ -24,6 +28,9 @@ static void game_init(void)
 
 static void game_quit(void)
 {
+    font_destroy(test_font);
+
+    texture_destroy(cursor_texture);
     texture_destroy(sponge_texture);
 }
 
@@ -64,14 +71,16 @@ static void game_render(void)
     }
     imm_end_texture_batch();
 
-    nkVec2 mp = get_screen_mouse_pos();
+    const nkChar* text = "Hello World!\nHow Cool...";
+    nkVec2 tb = font_get_text_bounds(test_font, text);
+    nkF32 tx = (SCREEN_WIDTH * 0.5f) - (tb.x * 0.25f);
+    nkF32 ty = (SCREEN_HEIGHT * 0.5f) - (32.0f * 0.25f);
+    font_draw_text(test_font, tx,ty, text, (nkVec4){ 1.0f,1.0f,0.4f,1.0f });
 
+    nkVec2 mp = get_screen_mouse_pos();
     ImmRect cursor_clip = { 0,0,32,32 };
     if(is_mouse_button_down(MouseButton_Left))
-    {
         cursor_clip.x += 32.0f;
-    }
-
     imm_set_texture_color((nkVec4){ 1,1,1,1 });
     imm_texture(cursor_texture, mp.x, mp.y, &cursor_clip);
 }
