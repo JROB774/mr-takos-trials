@@ -52,12 +52,14 @@
 #include "render.h"
 #include "immdraw.h"
 #include "input.h"
+#include "assets.h"
 
 #include "audio.c"
 #include "game.c"
 #include "render.c"
 #include "immdraw.c"
 #include "input.c"
+#include "assets.c"
 
 typedef struct PlatformContext
 {
@@ -228,7 +230,7 @@ static void main_init(void)
     audio_init();
 
     g_ctx.screentarget = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
-    g_ctx.screenshader = imm_load_shader_from_file("screen.shader");
+    g_ctx.screenshader = load_asset_shader("screen.shader");
     g_ctx.screenbuffer = vertex_buffer_create();
 
     vertex_buffer_set_stride   (g_ctx.screenbuffer, sizeof(nkF32)*4);

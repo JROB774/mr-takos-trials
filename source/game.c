@@ -14,8 +14,8 @@ static nkF32 random_float_range(nkF32 min, nkF32 max)
 
 static void game_init(void)
 {
-    sponge_texture = imm_load_texture_from_file("sponge.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
-    cursor_texture = imm_load_texture_from_file("cursor.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+    sponge_texture = load_asset_texture("sponge.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+    cursor_texture = load_asset_texture("cursor.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
 
     show_cursor(NK_FALSE);
 
