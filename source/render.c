@@ -454,8 +454,9 @@ static GLenum bpp_to_gl_format(nkS32 bpp)
 {
     switch(bpp)
     {
-        case(3): return GL_RGB;
-        case(4): return GL_RGBA;
+        case 1: return GL_ALPHA;
+        case 3: return GL_RGB;
+        case 4: return GL_RGBA;
         default:
         {
             // Unsupported BPP that has no appropriate format.
