@@ -7,7 +7,8 @@ typedef struct ImmContext
     DrawMode     draw_mode;
     VertexBuffer buffer;
     Shader       shader;
-    Texture      texture;
+    Shader       bound_shader;
+    Texture      bound_texture;
     nkVec4       tex_color;
     nkMat4       projection;
     nkMat4       view;
@@ -81,22 +82,28 @@ static void imm_set_texture_color(nkVec4 color)
     g_imm.tex_color = color;
 }
 
-static void imm_begin(DrawMode draw_mode, Texture tex)
+static void imm_begin(DrawMode draw_mode, Texture tex, Shader shader)
 {
     g_imm.draw_mode = draw_mode;
-    g_imm.texture = tex;
+    g_imm.bound_texture = tex;
+    g_imm.bound_shader = shader;
     g_imm.vert_count = 0;
+
+    if(!g_imm.bound_shader)
+    {
+        g_imm.bound_shader = g_imm.shader;
+    }
 }
 
 static void imm_end(void)
 {
-    texture_bind(g_imm.texture, 0);
-    shader_bind(g_imm.shader);
+    texture_bind(g_imm.bound_texture, 0);
+    shader_bind(g_imm.bound_shader);
 
-    shader_set_bool(g_imm.shader, "u_usetex",    (g_imm.texture != NULL));
-    shader_set_mat4(g_imm.shader, "u_projection", g_imm.projection);
-    shader_set_mat4(g_imm.shader, "u_view",       g_imm.view);
-    shader_set_mat4(g_imm.shader, "u_model",      g_imm.model);
+    shader_set_bool(g_imm.bound_shader, "u_usetex",    (g_imm.bound_texture != NULL));
+    shader_set_mat4(g_imm.bound_shader, "u_projection", g_imm.projection);
+    shader_set_mat4(g_imm.bound_shader, "u_view",       g_imm.view);
+    shader_set_mat4(g_imm.bound_shader, "u_model",      g_imm.model);
 
     vertex_buffer_update(g_imm.buffer, g_imm.verts, g_imm.vert_count * sizeof(ImmVertex), BufferType_Dynamic);
     vertex_buffer_draw(g_imm.buffer, g_imm.draw_mode, g_imm.vert_count);
@@ -110,14 +117,14 @@ static void imm_vertex(ImmVertex v)
 
 static void imm_point(nkF32 x, nkF32 y, nkVec4 color)
 {
-    imm_begin(DrawMode_Points, NULL);
+    imm_begin(DrawMode_Points, NULL, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x,y }, (nkVec2){ 0,0 }, color });
     imm_end();
 }
 
 static void imm_Line(nkF32 x1, nkF32 y1, nkF32 x2, nkF32 y2, nkVec4 color)
 {
-    imm_begin(DrawMode_Lines, NULL);
+    imm_begin(DrawMode_Lines, NULL, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ 0,0 }, color });
     imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ 1,1 }, color });
     imm_end();
@@ -133,7 +140,7 @@ static void imm_rect_outline(nkF32 x, nkF32 y, nkF32 w, nkF32 h, nkVec4 color)
     nkF32 x2 = x+w;
     nkF32 y2 = y+h;
 
-    imm_begin(DrawMode_LineLoop, NULL);
+    imm_begin(DrawMode_LineLoop, NULL, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ 0,0 }, color });
     imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ 1,0 }, color });
     imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ 1,1 }, color });
@@ -148,7 +155,7 @@ static void imm_rect_filled(nkF32 x, nkF32 y, nkF32 w, nkF32 h, nkVec4 color)
     nkF32 x2 = x+w;
     nkF32 y2 = y+h;
 
-    imm_begin(DrawMode_TriangleStrip, NULL);
+    imm_begin(DrawMode_TriangleStrip, NULL, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ 0,1 }, color });
     imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ 0,0 }, color });
     imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ 1,1 }, color });
@@ -158,7 +165,7 @@ static void imm_rect_filled(nkF32 x, nkF32 y, nkF32 w, nkF32 h, nkVec4 color)
 
 static void imm_circle_outline(nkF32 x, nkF32 y, nkF32 r, nkS32 n, nkVec4 color)
 {
-    imm_begin(DrawMode_LineLoop, NULL);
+    imm_begin(DrawMode_LineLoop, NULL, NULL);
     for(nkS32 i=0; i<n; ++i)
     {
         nkF32 theta = 2.0f * NK_TAU * NK_CAST(nkF32,i) / NK_CAST(nkF32,n);
@@ -171,7 +178,7 @@ static void imm_circle_outline(nkF32 x, nkF32 y, nkF32 r, nkS32 n, nkVec4 color)
 
 static void imm_circle_filled(nkF32 x, nkF32 y, nkF32 r, nkS32 n, nkVec4 color)
 {
-    imm_begin(DrawMode_TriangleFan, NULL);
+    imm_begin(DrawMode_TriangleFan, NULL, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x,y }, (nkVec2){ 0,0 }, color });
     for(nkS32 i=0; i<=n; ++i)
     {
@@ -211,7 +218,7 @@ static void imm_texture(Texture tex, nkF32 x, nkF32 y, ImmRect* clip)
     s2 /= w;
     t2 /= h;
 
-    imm_begin(DrawMode_TriangleStrip, tex);
+    imm_begin(DrawMode_TriangleStrip, tex, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color });
     imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, g_imm.tex_color });
     imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, g_imm.tex_color });
@@ -266,7 +273,7 @@ static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nk
     model_matrix = nk_translate(model_matrix, (nkVec3){    x,    y, 0.0f });
 
     imm_set_model(model_matrix);
-    imm_begin(DrawMode_TriangleStrip, tex);
+    imm_begin(DrawMode_TriangleStrip, tex, NULL);
     imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color });
     imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, g_imm.tex_color });
     imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, g_imm.tex_color });
@@ -277,7 +284,7 @@ static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nk
 
 static void imm_begin_texture_batch(Texture tex)
 {
-    imm_begin(DrawMode_Triangles, tex);
+    imm_begin(DrawMode_Triangles, tex, NULL);
 }
 
 static void imm_end_texture_batch(void)
@@ -289,8 +296,8 @@ static void imm_texture_batched(nkF32 x, nkF32 y, ImmRect* clip)
 {
     NK_ASSERT(g_imm.texture);
 
-    nkF32 w = texture_get_width(g_imm.texture);
-    nkF32 h = texture_get_height(g_imm.texture);
+    nkF32 w = texture_get_width(g_imm.bound_texture);
+    nkF32 h = texture_get_height(g_imm.bound_texture);
 
     nkF32 s1 = 0;
     nkF32 t1 = 0;
@@ -327,8 +334,8 @@ static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 a
 {
     NK_ASSERT(g_imm.texture);
 
-    nkF32 w = texture_get_width(g_imm.texture);
-    nkF32 h = texture_get_height(g_imm.texture);
+    nkF32 w = texture_get_width(g_imm.bound_texture);
+    nkF32 h = texture_get_height(g_imm.bound_texture);
 
     nkF32 s1 = 0;
     nkF32 t1 = 0;

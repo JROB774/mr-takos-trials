@@ -13,6 +13,18 @@ DEFINE_FONT_TYPE(Font)
     nkF32            px_height;
 };
 
+static Shader g_textshader;
+
+static void font_init(void)
+{
+    g_textshader = load_asset_shader("text.shader");
+}
+
+static void font_quit(void)
+{
+    shader_destroy(g_textshader);
+}
+
 static Font font_create(void* data, nkBool owns_data, nkF32 px_height)
 {
     Font font = ALLOCATE_FONT_TYPE(Font);
@@ -103,7 +115,7 @@ static void font_draw_text(Font font, nkF32 x, nkF32 y, const nkChar* text, nkVe
         return;
     }
 
-    imm_begin(DrawMode_Triangles, font->atlas);
+    imm_begin(DrawMode_Triangles, font->atlas, g_textshader);
     while(*text)
     {
         if(*text >= 32 && *text < 128)

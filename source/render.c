@@ -454,7 +454,16 @@ static GLenum bpp_to_gl_format(nkS32 bpp)
 {
     switch(bpp)
     {
+        #if defined(BUILD_NATIVE)
         case 1: return GL_RED;
+        case 2: return GL_RG;
+        #endif // BUILD_NATIVE
+
+        #if defined(BUILD_WEB)
+        case 1: return GL_LUMINANCE;
+        case 2: return GL_LUMINANCE_ALPHA;
+        #endif // BUILD_WEB
+
         case 3: return GL_RGB;
         case 4: return GL_RGBA;
         default:
@@ -484,12 +493,6 @@ static Texture texture_create(nkS32 w, nkS32 h, nkS32 bpp, void* data, SamplerFi
 
     GLenum gl_format = bpp_to_gl_format(bpp);
     glTexImage2D(GL_TEXTURE_2D, 0, gl_format, w,h, 0, gl_format, GL_UNSIGNED_BYTE, data);
-
-    if(gl_format == GL_RED) // Interpret as alpha!
-    {
-        GLint swizzle_mask[] = { GL_ONE, GL_ONE, GL_ONE, GL_RED };
-        glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_SWIZZLE_RGBA, swizzle_mask);
-    }
 
     if(filter > SamplerFilter_Linear)
     {

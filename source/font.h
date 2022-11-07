@@ -6,6 +6,8 @@
 
 DECLARE_FONT_TYPE(Font);
 
+static void   font_init           (void);
+static void   font_quit           (void);
 static Font   font_create         (void* data, nkBool owns_data, nkF32 px_height);
 static void   font_destroy        (Font font);
 static nkVec2 font_get_text_bounds(Font font, const nkChar* text);

@@ -30,7 +30,7 @@ static nkVec4 imm_get_texture_color(void);
 
 static void imm_set_texture_color(nkVec4 color);
 
-static void imm_begin (DrawMode draw_mode, Texture tex);
+static void imm_begin (DrawMode draw_mode, Texture tex, Shader shader);
 static void imm_end   (void);
 static void imm_vertex(ImmVertex v);
 

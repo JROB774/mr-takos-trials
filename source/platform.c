@@ -225,6 +225,7 @@ static void main_init(void)
 
     renderer_init();
     imm_init();
+    font_init();
     audio_init();
 
     g_ctx.screentarget = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
@@ -248,6 +249,7 @@ static void main_quit(void)
     render_target_destroy(g_ctx.screentarget);
 
     audio_quit();
+    font_quit();
     imm_quit();
     renderer_quit();
 
