@@ -1,10 +1,12 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
 #define STB_IMAGE_STATIC
+#define STBTT_STATIC
 #define GLEW_STATIC
 #define NK_STATIC
 
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_TRUETYPE_IMPLEMENTATION
 #define NK_MATH_IMPLEMENTATION
 #define NK_FILESYS_IMPLEMENTATION
 
@@ -18,6 +20,7 @@
 #include <nk_filesys.h>
 
 #include <stb_image.h>
+#include <stb_truetype.h>
 
 #include <SDL.h>
 #include <SDL_mixer.h>
@@ -51,6 +54,7 @@
 #include "game.h"
 #include "render.h"
 #include "immdraw.h"
+#include "font.h"
 #include "input.h"
 #include "assets.h"
 
@@ -58,6 +62,7 @@
 #include "game.c"
 #include "render.c"
 #include "immdraw.c"
+#include "font.c"
 #include "input.c"
 #include "assets.c"
 
