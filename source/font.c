@@ -2,7 +2,7 @@
 
 #define ALLOCATE_FONT_TYPE(name) malloc(sizeof(struct name##__Type))
 
-#define FONT_ATLAS_SIZE 512
+#define FONT_ATLAS_SIZE 1024
 
 DEFINE_FONT_TYPE(Font)
 {
@@ -32,21 +32,10 @@ static Font font_create(void* data, nkBool owns_data, nkF32 px_height)
 
     stbtt_BakeFontBitmap(font->data_buffer, 0, px_height, pixels, FONT_ATLAS_SIZE,FONT_ATLAS_SIZE, 32,96, font->chars);
 
-    // @Incomplete: We shouldn't need this... not sure why it's not working currently though
-    nkU8* final_pixels = malloc(FONT_ATLAS_SIZE*FONT_ATLAS_SIZE*4);
-    for(nkS32 i=0; i<FONT_ATLAS_SIZE*FONT_ATLAS_SIZE*4; i+=4)
-    {
-        final_pixels[i+0] = 0xFF;
-        final_pixels[i+1] = 0xFF;
-        final_pixels[i+2] = 0xFF;
-        final_pixels[i+3] = pixels[i/4];
-    }
-
-    font->atlas = texture_create(FONT_ATLAS_SIZE,FONT_ATLAS_SIZE, 4, final_pixels, SamplerFilter_Linear, SamplerWrap_Clamp);
+    font->atlas = texture_create(FONT_ATLAS_SIZE,FONT_ATLAS_SIZE, 1, pixels, SamplerFilter_Linear, SamplerWrap_Clamp);
     font->px_height = px_height;
 
     free(pixels);
-    free(final_pixels);
 
     return font;
 }
