@@ -229,7 +229,7 @@ static void main_init(void)
     audio_init();
 
     g_ctx.screentarget = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
-    g_ctx.screenshader = load_asset_shader("screen.shader");
+    g_ctx.screenshader = load_asset_shader("copy.shader");
     g_ctx.screenbuffer = vertex_buffer_create();
 
     vertex_buffer_set_stride   (g_ctx.screenbuffer, sizeof(nkF32)*4);
