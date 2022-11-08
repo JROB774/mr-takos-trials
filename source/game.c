@@ -3,7 +3,12 @@
 static Texture sponge_texture;
 static Texture cursor_texture;
 
+static Texture back_texture;
+static Texture logo_texture;
+
 static Font test_font;
+
+static Shader pp_invert;
 
 static nkF32 random_float(void)
 {
@@ -19,7 +24,14 @@ static void game_init(void)
     sponge_texture = load_asset_texture("sponge.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
     cursor_texture = load_asset_texture("cursor.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
 
-    test_font = load_asset_font("olive.ttf", 48.0f);
+    back_texture = load_asset_texture("back.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+    logo_texture = load_asset_texture("logo.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+
+    test_font = load_asset_font("mabook.ttf", 48.0f);
+
+    pp_invert = load_asset_shader("invert.shader");
+
+    postprocess_push_effect(pp_invert);
 
     show_cursor(NK_FALSE);
 
@@ -29,6 +41,9 @@ static void game_init(void)
 static void game_quit(void)
 {
     font_destroy(test_font);
+
+    texture_destroy(logo_texture);
+    texture_destroy(back_texture);
 
     texture_destroy(cursor_texture);
     texture_destroy(sponge_texture);
@@ -43,6 +58,13 @@ static void game_render(void)
 {
     clear_screen_f(0.1f, 0.2f, 0.3f, 1.0f);
 
+    nkF32 cx = SCREEN_WIDTH * 0.5f;
+    nkF32 cy = SCREEN_HEIGHT * 0.5f;
+
+    imm_texture(back_texture, cx,cy, NULL);
+    imm_texture(logo_texture, cx,cy, NULL);
+
+    /*
     static nkU32 seed = 673561296;
 
     if(is_key_down(KeyCode_F5))
@@ -71,11 +93,17 @@ static void game_render(void)
     }
     imm_end_texture_batch();
 
-    const nkChar* text = "Hello World!\nHow Cool...";
+    const nkChar* text = "Hello World!!!";
+
     nkVec2 tb = font_get_text_bounds(test_font, text);
-    nkF32 tx = (SCREEN_WIDTH * 0.5f) - (tb.x * 0.25f);
-    nkF32 ty = (SCREEN_HEIGHT * 0.5f) - (32.0f * 0.25f);
+
+    nkF32 tx = ((SCREEN_WIDTH - tb.x) * 0.5f);
+    nkF32 ty = ((SCREEN_HEIGHT + tb.y) * 0.5f);
+
+    font_draw_text(test_font, tx+4.0f,ty+4.0f, text, (nkVec4){ 0.1f,0.1f,0.0f,1.0f });
     font_draw_text(test_font, tx,ty, text, (nkVec4){ 1.0f,1.0f,0.4f,1.0f });
+
+    // imm_rect_outline(tx, aabb.y0, aabb.x1-aabb.x0, aabb.y1-aabb.y0, NK_V4_RED);
 
     nkVec2 mp = get_screen_mouse_pos();
     ImmRect cursor_clip = { 0,0,32,32 };
@@ -83,6 +111,7 @@ static void game_render(void)
         cursor_clip.x += 32.0f;
     imm_set_texture_color((nkVec4){ 1,1,1,1 });
     imm_texture(cursor_texture, mp.x, mp.y, &cursor_clip);
+    */
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
