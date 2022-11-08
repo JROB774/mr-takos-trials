@@ -81,14 +81,36 @@ static nkVec2 font_get_text_bounds(Font font, const nkChar* text)
 {
     NK_ASSERT(font);
 
-    // @Incomplete: This is innacurate and a bit rubbish right now...
-    nkVec2 bounds = NK_ZERO_MEM;
+    nkF32 x = 0.0f;
+    nkF32 y = 0.0f;
+
+    nkF32 x0 = 0.0f;
+    nkF32 y0 = 0.0f;
+    nkF32 x1 = 0.0f;
+    nkF32 y1 = 0.0f;
+
     for(nkU64 i=0,n=strlen(text); i<n; ++i)
     {
         nkChar c = text[i];
         if(c >= 32 && c < 128)
-            font_get_glyph_quad(font, c, &bounds.x,&bounds.y);
+        {
+            stbtt_aligned_quad q = font_get_glyph_quad(font, c, &x,&y);
+
+            x0 = nk_min(x0, q.x0);
+            y0 = nk_min(y0, q.y0);
+            x1 = nk_max(x1, q.x1);
+            y1 = nk_max(y1, q.y1);
+        }
+        else if(c == '\n')
+        {
+            x = 0.0f;
+            y += font->px_height;
+        }
     }
+
+    nkVec2 bounds;
+    bounds.x = x1-x0;
+    bounds.y = y1-y0;
     return bounds;
 }
 
