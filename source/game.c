@@ -8,7 +8,8 @@ static Texture logo_texture;
 
 static Font test_font;
 
-static Shader pp_invert;
+static Shader pp_crunch;
+static Shader pp_chroma;
 
 static nkF32 random_float(void)
 {
@@ -29,9 +30,11 @@ static void game_init(void)
 
     test_font = load_asset_font("mabook.ttf", 48.0f);
 
-    pp_invert = load_asset_shader("invert.shader");
+    pp_crunch = load_asset_shader("crunch.shader");
+    pp_chroma = load_asset_shader("chroma.shader");
 
-    postprocess_push_effect(pp_invert);
+    // postprocess_push_effect(pp_crunch);
+    // postprocess_push_effect(pp_chroma);
 
     show_cursor(NK_FALSE);
 
@@ -40,6 +43,9 @@ static void game_init(void)
 
 static void game_quit(void)
 {
+    shader_destroy(pp_crunch);
+    shader_destroy(pp_chroma);
+
     font_destroy(test_font);
 
     texture_destroy(logo_texture);
