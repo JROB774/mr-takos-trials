@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <time.h>
+#include <float.h>
 
 #include <nk_define.h>
 #include <nk_math.h>
@@ -42,11 +43,12 @@
 #define SCREEN_WIDTH  480
 #define SCREEN_HEIGHT 270
 
-#include "platform.h"
 #include "audio.h"
 #include "game.h"
 #include "render.h"
 #include "immdraw.h"
+#include "postprocess.h"
+#include "platform.h"
 #include "font.h"
 #include "input.h"
 #include "assets.h"
@@ -55,6 +57,7 @@
 #include "game.c"
 #include "render.c"
 #include "immdraw.c"
+#include "postprocess.c"
 #include "font.c"
 #include "input.c"
 #include "assets.c"
@@ -149,6 +152,8 @@ static void begin_render_frame(void)
 
 static void end_render_frame(void)
 {
+    RenderTarget output = postprocess_get_result();
+
     render_target_bind(NULL);
 
     nkF32 ww = NK_CAST(nkF32, window_get_width());
@@ -181,7 +186,7 @@ static void end_render_frame(void)
 
     nkMat4 projection = nk_orthographic(0,ww,wh,0,0,1);
 
-    texture_bind(g_ctx.screentarget->color_target, 0);
+    texture_bind(output->color_target, 0);
     shader_bind(g_ctx.screenshader);
 
     shader_set_mat4(g_ctx.screenshader, "u_projection", projection);
@@ -229,6 +234,7 @@ static void main_init(void)
     }
 
     renderer_init();
+    postprocess_init();
     imm_init();
     font_init();
     audio_init();
@@ -256,6 +262,7 @@ static void main_quit(void)
     audio_quit();
     font_quit();
     imm_quit();
+    postprocess_quit();
     renderer_quit();
 
     SDL_free(g_ctx.base_path);
