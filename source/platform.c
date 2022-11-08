@@ -127,6 +127,11 @@ static void show_cursor(nkBool show)
     SDL_ShowCursor((show ? SDL_ENABLE : SDL_DISABLE));
 }
 
+static RenderTarget get_screen(void)
+{
+    return g_ctx.screentarget;
+}
+
 static void begin_render_frame(void)
 {
     nkF32 vx = 0.0f;
