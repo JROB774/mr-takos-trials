@@ -234,7 +234,6 @@ static void main_init(void)
     }
 
     renderer_init();
-    postprocess_init();
     imm_init();
     font_init();
     audio_init();
@@ -246,6 +245,8 @@ static void main_init(void)
     vertex_buffer_set_stride   (g_ctx.screenbuffer, sizeof(nkF32)*4);
     vertex_buffer_enable_attrib(g_ctx.screenbuffer, 0, AttribType_Float, 4, 0);
 
+    postprocess_init();
+
     game_init();
 
     g_ctx.running = NK_TRUE;
@@ -255,6 +256,8 @@ static void main_quit(void)
 {
     game_quit();
 
+    postprocess_quit();
+
     vertex_buffer_destroy(g_ctx.screenbuffer);
     shader_destroy(g_ctx.screenshader);
     render_target_destroy(g_ctx.screentarget);
@@ -262,7 +265,6 @@ static void main_quit(void)
     audio_quit();
     font_quit();
     imm_quit();
-    postprocess_quit();
     renderer_quit();
 
     SDL_free(g_ctx.base_path);
@@ -324,6 +326,7 @@ static void main_loop(void)
     {
         begin_render_frame();
         game_render();
+        postprocess_execute();
     }
     end_render_frame();
 

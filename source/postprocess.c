@@ -7,6 +7,7 @@ typedef struct PostProcess
     Shader       effects[MAX_POSTPROCESS_EFFECTS];
     nkS32        effect_count;
     RenderTarget target;
+    RenderTarget result;
     VertexBuffer buffer;
 }
 PostProcess;
@@ -17,6 +18,7 @@ static void postprocess_init(void)
 {
     g_postprocess.target = render_target_create(SCREEN_WIDTH,SCREEN_HEIGHT, SamplerFilter_Nearest, SamplerWrap_Clamp);
     g_postprocess.buffer = vertex_buffer_create();
+    g_postprocess.result = get_screen();
 
     nkVec4 vertices[4];
 
@@ -53,16 +55,11 @@ static void postprocess_clear_effects(void)
     g_postprocess.effect_count = 0;
 }
 
-static RenderTarget postprocess_get_result(void)
+static void postprocess_execute(void)
 {
-    if(g_postprocess.effect_count == 0)
-    {
-        return get_screen();
-    }
+    if(g_postprocess.effect_count == 0) return;
 
     // Ping-pong back-and-forth between buffers to render effects.
-    nkBool result_in_src = NK_FALSE;
-
     RenderTarget src = get_screen();
     RenderTarget dst = g_postprocess.target;
 
@@ -77,12 +74,18 @@ static RenderTarget postprocess_get_result(void)
 
         vertex_buffer_draw(g_postprocess.buffer, DrawMode_TriangleStrip, 4);
 
-        result_in_src = !result_in_src;
-
-        NK_SWAP(RenderTarget, src, dst);
+        if(i+1 < g_postprocess.effect_count)
+        {
+            NK_SWAP(RenderTarget, src,dst);
+        }
     }
 
-    return ((result_in_src) ? src : dst);
+    g_postprocess.result = dst;
+}
+
+static RenderTarget postprocess_get_result(void)
+{
+    return g_postprocess.result;
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
