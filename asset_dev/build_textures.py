@@ -5,6 +5,9 @@ from PIL import Image
 outdir = "assets/textures/"
 indir = "asset_dev/"
 
+if not os.path.isdir(outdir):
+    os.makedirs(outdir)
+
 files = os.listdir(path=indir)
 for file in files:
     infile = os.path.join(indir, file)
