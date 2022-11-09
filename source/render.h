@@ -59,13 +59,19 @@ NK_ENUM(SamplerWrap, nkS32)
     SamplerWrap_Clamp
 };
 
+NK_ENUM(BlendMode, nkS32)
+{
+    BlendMode_None,
+    BlendMode_Alpha,
+    BlendMode_PremultipliedAlpha
+};
+
 static void renderer_init(void);
 static void renderer_quit(void);
 
 static void set_viewport(nkF32 x, nkF32 y, nkF32 w, nkF32 h);
 
-static void enable_alpha_blend (void);
-static void disable_alpha_blend(void);
+static void set_blend_mode(BlendMode blend_mode);
 
 static void clear_screen_v(nkVec4 color);
 static void clear_screen_f(nkF32 r, nkF32 g, nkF32 b, nkF32 a);

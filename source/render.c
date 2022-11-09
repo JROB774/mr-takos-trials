@@ -75,15 +75,27 @@ static void set_viewport(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
     glViewport(vx,vy,vw,vh);
 }
 
-static void enable_alpha_blend(void)
+static void set_blend_mode(BlendMode blend_mode)
 {
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-}
-
-static void disable_alpha_blend(void)
-{
-    glDisable(GL_BLEND);
+    switch(blend_mode)
+    {
+        case BlendMode_None:
+        {
+            glDisable(GL_BLEND);
+        } break;
+        case BlendMode_Alpha:
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendEquation(GL_FUNC_ADD);
+            glEnable(GL_BLEND);
+        } break;
+        case BlendMode_PremultipliedAlpha:
+        {
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendEquation(GL_FUNC_ADD);
+            glEnable(GL_BLEND);
+        } break;
+    }
 }
 
 static void clear_screen_v(nkVec4 color)
