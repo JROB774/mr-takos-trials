@@ -6,6 +6,7 @@ static Texture test_texture;
 
 static nkS32 frame;
 static nkF32 frame_timer;
+static nkF32 frame_angle;
 
 static void game_init(void)
 {
@@ -26,6 +27,7 @@ static void game_quit(void)
 static void game_update(nkF32 dt)
 {
     frame_timer += dt;
+    frame_angle += dt;
     if(frame_timer >= 0.33f)
     {
         frame_timer -= 0.33f;
@@ -47,11 +49,28 @@ static void game_render(void)
 
     nkMat4 model = nk_m4_identity();
     model = nk_translate(model, (nkVec3){ cx,cy,0 });
-    model = nk_rotate(model, (nkVec3){ 0,0,1 }, frame_timer * 2.5f);
+    model = nk_rotate(model, (nkVec3){ 0,0,1 }, frame_angle * 2.5f);
     imm_set_model(model);
     imm_rect_filled(-64,-64,128,128, NK_V4_BLUE);
 
-    imm_texture_ex(test_texture, cx,cy, 1,1, frame_timer * 2.5f, NULL, &ATLAS_TEST0[frame].bounds);
+    nkVec2 anchor = NK_ZERO_MEM;
+
+    anchor.x = ATLAS_TEST0[frame].box.w * 0.5f;
+    anchor.y = ATLAS_TEST0[frame].box.h * 0.5f;
+
+    nkF32 nx = anchor.x / ATLAS_TEST0[frame].box.w;
+    nkF32 ny = anchor.y / ATLAS_TEST0[frame].box.h;
+
+    nkF32 offx = ATLAS_TEST0[frame].box.x + (nx * ATLAS_TEST0[frame].box.w);
+    nkF32 offy = ATLAS_TEST0[frame].box.y + (ny * ATLAS_TEST0[frame].box.h);
+
+    offx = offx - (nx * ATLAS_TEST0[frame].original_size_x);
+    offy = offy - (ny * ATLAS_TEST0[frame].original_size_y);
+
+    anchor.x -= offx;
+    anchor.y -= offy;
+
+    imm_texture_ex(test_texture, cx,cy, 1,1, frame_angle * 2.5f, &anchor, &ATLAS_TEST0[frame].clip);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
