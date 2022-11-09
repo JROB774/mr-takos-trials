@@ -3,22 +3,16 @@
 static Texture back_texture;
 static Texture tako_texture;
 
-static Font test_font;
-
 static void game_init(void)
 {
     back_texture = load_asset_texture("back.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
     tako_texture = load_asset_texture("tako.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
-
-    test_font = load_asset_font("mabook.ttf", 48.0f);
 
     show_cursor(NK_FALSE);
 }
 
 static void game_quit(void)
 {
-    font_destroy(test_font);
-
     texture_destroy(tako_texture);
     texture_destroy(back_texture);
 }

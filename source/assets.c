@@ -1,7 +1,7 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
 #if defined(BUILD_NATIVE)
-#define ASSET_PATH "../../assets/"
+#define ASSET_PATH "assets/"
 #endif // BUILD_NATIVE
 #if defined(BUILD_WEB)
 #define ASSET_PATH ""
@@ -45,7 +45,6 @@ static Shader load_asset_shader(const nkChar* name)
     strcpy(buffer, get_base_path());
     strcat(buffer, ASSET_PATH);
     strcat(buffer, "shaders/");
-    strcat(buffer, SHADER_PATH);
     strcat(buffer, name);
 
     nkFileContent file_content = NK_ZERO_MEM;

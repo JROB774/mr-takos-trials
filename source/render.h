@@ -1,13 +1,6 @@
 #ifndef RENDER_H__ /*/////////////////////////////////////////////////////////*/
 #define RENDER_H__
 
-#if defined(BUILD_NATIVE)
-#define SHADER_PATH "gl_330/"
-#endif // BUILD_NATIVE
-#if defined(BUILD_WEB)
-#define SHADER_PATH "es_300/"
-#endif // BUILD_WEB
-
 #define DECLARE_RENDER_TYPE(name) struct name##__Type; typedef struct name##__Type* name;
 #define DEFINE_RENDER_TYPE(name) struct name##__Type
 

@@ -1,14 +1,18 @@
 @echo off
 setlocal
 
-if "%~1"=="win32" goto build_win32
-if "%~1"=="web" goto build_web
-if "%~1"=="assets" goto build_assets
+if %~1==win32 goto build_win32
+if %~1==web goto build_web
 
-echo please specify build target (win32, web, assets)...
+echo please specify build target (win32, web)...
 goto end
 
 :build_win32
+if not exist binary\win32 mkdir binary\win32
+
+echo ----------------------------------------
+python assets/build_assets.py win32
+echo.
 echo ----------------------------------------
 
 set defs=-D BUILD_NATIVE
@@ -26,10 +30,6 @@ if "%~2"=="release" (
     set cflg=%cflg% -Z7
 )
 
-set defs=%defs% -D BUILD_NATIVE
-
-if not exist binary\win32 mkdir binary\win32
-
 copy depends\sdl_mixer\bin\*.dll binary\win32\ > NUL
 copy depends\sdl\bin\*.dll binary\win32\ > NUL
 
@@ -40,6 +40,11 @@ popd
 goto end
 
 :build_web
+if not exist binary\web mkdir binary\web
+
+echo ----------------------------------------
+python assets/build_assets.py web
+echo.
 echo ----------------------------------------
 
 call depends\emsdk\emsdk install latest
@@ -50,21 +55,11 @@ set defs=-D BUILD_WEB
 set idir=-I ../../depends/nksdk/nklibs -I ../../depends/stb
 set libs=-s WASM=1 -s USE_SDL=2 -s USE_SDL_MIXER=2 -s USE_OGG=1 -s USE_VORBIS=1 -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -lidbfs.js
 set cflg=
-set lflg=--preload-file ../../assets@/ -s EXPORTED_FUNCTIONS="['_main', '_main_callback']" -s EXPORTED_RUNTIME_METHODS="['ccall']"
-
-if not exist binary\web mkdir binary\web
+set lflg=--preload-file assets@/ -s EXPORTED_FUNCTIONS="['_main', '_main_callback']" -s EXPORTED_RUNTIME_METHODS="['ccall']"
 
 pushd binary\web
 emcc %libs% %idir% %cflg% %lflg% %defs% ../../source/platform.c -o tako.html
 popd
-
-goto end
-
-:build_assets
-echo ----------------------------------------
-
-python asset_dev/build_textures.py
-python asset_dev/build_shaders.py
 
 goto end
 
