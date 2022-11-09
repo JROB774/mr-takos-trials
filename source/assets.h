@@ -3,10 +3,11 @@
 
 typedef struct TextureAtlasClip
 {
-    nkF32   original_size_x;
-    nkF32   original_size_y;
-    ImmRect box;
-    ImmRect clip;
+    nkF32   original_width;
+    nkF32   original_height;
+    nkF32   offset_x;
+    nkF32   offset_y;
+    ImmRect clip_bounds;
 }
 TextureAtlasClip;
 

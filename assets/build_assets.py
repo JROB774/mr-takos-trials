@@ -74,7 +74,7 @@ for file in texture_files:
             ogw = img.width
             ogh = img.height
             box = img.getbbox()
-            img = img.crop(box) # NOTE: disabling this because we aren't handling rendering correctly with it on, can come back to it if we want
+            img = img.crop(box)
             img.save(tmpfile)
             atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
             if atlas_name not in atlas_lists:
@@ -127,7 +127,7 @@ for name,files in atlas_lists.items():
             offy = int((box[1]+((box[3]-box[1])/2)) - siz[1]/2)
             atlas.paste(textures[i], (x,y))
             defines.append(os.path.basename(files[i][0]).split('.')[0].upper())
-            rectdat.append("{{ {:>5},{:>5}, {{ {:>5},{:>5},{:>5},{:>5} }}, {{ {:>5},{:>5},{:>5},{:>5} }} }}".format(siz[0],siz[1], box[0],box[1],box[2]-box[0],box[3]-box[1], x,y,w,h))
+            rectdat.append("{{ {:>5},{:>5}, {:>5},{:>5}, {{ {:>5},{:>5},{:>5},{:>5} }} }}".format(siz[0],siz[1], box[0],box[1], x,y,w,h))
         atlas.save(outfile)
         # write out the atlas rect data
         cdata  = "#ifndef ATLAS_{}_H__\n".format(name.upper())

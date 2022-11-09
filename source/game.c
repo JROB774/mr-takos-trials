@@ -55,22 +55,22 @@ static void game_render(void)
 
     nkVec2 anchor = NK_ZERO_MEM;
 
-    anchor.x = ATLAS_TEST0[frame].box.w * 0.5f;
-    anchor.y = ATLAS_TEST0[frame].box.h * 0.5f;
+    anchor.x = ATLAS_TEST0[frame].clip_bounds.w * 0.5f;
+    anchor.y = ATLAS_TEST0[frame].clip_bounds.h * 0.5f;
 
-    nkF32 nx = anchor.x / ATLAS_TEST0[frame].box.w;
-    nkF32 ny = anchor.y / ATLAS_TEST0[frame].box.h;
+    nkF32 nx = anchor.x / ATLAS_TEST0[frame].clip_bounds.w;
+    nkF32 ny = anchor.y / ATLAS_TEST0[frame].clip_bounds.h;
 
-    nkF32 offx = ATLAS_TEST0[frame].box.x + (nx * ATLAS_TEST0[frame].box.w);
-    nkF32 offy = ATLAS_TEST0[frame].box.y + (ny * ATLAS_TEST0[frame].box.h);
+    nkF32 offx = ATLAS_TEST0[frame].offset_x + (nx * ATLAS_TEST0[frame].clip_bounds.w);
+    nkF32 offy = ATLAS_TEST0[frame].offset_y + (ny * ATLAS_TEST0[frame].clip_bounds.h);
 
-    offx = offx - (nx * ATLAS_TEST0[frame].original_size_x);
-    offy = offy - (ny * ATLAS_TEST0[frame].original_size_y);
+    offx = offx - (nx * ATLAS_TEST0[frame].original_width);
+    offy = offy - (ny * ATLAS_TEST0[frame].original_height);
 
     anchor.x -= offx;
     anchor.y -= offy;
 
-    imm_texture_ex(test_texture, cx,cy, 1,1, frame_angle * 2.5f, &anchor, &ATLAS_TEST0[frame].clip);
+    imm_texture_ex(test_texture, cx,cy, 1,1, frame_angle * 2.5f, &anchor, &ATLAS_TEST0[frame].clip_bounds);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
