@@ -190,7 +190,7 @@ static void imm_circle_filled(nkF32 x, nkF32 y, nkF32 r, nkS32 n, nkVec4 color)
     imm_end();
 }
 
-static void imm_texture(Texture tex, nkF32 x, nkF32 y, ImmRect* clip)
+static void imm_texture(Texture tex, nkF32 x, nkF32 y, const ImmRect* clip)
 {
     nkF32 w = texture_get_width(tex);
     nkF32 h = texture_get_height(tex);
@@ -226,7 +226,7 @@ static void imm_texture(Texture tex, nkF32 x, nkF32 y, ImmRect* clip)
     imm_end();
 }
 
-static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, ImmRect* clip)
+static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip)
 {
     nkF32 w = texture_get_width(tex);
     nkF32 h = texture_get_height(tex);
@@ -292,7 +292,7 @@ static void imm_end_texture_batch(void)
     imm_end();
 }
 
-static void imm_texture_batched(nkF32 x, nkF32 y, ImmRect* clip)
+static void imm_texture_batched(nkF32 x, nkF32 y, const ImmRect* clip)
 {
     NK_ASSERT(g_imm.texture);
 
@@ -330,7 +330,7 @@ static void imm_texture_batched(nkF32 x, nkF32 y, ImmRect* clip)
     imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color }); // BL
 }
 
-static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, ImmRect* clip)
+static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip)
 {
     NK_ASSERT(g_imm.texture);
 
