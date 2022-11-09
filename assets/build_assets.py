@@ -45,14 +45,18 @@ for file in shader_files:
 
 # crop temp textures
 texture_out_dir = asset_out_dir + "textures/"
-texture_in_dir = asset_dir + "textures/"
+texture_in_dir  = asset_dir + "textures/"
 texture_tmp_dir = texture_in_dir + "temp/"
+texture_dat_dir = "source/codegen/"
 
 if os.path.exists(texture_tmp_dir):
     shutil.rmtree(texture_tmp_dir)
+if os.path.exists(texture_dat_dir):
+    shutil.rmtree(texture_dat_dir)
 
 os.makedirs(texture_out_dir)
 os.makedirs(texture_tmp_dir)
+os.makedirs(texture_dat_dir)
 
 atlas_lists = {}
 
@@ -67,30 +71,38 @@ for file in texture_files:
             tmpfile = str.replace(os.path.join(texture_tmp_dir, file), ".psd", ".png")
             print("cropping texture {} to {}".format(infile, tmpfile))
             img = Image.open(infile)
-            img = img.crop(img.getbbox())
+            box = img.getbbox()
+            img = img.crop(box)
             img.save(tmpfile)
             atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
             if atlas_name not in atlas_lists:
                 atlas_lists[atlas_name] = []
-            atlas_lists[atlas_name].append(tmpfile)
+            atlas_lists[atlas_name].append((tmpfile,box))
 
 # build texture atlases
 for name,files in atlas_lists.items():
-    if len(files) > 1:
+    if len(files) == 1:
+        # save out the original
+        infile = str.replace(os.path.join(texture_in_dir, os.path.basename(files[0][0])), ".png", ".psd")
+        outfile = str.replace(os.path.join(texture_out_dir, os.path.basename(files[0][0])), ".psd", ".png")
+        print("converting texture {} texture to {}".format(infile, outfile))
+        img = Image.open(infile)
+        img.save(outfile)
+    else:
         outfile = os.path.join(texture_out_dir, name + ".png")
         print("building texture atlas {}".format(outfile))
         # load all of the textures
         textures = []
         rects = []
         for file in files:
-            img = Image.open(file)
-            textures.append(img)
+            img = Image.open(file[0])
             w = img.size[0] + atlas_padding
             h = img.size[1] + atlas_padding
+            textures.append(img)
             rects.append((w,h))
         # pack the texture rects
         for atlas_pow in range(1,12):
-            packer = newPacker()
+            packer = newPacker(rotation=False)
             for rect in rects:
                 packer.add_rect(*rect)
             atlas_size = pow(2, atlas_pow)
@@ -100,15 +112,34 @@ for name,files in atlas_lists.items():
                 break
         # build the final atlas image
         atlas = Image.new("RGBA", (atlas_size,atlas_size))
+        defines = []
+        rectdat = []
         for i in range(len(textures)):
+            offx = files[i][1][0]
+            offy = files[i][1][1]
             x = int(packer[0][i].x + (atlas_padding / 2))
             y = int(packer[0][i].y + (atlas_padding / 2))
+            w = packer[0][i].width
+            h = packer[0][i].height
             atlas.paste(textures[i], (x,y))
+            defines.append(os.path.basename(files[i][0]).split('.')[0].upper())
+            rectdat.append("{{ {:>4},{:>4}, {{ {:>4},{:>4},{:>4},{:>4} }} }}".format(offx,offy, x,y,w,h))
         atlas.save(outfile)
-    else:
-        # save out the original
-        infile = str.replace(os.path.join(texture_in_dir, os.path.basename(files[0])), ".png", ".psd")
-        outfile = str.replace(os.path.join(texture_out_dir, os.path.basename(files[0])), ".psd", ".png")
-        print("converting texture {} texture to {}".format(infile, outfile))
-        img = Image.open(infile)
-        img.save(outfile)
+        # write out the atlas rect data
+        cdata  = "#ifndef ATLAS_{}_H__\n".format(name.upper())
+        cdata += "#define ATLAS_{}_H__\n".format(name.upper())
+        cdata += "\n"
+        cdata += "// DO NOT EDIT: This file was auto generated as part of the asset build process.\n"
+        cdata += "\n"
+        for i in range(len(defines)):
+            cdata += "#define ATLAS_{} {}\n".format(defines[i], i)
+        cdata += "\n"
+        cdata += "static const TextureAtlasClip ATLAS_{}[] =\n".format(name.upper())
+        cdata += "{\n"
+        for data in rectdat:
+            cdata += "{},\n".format(data)
+        cdata +="};\n"
+        cdata +="\n"
+        cdata +="#endif // ATLAS_{}_H__\n".format(name.upper())
+        with open(os.path.join(texture_dat_dir, "atlas_" + name + ".h"), "w") as datafile:
+            datafile.write(cdata)

@@ -53,6 +53,8 @@
 #include "input.h"
 #include "assets.h"
 
+#include "codegen/atlas_test0.h"
+
 #include "audio.c"
 #include "game.c"
 #include "render.c"
