@@ -39,7 +39,7 @@ static void game_update(nkF32 dt)
 
 static void game_render(void)
 {
-    clear_screen_f(0.1f, 0.1f, 0.1f, 1.0f);
+    clear_screen_v(NK_V4_BLACK);
 
     set_blend_mode(BlendMode_Alpha);
 
