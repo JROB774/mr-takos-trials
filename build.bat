@@ -64,6 +64,7 @@ goto end
 echo ----------------------------------------
 
 python asset_dev/build_textures.py
+python asset_dev/build_shaders.py
 
 goto end
 
