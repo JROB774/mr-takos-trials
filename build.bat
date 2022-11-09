@@ -3,8 +3,9 @@ setlocal
 
 if "%~1"=="win32" goto build_win32
 if "%~1"=="web" goto build_web
+if "%~1"=="assets" goto build_assets
 
-echo please specify a platform to build for (win32 or web)...
+echo please specify build target (win32, web, assets)...
 goto end
 
 :build_win32
@@ -56,6 +57,13 @@ if not exist binary\web mkdir binary\web
 pushd binary\web
 emcc %libs% %idir% %cflg% %lflg% %defs% ../../source/platform.c -o tako.html
 popd
+
+goto end
+
+:build_assets
+echo ----------------------------------------
+
+python asset_dev/build_textures.py
 
 goto end
 
