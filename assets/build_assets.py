@@ -74,7 +74,6 @@ for file in texture_files:
             ogw = img.width
             ogh = img.height
             box = img.getbbox()
-            print(box)
             img = img.crop(box)
             img.save(tmpfile)
             atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
