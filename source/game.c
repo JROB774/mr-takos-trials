@@ -5,15 +5,6 @@ static Texture tako_texture;
 
 static Font test_font;
 
-static nkF32 random_float(void)
-{
-    return (NK_CAST(nkF32,rand()) / NK_CAST(nkF32,RAND_MAX));
-}
-static nkF32 random_float_range(nkF32 min, nkF32 max)
-{
-    return (min + NK_CAST(nkF32,rand()) / NK_CAST(nkF32,RAND_MAX/(max-min)));
-}
-
 static void game_init(void)
 {
     back_texture = load_asset_texture("back.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
