@@ -56,6 +56,8 @@ static void renderer_init(void)
     glGenVertexArrays(1, &g_vao);
     glBindVertexArray(g_vao);
     #endif // BUILD_NATIVE
+
+    glEnable(GL_FRAMEBUFFER_SRGB);
 }
 
 static void renderer_quit(void)
@@ -503,8 +505,9 @@ static Texture texture_create(nkS32 w, nkS32 h, nkS32 bpp, void* data, SamplerFi
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, sampler_wrap_to_gl(wrap));
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, sampler_wrap_to_gl(wrap));
 
+    // NOTE: Probably shouldn't always be setting sRGB for all textures...
     GLenum gl_format = bpp_to_gl_format(bpp);
-    glTexImage2D(GL_TEXTURE_2D, 0, gl_format, w,h, 0, gl_format, GL_UNSIGNED_BYTE, data);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, w,h, 0, gl_format, GL_UNSIGNED_BYTE, data);
 
     if(filter > SamplerFilter_Linear)
     {

@@ -186,6 +186,8 @@ static void end_render_frame(void)
 
     nkMat4 projection = nk_orthographic(0,ww,wh,0,0,1);
 
+    set_blend_mode(BlendMode_PremultipliedAlpha);
+
     texture_bind(output->color_target, 0);
     shader_bind(g_ctx.screenshader);
 
@@ -207,12 +209,12 @@ static void main_init(void)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     #endif // BUILD_NATIVE
-
     #if defined(BUILD_WEB)
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     #endif // BUILD_WEB
+    SDL_GL_SetAttribute(SDL_GL_FRAMEBUFFER_SRGB_CAPABLE, 1);
 
     g_ctx.window = SDL_CreateWindow(WINDOW_TITLE, WINDOW_XPOS,WINDOW_YPOS, WINDOW_WIDTH,WINDOW_HEIGHT, WINDOW_FLAGS);
     if(!g_ctx.window)
