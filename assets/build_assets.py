@@ -71,13 +71,16 @@ for file in texture_files:
             tmpfile = str.replace(os.path.join(texture_tmp_dir, file), ".psd", ".png")
             print("cropping texture {} to {}".format(infile, tmpfile))
             img = Image.open(infile)
+            ogw = img.width
+            ogh = img.height
             box = img.getbbox()
+            print(box)
             img = img.crop(box)
             img.save(tmpfile)
             atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
             if atlas_name not in atlas_lists:
                 atlas_lists[atlas_name] = []
-            atlas_lists[atlas_name].append((tmpfile,box))
+            atlas_lists[atlas_name].append((tmpfile,box,(ogw,ogh)))
 
 # build texture atlases
 for name,files in atlas_lists.items():
@@ -115,15 +118,17 @@ for name,files in atlas_lists.items():
         defines = []
         rectdat = []
         for i in range(len(textures)):
-            offx = files[i][1][0]
-            offy = files[i][1][1]
             x = int(packer[0][i].x + (atlas_padding / 2))
             y = int(packer[0][i].y + (atlas_padding / 2))
-            w = packer[0][i].width
-            h = packer[0][i].height
+            w = packer[0][i].width - atlas_padding
+            h = packer[0][i].height - atlas_padding
+            box = files[i][1]
+            siz = files[i][2]
+            offx = int((box[0]+((box[2]-box[0])/2)) - siz[0]/2)
+            offy = int((box[1]+((box[3]-box[1])/2)) - siz[1]/2)
             atlas.paste(textures[i], (x,y))
             defines.append(os.path.basename(files[i][0]).split('.')[0].upper())
-            rectdat.append("{{ {:>4},{:>4}, {{ {:>4},{:>4},{:>4},{:>4} }} }}".format(offx,offy, x,y,w,h))
+            rectdat.append("{{ {:>5},{:>5}, {{ {:>5},{:>5},{:>5},{:>5} }} }}".format(offx,offy, x,y,w,h))
         atlas.save(outfile)
         # write out the atlas rect data
         cdata  = "#ifndef ATLAS_{}_H__\n".format(name.upper())

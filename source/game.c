@@ -45,7 +45,12 @@ static void game_render(void)
     imm_texture(back_texture, cx,cy, NULL);
     imm_texture(tako_texture, cx,cy, NULL);
 
-    imm_texture(test_texture, cx,cy, &ATLAS_TEST0[frame].bounds);
+    imm_rect_filled(cx-64,cy-64,128,128, NK_V4_BLUE);
+
+    nkF32 tx = cx + ATLAS_TEST0[frame].offset_x;
+    nkF32 ty = cy + ATLAS_TEST0[frame].offset_y;
+
+    imm_texture(test_texture, tx,ty, &ATLAS_TEST0[frame].bounds);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
