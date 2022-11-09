@@ -74,7 +74,7 @@ for file in texture_files:
             ogw = img.width
             ogh = img.height
             box = img.getbbox()
-            img = img.crop(box)
+            # img = img.crop(box) # NOTE: disabling this because we aren't handling rendering correctly with it on, can come back to it if we want
             img.save(tmpfile)
             atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
             if atlas_name not in atlas_lists:

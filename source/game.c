@@ -45,12 +45,13 @@ static void game_render(void)
     imm_texture(back_texture, cx,cy, NULL);
     imm_texture(tako_texture, cx,cy, NULL);
 
-    imm_rect_filled(cx-64,cy-64,128,128, NK_V4_BLUE);
+    nkMat4 model = nk_m4_identity();
+    model = nk_translate(model, (nkVec3){ cx,cy,0 });
+    model = nk_rotate(model, (nkVec3){ 0,0,1 }, frame_timer * 2.5f);
+    imm_set_model(model);
+    imm_rect_filled(-64,-64,128,128, NK_V4_BLUE);
 
-    nkF32 tx = cx + ATLAS_TEST0[frame].offset_x;
-    nkF32 ty = cy + ATLAS_TEST0[frame].offset_y;
-
-    imm_texture(test_texture, tx,ty, &ATLAS_TEST0[frame].bounds);
+    imm_texture_ex(test_texture, cx,cy, 1,1, frame_timer * 2.5f, NULL, &ATLAS_TEST0[frame].bounds);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
