@@ -410,8 +410,8 @@ static nkVec2 imm_calculate_atlas_clip_anchor(const ImmAtlasClip* clip, nkVec2* 
 
     nkVec2 anchor = NK_ZERO_MEM;
 
-    anchor.x = ((nx * clip->clip_bounds.w) - offx) / clip->clip_bounds.w;
-    anchor.y = ((ny * clip->clip_bounds.w) - offy) / clip->clip_bounds.h;
+    anchor.x = ((nx * clip->clip_bounds.w) - offx) / (clip->clip_bounds.w);
+    anchor.y = ((ny * clip->clip_bounds.h) - offy) / (clip->clip_bounds.h);
 
     return anchor;
 }
