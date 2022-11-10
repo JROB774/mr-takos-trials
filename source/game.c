@@ -53,24 +53,7 @@ static void game_render(void)
     imm_set_model(model);
     imm_rect_filled(-64,-64,128,128, NK_V4_BLUE);
 
-    nkVec2 anchor = NK_ZERO_MEM;
-
-    anchor.x = ATLAS_TEST0[frame].clip_bounds.w * 0.5f;
-    anchor.y = ATLAS_TEST0[frame].clip_bounds.h * 0.5f;
-
-    nkF32 nx = anchor.x / ATLAS_TEST0[frame].clip_bounds.w;
-    nkF32 ny = anchor.y / ATLAS_TEST0[frame].clip_bounds.h;
-
-    nkF32 offx = ATLAS_TEST0[frame].offset_x + (nx * ATLAS_TEST0[frame].clip_bounds.w);
-    nkF32 offy = ATLAS_TEST0[frame].offset_y + (ny * ATLAS_TEST0[frame].clip_bounds.h);
-
-    offx = offx - (nx * ATLAS_TEST0[frame].original_width);
-    offy = offy - (ny * ATLAS_TEST0[frame].original_height);
-
-    anchor.x -= offx;
-    anchor.y -= offy;
-
-    imm_texture_ex(test_texture, cx,cy, 1,1, frame_angle * 2.5f, &anchor, &ATLAS_TEST0[frame].clip_bounds);
+    imm_atlas_ex(test_texture, cx,cy, 1,1, frame_angle * 2.5f, NULL, &ATLAS_TEST0[frame]);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

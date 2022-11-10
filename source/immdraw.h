@@ -15,6 +15,16 @@ typedef struct ImmRect
 }
 ImmRect;
 
+typedef struct ImmAtlasClip
+{
+    nkF32   original_width;
+    nkF32   original_height;
+    nkF32   offset_x;
+    nkF32   offset_y;
+    ImmRect clip_bounds;
+}
+ImmAtlasClip;
+
 static void imm_init(void);
 static void imm_quit(void);
 
@@ -41,12 +51,15 @@ static void imm_rect_filled   (nkF32  x, nkF32  y, nkF32  w, nkF32  h, nkVec4 co
 static void imm_circle_outline(nkF32  x, nkF32  y, nkF32  r, nkS32  n, nkVec4 color);
 static void imm_circle_filled (nkF32  x, nkF32  y, nkF32  r, nkS32  n, nkVec4 color);
 
-static void imm_texture   (Texture tex, nkF32 x, nkF32 y,                                                  const ImmRect* clip);
-static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip);
-
 static void imm_begin_texture_batch(Texture tex);
 static void imm_end_texture_batch  (void);
-static void imm_texture_batched    (nkF32 x, nkF32 y,                                                  const ImmRect* clip);
-static void imm_texture_batched_ex (nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip);
+static void imm_texture            (Texture tex, nkF32 x, nkF32 y,                                                  const ImmRect*      clip);
+static void imm_texture_ex         (Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect*      clip);
+static void imm_texture_batched    (             nkF32 x, nkF32 y,                                                  const ImmRect*      clip);
+static void imm_texture_batched_ex (             nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect*      clip);
+static void imm_atlas              (Texture tex, nkF32 x, nkF32 y,                                                  const ImmAtlasClip* clip);
+static void imm_atlas_ex           (Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip);
+static void imm_atlas_batched      (             nkF32 x, nkF32 y,                                                  const ImmAtlasClip* clip);
+static void imm_atlas_batched_ex   (             nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip);
 
 #endif /* IMMDRAW_H__ ////////////////////////////////////////////////////////*/

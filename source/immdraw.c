@@ -190,6 +190,16 @@ static void imm_circle_filled(nkF32 x, nkF32 y, nkF32 r, nkS32 n, nkVec4 color)
     imm_end();
 }
 
+static void imm_begin_texture_batch(Texture tex)
+{
+    imm_begin(DrawMode_Triangles, tex, NULL);
+}
+
+static void imm_end_texture_batch(void)
+{
+    imm_end();
+}
+
 static void imm_texture(Texture tex, nkF32 x, nkF32 y, const ImmRect* clip)
 {
     nkF32 w = texture_get_width(tex);
@@ -247,8 +257,8 @@ static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nk
     nkF32 ox = x;
     nkF32 oy = y;
 
-    nkF32 ax = ((anchor) ? anchor->x : (s2-s1)*0.5f);
-    nkF32 ay = ((anchor) ? anchor->y : (t2-t1)*0.5f);
+    nkF32 ax = ((anchor) ? (anchor->x*(s2-s1)) : (s2-s1)*0.5f);
+    nkF32 ay = ((anchor) ? (anchor->y*(t2-t1)) : (t2-t1)*0.5f);
 
     x -= ax;
     y -= ay;
@@ -280,16 +290,6 @@ static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nk
     imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, g_imm.tex_color });
     imm_end();
     imm_set_model(cached_matrix);
-}
-
-static void imm_begin_texture_batch(Texture tex)
-{
-    imm_begin(DrawMode_Triangles, tex, NULL);
-}
-
-static void imm_end_texture_batch(void)
-{
-    imm_end();
 }
 
 static void imm_texture_batched(nkF32 x, nkF32 y, const ImmRect* clip)
@@ -353,8 +353,8 @@ static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 a
     nkF32 ox = x;
     nkF32 oy = y;
 
-    nkF32 ax = ((anchor) ? anchor->x : (s2-s1)*0.5f);
-    nkF32 ay = ((anchor) ? anchor->y : (t2-t1)*0.5f);
+    nkF32 ax = ((anchor) ? (anchor->x*(s2-s1)) : (s2-s1)*0.5f);
+    nkF32 ay = ((anchor) ? (anchor->y*(t2-t1)) : (t2-t1)*0.5f);
 
     x -= ax;
     y -= ay;
@@ -393,6 +393,51 @@ static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 a
     imm_vertex((ImmVertex){ (nkVec2){ tr.x,tr.y }, (nkVec2){ s2,t1 }, g_imm.tex_color });
     imm_vertex((ImmVertex){ (nkVec2){ br.x,br.y }, (nkVec2){ s2,t2 }, g_imm.tex_color });
     imm_vertex((ImmVertex){ (nkVec2){ bl.x,bl.y }, (nkVec2){ s1,t2 }, g_imm.tex_color });
+}
+
+static nkVec2 imm_calculate_atlas_clip_anchor(const ImmAtlasClip* clip, nkVec2* initial_anchor)
+{
+    NK_ASSERT(clip);
+
+    nkF32 nx = ((initial_anchor) ? initial_anchor->x : 0.5f);
+    nkF32 ny = ((initial_anchor) ? initial_anchor->y : 0.5f);
+
+    nkF32 offx = clip->offset_x + (nx * clip->clip_bounds.w);
+    nkF32 offy = clip->offset_y + (ny * clip->clip_bounds.h);
+
+    offx = offx - (nx * clip->original_width);
+    offy = offy - (ny * clip->original_height);
+
+    nkVec2 anchor = NK_ZERO_MEM;
+
+    anchor.x = ((nx * clip->clip_bounds.w) - offx) / clip->clip_bounds.w;
+    anchor.y = ((ny * clip->clip_bounds.w) - offy) / clip->clip_bounds.h;
+
+    return anchor;
+}
+
+static void imm_atlas(Texture tex, nkF32 x, nkF32 y, const ImmAtlasClip* clip)
+{
+    nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, NULL);
+    imm_texture_ex(tex, x,y, 1.0f,1.0f, 0.0f, &final_anchor, &clip->clip_bounds);
+}
+
+static void imm_atlas_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip)
+{
+    nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, anchor);
+    imm_texture_ex(tex, x,y, sx,sy, angle, &final_anchor, &clip->clip_bounds);
+}
+
+static void imm_atlas_batched(nkF32 x, nkF32 y, const ImmAtlasClip* clip)
+{
+    nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, NULL);
+    imm_texture_batched_ex(x,y, 1.0f,1.0f, 0.0f, &final_anchor, &clip->clip_bounds);
+}
+
+static void imm_atlas_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip)
+{
+    nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, anchor);
+    imm_texture_batched_ex(x,y, sx,sy, angle, &final_anchor, &clip->clip_bounds);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

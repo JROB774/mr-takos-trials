@@ -138,7 +138,7 @@ for name,files in atlas_lists.items():
         for i in range(len(defines)):
             cdata += "#define ATLAS_{} {}\n".format(defines[i], i)
         cdata += "\n"
-        cdata += "static const TextureAtlasClip ATLAS_{}[] =\n".format(name.upper())
+        cdata += "static const ImmAtlasClip ATLAS_{}[] =\n".format(name.upper())
         cdata += "{\n"
         for data in rectdat:
             cdata += "{},\n".format(data)
