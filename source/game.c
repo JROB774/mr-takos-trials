@@ -2,37 +2,33 @@
 
 static Texture back_texture;
 static Texture tako_texture;
-static Texture test_texture;
 
-static nkS32 frame;
-static nkF32 frame_timer;
-static nkF32 frame_angle;
+static nkF32 random_float(void)
+{
+    return (NK_CAST(nkF32,rand()) / NK_CAST(nkF32,RAND_MAX));
+}
+static nkF32 random_float_range(nkF32 min, nkF32 max)
+{
+    return (min + NK_CAST(nkF32,rand()) / NK_CAST(nkF32,RAND_MAX/(max-min)));
+}
 
 static void game_init(void)
 {
-    back_texture = load_asset_texture( "back.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
-    tako_texture = load_asset_texture( "tako.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
-    test_texture = load_asset_texture("test0.png", SamplerFilter_Nearest, SamplerWrap_Clamp);
+    back_texture = load_asset_texture("back.png", SamplerFilter_Linear, SamplerWrap_Clamp);
+    tako_texture = load_asset_texture("tako.png", SamplerFilter_Linear, SamplerWrap_Clamp);
 
     show_cursor(NK_FALSE);
 }
 
 static void game_quit(void)
 {
-    texture_destroy(test_texture);
     texture_destroy(tako_texture);
     texture_destroy(back_texture);
 }
 
 static void game_update(nkF32 dt)
 {
-    frame_timer += dt;
-    frame_angle += dt;
-    if(frame_timer >= 0.33f)
-    {
-        frame_timer -= 0.33f;
-        frame = ((frame + 1) % NK_ARRAY_SIZE(ATLAS_TEST0));
-    }
+    // ...
 }
 
 static void game_render(void)
@@ -45,15 +41,29 @@ static void game_render(void)
     nkF32 cy = SCREEN_HEIGHT * 0.5f;
 
     imm_texture(back_texture, cx,cy, NULL);
-    imm_texture(tako_texture, cx,cy, NULL);
 
-    nkMat4 model = nk_m4_identity();
-    model = nk_translate(model, (nkVec3){ cx,cy,0 });
-    model = nk_rotate(model, (nkVec3){ 0,0,1 }, frame_angle * 2.5f);
-    imm_set_model(model);
-    imm_rect_filled(-64,-64,128,128, NK_V4_BLUE);
+    srand(56673286);
 
-    imm_atlas_ex(test_texture, cx,cy, 1,1, frame_angle * 2.5f, NULL, &ATLAS_TEST0[frame]);
+    imm_begin_texture_batch(tako_texture);
+    #if 1
+    for(nkS32 i=0; i<100; ++i)
+    {
+        nkF32 x = random_float_range(0, SCREEN_WIDTH);
+        nkF32 y = random_float_range(0, SCREEN_HEIGHT);
+        nkF32 angle = random_float_range(0, NK_TAU);
+
+        imm_set_texture_color((nkVec4){ 1.0f,1.0f,1.0f,0.6f });
+        imm_atlas_batched_ex(x+4.0f,y+4.0f, 1.0f,1.0f, angle, NULL, &ATLAS_TAKO[ATLAS_TAKO_SHADOW]);
+        imm_set_texture_color((nkVec4){ 1.0f,1.0f,1.0f,1.0f });
+        imm_atlas_batched_ex(x,y, 1.0f,1.0f, angle, NULL, &ATLAS_TAKO[ATLAS_TAKO_BODY]);
+    }
+    #else
+    imm_set_texture_color((nkVec4){ 1.0f,1.0f,1.0f,0.6f });
+    imm_atlas_batched(cx+4.0f,cy+4.0f, &ATLAS_TAKO[ATLAS_TAKO_SHADOW]);
+    imm_set_texture_color((nkVec4){ 1.0f,1.0f,1.0f,1.0f });
+    imm_atlas_batched(cx,cy, &ATLAS_TAKO[ATLAS_TAKO_BODY]);
+    #endif
+    imm_end_texture_batch();
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

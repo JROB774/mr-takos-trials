@@ -4,6 +4,7 @@ import shutil
 
 from rectpack import newPacker
 from PIL import Image
+from psd_tools import PSDImage
 
 if len(sys.argv) <= 1:
     print("ERROR: no platform specified for asset building\n")
@@ -68,18 +69,35 @@ for file in texture_files:
     if os.path.isfile(infile):
         if infile.split(".")[1] == "psd":
             # crop each input image and save it as a temporary png for atlas packing
-            tmpfile = str.replace(os.path.join(texture_tmp_dir, file), ".psd", ".png")
-            print("cropping texture {} to {}".format(infile, tmpfile))
-            img = Image.open(infile)
-            ogw = img.width
-            ogh = img.height
-            box = img.getbbox()
-            img = img.crop(box)
-            img.save(tmpfile)
-            atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
-            if atlas_name not in atlas_lists:
-                atlas_lists[atlas_name] = []
-            atlas_lists[atlas_name].append((tmpfile,box,(ogw,ogh)))
+            psd = PSDImage.open(infile)
+            if len(psd) == 1:
+                tmpfile = os.path.join(texture_tmp_dir, file.split('.')[0] + ".png")
+                print("cropping texture {} to {}".format(infile, tmpfile))
+                img = psd[0].composite()
+                ogw = img.width
+                ogh = img.height
+                box = img.getbbox()
+                img = img.crop(box)
+                img.save(tmpfile)
+                atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
+                if atlas_name not in atlas_lists:
+                    atlas_lists[atlas_name] = []
+                atlas_lists[atlas_name].append((tmpfile,box,(ogw,ogh)))
+            else:
+                for layer in psd:
+                    if not layer.name.startswith("_"):
+                        tmpfile = os.path.join(texture_tmp_dir, file.split('.')[0] + "_" + layer.name + ".png")
+                        print("cropping texture {} to {}".format(infile, tmpfile))
+                        img = layer.composite(viewport=(0,0,psd.width,psd.height))
+                        ogw = img.width
+                        ogh = img.height
+                        box = img.getbbox()
+                        img = img.crop(box)
+                        img.save(tmpfile)
+                        atlas_name = os.path.basename(tmpfile).split('_')[0].split('.')[0]
+                        if atlas_name not in atlas_lists:
+                            atlas_lists[atlas_name] = []
+                        atlas_lists[atlas_name].append((tmpfile,box,(ogw,ogh)))
 
 # build texture atlases
 for name,files in atlas_lists.items():
@@ -123,8 +141,6 @@ for name,files in atlas_lists.items():
             h = packer[0][i].height - atlas_padding
             box = files[i][1]
             siz = files[i][2]
-            offx = int((box[0]+((box[2]-box[0])/2)) - siz[0]/2)
-            offy = int((box[1]+((box[3]-box[1])/2)) - siz[1]/2)
             atlas.paste(textures[i], (x,y))
             defines.append(os.path.basename(files[i][0]).split('.')[0].upper())
             rectdat.append("{{ {:>5},{:>5}, {:>5},{:>5}, {{ {:>5},{:>5},{:>5},{:>5} }} }}".format(siz[0],siz[1], box[0],box[1], x,y,w,h))
