@@ -2,7 +2,7 @@ import sys
 import os
 import shutil
 
-from rectpack import newPacker
+from rectpack import newPacker, SORT_NONE
 from PIL import Image
 from psd_tools import PSDImage
 
@@ -121,15 +121,16 @@ for name,files in atlas_lists.items():
             textures.append(img)
             rects.append((w,h))
         # pack the texture rects
-        for atlas_pow in range(1,12):
-            packer = newPacker(rotation=False)
+        atlas_size = 64
+        while True:
+            packer = newPacker(sort_algo=SORT_NONE, rotation=False)
             for rect in rects:
                 packer.add_rect(*rect)
-            atlas_size = pow(2, atlas_pow)
             packer.add_bin(atlas_size,atlas_size)
             packer.pack()
             if len(packer) and len(packer[0]) == len(rects): # increas size until successful
                 break
+            atlas_size += 64
         # build the final atlas image
         atlas = Image.new("RGBA", (atlas_size,atlas_size))
         defines = []
