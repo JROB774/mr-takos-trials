@@ -53,6 +53,7 @@
 #include "input.h"
 #include "assets.h"
 
+#include "codegen/atlas_letter.h"
 #include "codegen/atlas_tako.h"
 
 #include "audio.c"
