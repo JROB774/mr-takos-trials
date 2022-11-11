@@ -48,17 +48,17 @@ static void render_text_string(nkF32 start_x, nkF32 start_y, const nkChar* text)
     nkF32 y = start_y;
 
     imm_begin_texture_batch(letter_texture);
-
     for(nkS32 i=0,n=strlen(text); i<n; ++i)
     {
         nkF32 angle = random_float_range(-0.22f, 0.22f);
-
         nkS32 index = (toupper(text[i]) - 'A') * 2;
+        if(i != 0)
+            x += ((ATLAS_LETTER[index+1].clip_bounds.w * 0.5f));
         imm_set_texture_color((nkVec4){ 1.0f,1.0f,1.0f,0.6f });
         imm_atlas_batched_ex(x+4,y+4, 1,1, angle, NULL, &ATLAS_LETTER[index]);
         imm_set_texture_color((nkVec4){ 1.0f,1.0f,1.0f,1.0f });
         imm_atlas_batched_ex(x,y, 1,1, angle, NULL, &ATLAS_LETTER[index+1]);
-        x += (ATLAS_LETTER[index+1].clip_bounds.w + 2.0f);
+        x += ((ATLAS_LETTER[index+1].clip_bounds.w * 0.5f)) + 3.0f;
     }
     imm_end_texture_batch();
 }
@@ -113,8 +113,8 @@ static void game_render(void)
     imm_end_texture_batch();
     */
 
-    render_text_string(125,cy-35, "Hello");
-    render_text_string(110,cy+35, "World");
+    render_text_string(135,cy-35, "Hello");
+    render_text_string(120,cy+35, "World");
 
     render_tako(20,cy);
     render_tako(460,cy);
