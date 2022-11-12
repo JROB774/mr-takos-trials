@@ -7,6 +7,20 @@
 #define ASSET_PATH ""
 #endif // BUILD_WEB
 
+static nkChar* load_asset_text(const nkChar* name)
+{
+    nkChar buffer[1024] = NK_ZERO_MEM;
+    strcpy(buffer, get_base_path());
+    strcat(buffer, ASSET_PATH);
+    strcat(buffer, "strings/");
+    strcat(buffer, name);
+
+    nkFileContent file_content;
+    if(!nk_read_file_content(&file_content, buffer, nkFileReadMode_Text))
+        fatal_error("Failed to load text from file: %s", buffer);
+    return file_content.data;
+}
+
 static Font load_asset_font(const nkChar* name, nkF32 px_height)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
