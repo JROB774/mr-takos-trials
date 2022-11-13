@@ -1,6 +1,10 @@
 #ifndef ASSETS_H__ /*/////////////////////////////////////////////////////////*/
 #define ASSETS_H__
 
+#include "codegen/atlas_letter.h"
+#include "codegen/atlas_tako.h"
+#include "codegen/atlas_ui.h"
+
 static Texture g_asset_background;
 static Texture g_asset_letter;
 static Texture g_asset_ui;

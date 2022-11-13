@@ -56,13 +56,6 @@
 #include "input.h"
 #include "assets.h"
 
-#include "codegen/atlas_letter.h"
-#include "codegen/atlas_tako.h"
-#include "codegen/atlas_ui.h"
-
-#include "minigame/typer.h"
-#include "minigame/typer.c"
-
 #include "audio.c"
 #include "render.c"
 #include "immdraw.c"

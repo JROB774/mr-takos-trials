@@ -1,5 +1,8 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#include "minigame/typer.h"
+#include "minigame/typer.c"
+
 NK_ENUM(MiniGame, nkS32)
 {
     MiniGame_Typer,
