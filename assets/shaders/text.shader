@@ -36,7 +36,7 @@ void main()
     o_fragcolor = v_color;
     if(u_usetex)
     {
-        o_fragcolor.a = texture(u_texture, v_texcoord).r;
+        o_fragcolor.a = texture(u_texture, v_texcoord).r * v_color.a;
     }
 }
 
