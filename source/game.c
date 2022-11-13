@@ -48,12 +48,19 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
 static void game_init(void)
 {
     g_state.minigame = MiniGame_Typer;
+
     load_all_assets();
+
+    clock_t seed = clock();
+
+    rng_init(&g_rng_l, seed);
+    rng_init(&g_rng_v, seed);
+
     show_cursor(NK_FALSE);
 
-    g_state.timer = 20.0f;
-
     minigame_typer_init();
+
+    g_state.timer = 20.0f;
 }
 
 static void game_quit(void)
@@ -79,8 +86,8 @@ static void game_update(nkF32 dt)
 
 static void game_render_timer(void)
 {
-    static const LETTER_WIDTH = 15.0f;
-    static const PADDING = 4.0f;
+    static const nkF32 LETTER_WIDTH = 15.0f;
+    static const nkF32 PADDING = 4.0f;
 
     nkF32 width = LETTER_WIDTH * 5.0f;
 

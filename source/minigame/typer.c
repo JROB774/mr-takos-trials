@@ -13,7 +13,7 @@ static MiniGameTyper g_minigame_typer;
 
 static void minigame_typer_select_new_word(void)
 {
-    g_minigame_typer.current_word = rand() % g_minigame_typer.word_count;
+    g_minigame_typer.current_word = rng_int(&g_rng_l) % g_minigame_typer.word_count;
     memset(g_minigame_typer.input, 0, sizeof(g_minigame_typer.input));
 }
 
