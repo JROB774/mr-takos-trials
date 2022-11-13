@@ -48,6 +48,8 @@
 #include "immdraw.h"
 #include "random.h"
 #include "game.h"
+#include "menu.h"
+#include "application.h"
 #include "postprocess.h"
 #include "platform.h"
 #include "font.h"
@@ -66,6 +68,8 @@
 #include "immdraw.c"
 #include "random.c"
 #include "game.c"
+#include "menu.c"
+#include "application.c"
 #include "postprocess.c"
 #include "font.c"
 #include "input.c"
@@ -257,14 +261,14 @@ static void main_init(void)
 
     postprocess_init();
 
-    game_init();
+    app_init();
 
     g_ctx.running = NK_TRUE;
 }
 
 static void main_quit(void)
 {
-    game_quit();
+    app_quit();
 
     postprocess_quit();
 
@@ -330,14 +334,14 @@ static void main_loop(void)
     {
         did_update = NK_TRUE;
         update_input_state();
-        game_update(dt);
+        app_update(dt);
         reset_input_state();
         update_timer -= dt;
     }
     if(did_update)
     {
         begin_render_frame();
-        game_render();
+        app_render();
         postprocess_execute();
     }
     end_render_frame();

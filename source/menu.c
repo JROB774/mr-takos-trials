@@ -1,0 +1,23 @@
+/*////////////////////////////////////////////////////////////////////////////*/
+
+static void menu_init(void)
+{
+    // @Incomplete: ...
+}
+
+static void menu_quit(void)
+{
+    // @Incomplete: ...
+}
+
+static void menu_update(nkF32 dt)
+{
+    // @Incomplete: ...
+}
+
+static void menu_render(void)
+{
+    // @Incomplete: ...
+}
+
+/*////////////////////////////////////////////////////////////////////////////*/
