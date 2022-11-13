@@ -92,7 +92,7 @@ static nkVec2 font_get_text_bounds(Font font, const nkChar* text)
     for(nkU64 i=0,n=strlen(text); i<n; ++i)
     {
         nkChar c = text[i];
-        if(c >= 32 && c < 128)
+        if(NK_CAST(nkU8,c) >= 32 && NK_CAST(nkU8,c) < 128)
         {
             stbtt_aligned_quad q = font_get_glyph_quad(font, c, &x,&y);
 
@@ -148,7 +148,7 @@ static void font_draw_text(Font font, nkF32 x, nkF32 y, const nkChar* text, nkVe
     imm_begin(DrawMode_Triangles, font->atlas, g_textshader);
     while(*text)
     {
-        if(*text >= 32 && *text < 128)
+        if(NK_CAST(nkU8,*text) >= 32 && NK_CAST(nkU8,*text) < 128)
         {
             stbtt_aligned_quad q = font_get_glyph_quad(font, *text, &x,&y);
 
