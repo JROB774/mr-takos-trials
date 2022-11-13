@@ -31,6 +31,12 @@ fonts_in_dir = asset_dir + "fonts/"
 
 shutil.copytree(fonts_in_dir, fonts_out_dir)
 
+# copy audio
+audio_out_dir = asset_out_dir + "audio/"
+audio_in_dir = asset_dir + "audio/"
+
+shutil.copytree(audio_in_dir, audio_out_dir)
+
 # build platform shaders
 shader_out_dir = asset_out_dir + "shaders/"
 shader_in_dir = asset_dir + "shaders/"

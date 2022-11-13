@@ -3,6 +3,8 @@
 #define LETTER_MIN_ANGLE -0.4f
 #define LETTER_MAX_ANGLE  0.4f
 
+#define TYPING_COOLDOWN 0.8f
+
 typedef struct MiniGameTyper
 {
     nkU32    current_word;
@@ -11,6 +13,7 @@ typedef struct MiniGameTyper
     nkChar   input[32];
     nkF32    angles[32];
     nkF32    timer;
+    nkF32    cooldown;
 }
 MiniGameTyper;
 
@@ -29,7 +32,6 @@ static void minigame_typer_draw_word(const nkU32 word_index)
     const nkChar* word = g_minigame_typer.words[word_index];
 
     nkU32 word_length = strlen(word);
-
 
     nkF32 x = 0.0f;
     nkF32 y = 0.0f;
@@ -107,6 +109,7 @@ static void minigame_typer_init(void)
     }
 
     g_minigame_typer.timer = 0.0f;
+    g_minigame_typer.cooldown = 0.0f;
 }
 
 static void minigame_typer_quit(void)
@@ -131,11 +134,18 @@ static void minigame_typer_update(nkF32 dt)
         }
     }
 
-    if(game_is_playing())
+    // Cooldown if there was an incorrect letter given.
+    if(g_minigame_typer.cooldown > 0.0f)
+    {
+        g_minigame_typer.cooldown -= dt;
+    }
+
+    if(game_is_playing() && g_minigame_typer.cooldown <= 0.0f)
     {
         // Compare the current text input with what the user has left to type.
         nkChar* current_word = g_minigame_typer.words[g_minigame_typer.current_word];
         nkChar* text_input = get_current_text_input();
+
         if(text_input && strlen(text_input) > 0)
         {
             for(nkU32 i=0,n=strlen(text_input); i<n; ++i)
@@ -143,13 +153,21 @@ static void minigame_typer_update(nkF32 dt)
                 nkU32 index = strlen(g_minigame_typer.input);
                 if(index < strlen(current_word))
                 {
+                    sound_play(g_asset_sfx_office_stamp[rng_int_range(&g_rng_v, 0,4)], 0);
+
                     if(toupper(text_input[i]) == toupper(current_word[index]))
                     {
                         g_minigame_typer.input[index] = tolower(text_input[i]);
                     }
+                    else
+                    {
+                        g_minigame_typer.cooldown = TYPING_COOLDOWN;
+                        sound_play(g_asset_sfx_wrong_buzzer, 0);
+                    }
                 }
             }
         }
+
         // If the word is complete then advance!
         if(strcmp(g_minigame_typer.input, current_word) == 0)
         {
@@ -161,6 +179,17 @@ static void minigame_typer_update(nkF32 dt)
 static void minigame_typer_render(void)
 {
     minigame_typer_draw_word(g_minigame_typer.current_word);
+
+    // Draw the sad face if the player is on timeout.
+    if(g_minigame_typer.cooldown > 0.0f)
+    {
+        nkF32 x = SCREEN_WIDTH * 0.5f;
+        nkF32 y = SCREEN_HEIGHT * 0.5f;
+
+        imm_begin_texture_batch(g_asset_ui);
+        render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
+        imm_end_texture_batch();
+    }
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

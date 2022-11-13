@@ -77,10 +77,17 @@ static void game_update(nkF32 dt)
         case MiniGame_Typer: minigame_typer_update(dt); break;
     }
 
+    nkF32 prev_timer = g_state.timer;
     g_state.timer -= dt;
     if(g_state.timer < 0.0f)
-    {
         g_state.timer = 0.0f;
+    if(prev_timer > 0.0f && g_state.timer <= 0.0f)
+    {
+        sound_play(g_asset_sfx_alarm_clock, 0);
+    }
+    if(prev_timer > 5.0f && g_state.timer <= 5.0f)
+    {
+        sound_play(g_asset_sfx_clock_ticking, 0);
     }
 }
 
