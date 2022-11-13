@@ -11,6 +11,7 @@ static Sound   g_asset_sfx_alarm_clock;
 static Sound   g_asset_sfx_clock_ticking;
 static Sound   g_asset_sfx_office_stamp[5];
 static Sound   g_asset_sfx_crowd_gasp;
+static Sound   g_asset_sfx_success_ding;
 
 static void load_all_assets(void);
 static void free_all_assets(void);

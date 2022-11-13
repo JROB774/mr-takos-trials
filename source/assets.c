@@ -16,6 +16,7 @@ static void load_all_assets(void)
     g_asset_sfx_office_stamp[3] = load_asset_sound  ("office_stamp_004.wav");
     g_asset_sfx_office_stamp[4] = load_asset_sound  ("office_stamp_005.wav");
     g_asset_sfx_crowd_gasp      = load_asset_sound  ("crowd_gasp.wav");
+    g_asset_sfx_success_ding    = load_asset_sound  ("success_ding.wav");
 }
 
 static void free_all_assets(void)
@@ -33,6 +34,7 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_office_stamp[3]);
     sound_destroy  (g_asset_sfx_office_stamp[4]);
     sound_destroy  (g_asset_sfx_crowd_gasp);
+    sound_destroy  (g_asset_sfx_success_ding);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

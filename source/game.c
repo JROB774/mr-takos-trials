@@ -112,10 +112,10 @@ static void game_render_timer(void)
 
     render_item(x+ox,y+oy, ATLAS_UI, ATLAS_UI_CLOCK_BODY, 1.0f);
 
+    x += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
+
     nkChar timer_buffer[8] = NK_ZERO_MEM;
     sprintf(timer_buffer, "%04.1f0", g_state.timer);
-
-    x += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
 
     for(nkU32 i=0,n=strlen(timer_buffer); i<n; ++i)
     {
