@@ -5,10 +5,17 @@ typedef struct MiniGameTyper
     nkU32    current_word;
     nkChar** words;
     nkU32    word_count;
+    nkChar   input[32];
 }
 MiniGameTyper;
 
 static MiniGameTyper g_minigame_typer;
+
+static void minigame_typer_select_new_word(void)
+{
+    g_minigame_typer.current_word = rand() % g_minigame_typer.word_count;
+    memset(g_minigame_typer.input, 0, sizeof(g_minigame_typer.input));
+}
 
 static void minigame_typer_draw_word(const nkU32 word_index)
 {
@@ -48,13 +55,22 @@ static void minigame_typer_draw_word(const nkU32 word_index)
 
         x += ((ATLAS_LETTER[index_body].clip_bounds.w * 0.5f));
 
+        nkVec4 shadow_color = SHADOW_COLOR;
+        nkVec4 body_color = BODY_COLOR;
+
+        if(g_minigame_typer.input[i] != word[i])
+        {
+            shadow_color.a *= 0.5f;
+            body_color.a *= 0.5f;
+        }
+
         nkF32 bx = x;
         nkF32 by = y;
         nkF32 sx = x + SHADOW_OFFSET.x;
         nkF32 sy = y + SHADOW_OFFSET.y;
 
-        imm_atlas_batched_ex(sx,sy, 1,1, 0, NULL, &ATLAS_LETTER[index_shadow], SHADOW_COLOR);
-        imm_atlas_batched_ex(bx,by, 1,1, 0, NULL, &ATLAS_LETTER[index_body], BODY_COLOR);
+        imm_atlas_batched_ex(sx,sy, 1,1, 0, NULL, &ATLAS_LETTER[index_shadow], shadow_color);
+        imm_atlas_batched_ex(bx,by, 1,1, 0, NULL, &ATLAS_LETTER[index_body], body_color);
 
         x += ((ATLAS_LETTER[index_body].clip_bounds.w * 0.5f));
         x += WORD_SPACING;
@@ -96,7 +112,7 @@ static void minigame_typer_init(void)
         }
     }
 
-    g_minigame_typer.current_word = rand() % g_minigame_typer.word_count;
+    minigame_typer_select_new_word();
 }
 
 static void minigame_typer_quit(void)
@@ -109,7 +125,29 @@ static void minigame_typer_update(nkF32 dt)
     // @Temporary: Debug word change.
     if(is_key_pressed(KeyCode_F5))
     {
-        g_minigame_typer.current_word = rand() % g_minigame_typer.word_count;
+        minigame_typer_select_new_word();
+    }
+
+    // Compare the current text input with what the user has left to type.
+    nkChar* current_word = g_minigame_typer.words[g_minigame_typer.current_word];
+    nkChar* text_input = get_current_text_input();
+    if(text_input && strlen(text_input) > 0)
+    {
+        for(nkU32 i=0,n=strlen(text_input); i<n; ++i)
+        {
+            nkU32 index = strlen(g_minigame_typer.input);
+            if(index < strlen(current_word))
+            {
+                if(toupper(text_input[i]) == toupper(current_word[index]))
+                {
+                    g_minigame_typer.input[index] = tolower(text_input[i]);
+                }
+            }
+        }
+    }
+    if(strcmp(g_minigame_typer.input, current_word) == 0)
+    {
+        minigame_typer_select_new_word();
     }
 }
 
