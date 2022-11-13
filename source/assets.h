@@ -3,6 +3,7 @@
 
 static Texture g_asset_background;
 static Texture g_asset_letter;
+static Texture g_asset_ui;
 static nkChar* g_asset_wordlist;
 static Font    g_asset_font;
 

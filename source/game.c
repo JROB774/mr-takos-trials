@@ -15,6 +15,36 @@ GameState;
 
 static GameState g_state;
 
+static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 alpha)
+{
+    nkF32 sx = x + SHADOW_OFFSET.x;
+    nkF32 sy = y + SHADOW_OFFSET.y;
+
+    nkVec4 shadow_color = SHADOW_COLOR;
+    nkVec4 body_color = BODY_COLOR;
+
+    shadow_color.a *= alpha;
+    body_color.a *= alpha;
+
+    imm_atlas_batched(sx,sy, &atlas_clips[atlas_clip_index-1], shadow_color);
+    imm_atlas_batched(x,y, &atlas_clips[atlas_clip_index], body_color);
+}
+
+static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 alpha)
+{
+    nkF32 xs = x + (SHADOW_OFFSET.x * sx);
+    nkF32 ys = y + (SHADOW_OFFSET.y * sy);
+
+    nkVec4 shadow_color = SHADOW_COLOR;
+    nkVec4 body_color = BODY_COLOR;
+
+    shadow_color.a *= alpha;
+    body_color.a *= alpha;
+
+    imm_atlas_batched_ex(xs,ys, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index-1], shadow_color);
+    imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], body_color);
+}
+
 static void game_init(void)
 {
     g_state.minigame = MiniGame_Typer;
@@ -47,6 +77,36 @@ static void game_update(nkF32 dt)
     }
 }
 
+static void game_render_timer(void)
+{
+    static const LETTER_WIDTH = 15.0f;
+    static const PADDING = 4.0f;
+
+    imm_begin_texture_batch(g_asset_ui);
+
+    nkF32 x = (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
+    nkF32 y = (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.h * 0.5f) + PADDING;
+
+    render_item(x,y, ATLAS_UI, ATLAS_UI_CLOCK_BODY, 1.0f);
+
+    nkChar timer_buffer[8] = NK_ZERO_MEM;
+    sprintf(timer_buffer, "%04.1f0", g_state.timer);
+
+    x += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
+
+    for(nkU32 i=0,n=strlen(timer_buffer); i<n; ++i)
+    {
+        nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((timer_buffer[i] - '0') * 2) + 1);
+        if(timer_buffer[i] == '.')
+            index = ATLAS_UI_TIMER_DOT_BODY;
+        x += LETTER_WIDTH * 0.5f;
+        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 1.0f);
+        x += LETTER_WIDTH * 0.5f;
+    }
+
+    imm_end_texture_batch();
+}
+
 static void game_render(void)
 {
     nkF32 hsw = SCREEN_WIDTH * 0.5f;
@@ -63,20 +123,17 @@ static void game_render(void)
         case MiniGame_Typer: minigame_typer_render(); break;
     }
 
-    // Draw the game timer. @Temporary: Just using a debug font for now...
-    nkChar timer_buffer[32] = NK_ZERO_MEM;
-    sprintf(timer_buffer, "%05.2f", g_state.timer);
+    game_render_timer();
+}
 
-    nkF32 tw = font_get_text_width(g_asset_font, "20.00");
+static nkBool game_is_playing(void)
+{
+    return (g_state.timer > 0.0f);
+}
 
-    nkF32 tx = (SCREEN_WIDTH - tw) * 0.5f;
-    nkF32 ty = font_get_px_height(g_asset_font) * 0.75f;
-
-    nkVec4 fg_color = { 0.15f,0.12f,0.10f,1.0f };
-    nkVec4 bg_color = { 0.00f,0.00f,0.00f,0.3f };
-
-    font_draw_text(g_asset_font, tx+2,ty+2, timer_buffer, bg_color);
-    font_draw_text(g_asset_font, tx,ty, timer_buffer, fg_color);
+static nkF32 game_get_timer(void)
+{
+    return g_state.timer;
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
