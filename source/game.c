@@ -82,10 +82,15 @@ static void game_render_timer(void)
     static const LETTER_WIDTH = 15.0f;
     static const PADDING = 4.0f;
 
+    nkF32 width = LETTER_WIDTH * 5.0f;
+
     imm_begin_texture_batch(g_asset_ui);
 
-    nkF32 x = (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
-    nkF32 y = (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.h * 0.5f) + PADDING;
+    nkF32 x = (SCREEN_WIDTH - width) * 0.5f;
+    nkF32 y = PADDING;
+
+    x -= (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
+    y += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.h * 0.5f);
 
     render_item(x,y, ATLAS_UI, ATLAS_UI_CLOCK_BODY, 1.0f);
 
