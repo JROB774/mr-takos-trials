@@ -33,7 +33,7 @@
 #include <GLES2/gl2.h>
 #endif // BUILD_WEB
 
-#define WINDOW_TITLE  "TAKO TYPING TRIALS"
+#define WINDOW_TITLE  "MR. TAKO'S TRIALS"
 #define WINDOW_XPOS   SDL_WINDOWPOS_CENTERED
 #define WINDOW_YPOS   SDL_WINDOWPOS_CENTERED
 #define WINDOW_WIDTH  1920 // @Incomplete: Change to be something smalle...
