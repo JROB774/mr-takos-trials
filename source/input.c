@@ -36,10 +36,26 @@ typedef struct InputState
     nkBool curr_button_state[MouseButton_TOTAL];
     nkVec2 mouse_pos;
     nkVec2 mouse_pos_relative;
+    nkChar text_input[256];
 }
 InputState;
 
 static InputState g_input;
+
+static void process_input_events(SDL_Event* event)
+{
+    switch(event->type)
+    {
+        case SDL_TEXTINPUT:
+        {
+            nkU32 new_length = strlen(g_input.text_input) + strlen(event->text.text);
+            if(new_length < NK_ARRAY_SIZE(g_input.text_input))
+            {
+                strcat(g_input.text_input, event->text.text);
+            }
+        } break;
+    }
+}
 
 static void update_input_state(void)
 {
@@ -66,6 +82,11 @@ static void update_input_state(void)
     memcpy(g_input.prev_button_state, g_input.curr_button_state, sizeof(g_input.prev_button_state));
     for(nkS32 i=0; i<MouseButton_TOTAL; ++i)
         g_input.curr_button_state[i] = (NK_CHECK_FLAGS(sdl_mouse, SDL_BUTTON(BUTTON_MAP[NK_CAST(MouseButton, i)])) != 0);
+}
+
+static void reset_input_state(void)
+{
+    memset(g_input.text_input, 0, sizeof(g_input.text_input));
 }
 
 static nkBool is_key_down(KeyCode code)
@@ -120,6 +141,11 @@ static nkBool is_any_key_released(void)
     for(nkS32 i=0; i<NK_CAST(nkS32, KeyCode_TOTAL); ++i)
         if(is_key_released(NK_CAST(KeyCode, i))) return NK_TRUE;
     return NK_FALSE;
+}
+
+static nkChar* get_current_text_input(void)
+{
+    return g_input.text_input;
 }
 
 static nkVec2 get_window_mouse_pos(void)

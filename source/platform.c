@@ -301,6 +301,7 @@ static void main_loop(void)
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
+        process_input_events(&event);
         switch(event.type)
         {
             case(SDL_KEYDOWN):
@@ -327,6 +328,7 @@ static void main_loop(void)
         did_update = NK_TRUE;
         update_input_state();
         game_update(dt);
+        reset_input_state();
         update_timer -= dt;
     }
     if(did_update)

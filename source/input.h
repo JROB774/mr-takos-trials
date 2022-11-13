@@ -1,7 +1,9 @@
 #ifndef INPUT_H__ /*//////////////////////////////////////////////////////////*/
 #define INPUT_H__
 
+static void process_input_events(SDL_Event* event);
 static void update_input_state(void);
+static void reset_input_state(void);
 
 // Keyboard
 NK_ENUM(KeyCode, nkS32)
@@ -37,6 +39,8 @@ static nkBool is_any_key_down    (void);
 static nkBool is_any_key_up      (void);
 static nkBool is_any_key_pressed (void);
 static nkBool is_any_key_released(void);
+
+static nkChar* get_current_text_input(void);
 
 // Mouse
 NK_ENUM(MouseButton, nkS32)
