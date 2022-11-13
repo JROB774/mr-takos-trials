@@ -4,6 +4,7 @@
 static Texture g_asset_background;
 static Texture g_asset_letter;
 static nkChar* g_asset_wordlist;
+static Font    g_asset_font;
 
 static void load_all_assets(void);
 static void free_all_assets(void);
