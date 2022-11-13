@@ -53,10 +53,8 @@ static void minigame_typer_draw_word(const nkU32 word_index)
         nkF32 sx = x + SHADOW_OFFSET.x;
         nkF32 sy = y + SHADOW_OFFSET.y;
 
-        imm_set_texture_color(SHADOW_COLOR);
-        imm_atlas_batched_ex(sx,sy, 1,1, 0, NULL, &ATLAS_LETTER[index_shadow]);
-        imm_set_texture_color(BODY_COLOR);
-        imm_atlas_batched_ex(bx,by, 1,1, 0, NULL, &ATLAS_LETTER[index_body]);
+        imm_atlas_batched_ex(sx,sy, 1,1, 0, NULL, &ATLAS_LETTER[index_shadow], SHADOW_COLOR);
+        imm_atlas_batched_ex(bx,by, 1,1, 0, NULL, &ATLAS_LETTER[index_body], BODY_COLOR);
 
         x += ((ATLAS_LETTER[index_body].clip_bounds.w * 0.5f));
         x += WORD_SPACING;

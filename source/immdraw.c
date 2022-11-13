@@ -9,7 +9,6 @@ typedef struct ImmContext
     Shader       shader;
     Shader       bound_shader;
     Texture      bound_texture;
-    nkVec4       tex_color;
     nkMat4       projection;
     nkMat4       view;
     nkMat4       model;
@@ -32,8 +31,6 @@ static void imm_init(void)
     g_imm.projection = nk_m4_identity();
     g_imm.view       = nk_m4_identity();
     g_imm.model      = nk_m4_identity();
-
-    g_imm.tex_color = (nkVec4){ 1,1,1,1 };
 }
 
 static void imm_quit(void)
@@ -70,16 +67,6 @@ static void imm_set_view(nkMat4 view)
 static void imm_set_model(nkMat4 model)
 {
     g_imm.model = model;
-}
-
-static nkVec4 imm_get_texture_color(void)
-{
-    return g_imm.tex_color;
-}
-
-static void imm_set_texture_color(nkVec4 color)
-{
-    g_imm.tex_color = color;
 }
 
 static void imm_begin(DrawMode draw_mode, Texture tex, Shader shader)
@@ -200,7 +187,7 @@ static void imm_end_texture_batch(void)
     imm_end();
 }
 
-static void imm_texture(Texture tex, nkF32 x, nkF32 y, const ImmRect* clip)
+static void imm_texture(Texture tex, nkF32 x, nkF32 y, const ImmRect* clip, nkVec4 color)
 {
     nkF32 w = texture_get_width(tex);
     nkF32 h = texture_get_height(tex);
@@ -229,14 +216,14 @@ static void imm_texture(Texture tex, nkF32 x, nkF32 y, const ImmRect* clip)
     t2 /= h;
 
     imm_begin(DrawMode_TriangleStrip, tex, NULL);
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, g_imm.tex_color });
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, color });
     imm_end();
 }
 
-static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip)
+static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip, nkVec4 color)
 {
     nkF32 w = texture_get_width(tex);
     nkF32 h = texture_get_height(tex);
@@ -284,15 +271,15 @@ static void imm_texture_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nk
 
     imm_set_model(model_matrix);
     imm_begin(DrawMode_TriangleStrip, tex, NULL);
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, g_imm.tex_color });
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, color });
     imm_end();
     imm_set_model(cached_matrix);
 }
 
-static void imm_texture_batched(nkF32 x, nkF32 y, const ImmRect* clip)
+static void imm_texture_batched(nkF32 x, nkF32 y, const ImmRect* clip, nkVec4 color)
 {
     NK_ASSERT(g_imm.texture);
 
@@ -322,15 +309,15 @@ static void imm_texture_batched(nkF32 x, nkF32 y, const ImmRect* clip)
     s2 /= w;
     t2 /= h;
 
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color }); // BL
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, g_imm.tex_color }); // TL
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, g_imm.tex_color }); // TR
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, g_imm.tex_color }); // TR
-    imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, g_imm.tex_color }); // BR
-    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, g_imm.tex_color }); // BL
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, color }); // BL
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y1 }, (nkVec2){ s1,t1 }, color }); // TL
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, color }); // TR
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y1 }, (nkVec2){ s2,t1 }, color }); // TR
+    imm_vertex((ImmVertex){ (nkVec2){ x2,y2 }, (nkVec2){ s2,t2 }, color }); // BR
+    imm_vertex((ImmVertex){ (nkVec2){ x1,y2 }, (nkVec2){ s1,t2 }, color }); // BL
 }
 
-static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip)
+static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmRect* clip, nkVec4 color)
 {
     NK_ASSERT(g_imm.texture);
 
@@ -387,12 +374,12 @@ static void imm_texture_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 a
     bl = nk_m4_mulv(model_matrix, bl);
     br = nk_m4_mulv(model_matrix, br);
 
-    imm_vertex((ImmVertex){ (nkVec2){ bl.x,bl.y }, (nkVec2){ s1,t2 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ tl.x,tl.y }, (nkVec2){ s1,t1 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ tr.x,tr.y }, (nkVec2){ s2,t1 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ tr.x,tr.y }, (nkVec2){ s2,t1 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ br.x,br.y }, (nkVec2){ s2,t2 }, g_imm.tex_color });
-    imm_vertex((ImmVertex){ (nkVec2){ bl.x,bl.y }, (nkVec2){ s1,t2 }, g_imm.tex_color });
+    imm_vertex((ImmVertex){ (nkVec2){ bl.x,bl.y }, (nkVec2){ s1,t2 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ tl.x,tl.y }, (nkVec2){ s1,t1 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ tr.x,tr.y }, (nkVec2){ s2,t1 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ tr.x,tr.y }, (nkVec2){ s2,t1 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ br.x,br.y }, (nkVec2){ s2,t2 }, color });
+    imm_vertex((ImmVertex){ (nkVec2){ bl.x,bl.y }, (nkVec2){ s1,t2 }, color });
 }
 
 static nkVec2 imm_calculate_atlas_clip_anchor(const ImmAtlasClip* clip, nkVec2* initial_anchor)
@@ -416,28 +403,28 @@ static nkVec2 imm_calculate_atlas_clip_anchor(const ImmAtlasClip* clip, nkVec2* 
     return anchor;
 }
 
-static void imm_atlas(Texture tex, nkF32 x, nkF32 y, const ImmAtlasClip* clip)
+static void imm_atlas(Texture tex, nkF32 x, nkF32 y, const ImmAtlasClip* clip, nkVec4 color)
 {
     nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, NULL);
-    imm_texture_ex(tex, x,y, 1.0f,1.0f, 0.0f, &final_anchor, &clip->clip_bounds);
+    imm_texture_ex(tex, x,y, 1.0f,1.0f, 0.0f, &final_anchor, &clip->clip_bounds, color);
 }
 
-static void imm_atlas_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip)
+static void imm_atlas_ex(Texture tex, nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip, nkVec4 color)
 {
     nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, anchor);
-    imm_texture_ex(tex, x,y, sx,sy, angle, &final_anchor, &clip->clip_bounds);
+    imm_texture_ex(tex, x,y, sx,sy, angle, &final_anchor, &clip->clip_bounds, color);
 }
 
-static void imm_atlas_batched(nkF32 x, nkF32 y, const ImmAtlasClip* clip)
+static void imm_atlas_batched(nkF32 x, nkF32 y, const ImmAtlasClip* clip, nkVec4 color)
 {
     nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, NULL);
-    imm_texture_batched_ex(x,y, 1.0f,1.0f, 0.0f, &final_anchor, &clip->clip_bounds);
+    imm_texture_batched_ex(x,y, 1.0f,1.0f, 0.0f, &final_anchor, &clip->clip_bounds, color);
 }
 
-static void imm_atlas_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip)
+static void imm_atlas_batched_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, nkVec2* anchor, const ImmAtlasClip* clip, nkVec4 color)
 {
     nkVec2 final_anchor = imm_calculate_atlas_clip_anchor(clip, anchor);
-    imm_texture_batched_ex(x,y, sx,sy, angle, &final_anchor, &clip->clip_bounds);
+    imm_texture_batched_ex(x,y, sx,sy, angle, &final_anchor, &clip->clip_bounds, color);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
