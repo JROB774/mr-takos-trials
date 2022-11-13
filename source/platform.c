@@ -56,6 +56,9 @@
 #include "codegen/atlas_letter.h"
 #include "codegen/atlas_tako.h"
 
+#include "minigame/typer.h"
+#include "minigame/typer.c"
+
 #include "audio.c"
 #include "game.c"
 #include "render.c"
