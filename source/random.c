@@ -4,7 +4,7 @@ static void rng_init(RNG* rng, nkU32 seed)
 {
     NK_ASSERT(rng);
     rng->a = ((seed      ) & 0xFFFF);
-    rng->b = ((seed << 16) & 0xFFFF);
+    rng->b = ((seed >> 16) & 0xFFFF);
 }
 
 // https://www.codeproject.com/Articles/25172/Simple-Random-Number-Generation
@@ -30,7 +30,7 @@ static nkF32 rng_num(RNG* rng)
 
 static nkF32 rng_num_range(RNG* rng, nkF32 min, nkF32 max)
 {
-    return (min + NK_CAST(nkF32,rng_int(rng)) / (NK_CAST(nkF32,NK_S32_MAX) / NK_CAST(nkF32,max-min)));
+    return (min + NK_CAST(nkF32,rng_int(rng)) / (NK_CAST(nkF32,NK_S32_MAX) / max-min));
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
