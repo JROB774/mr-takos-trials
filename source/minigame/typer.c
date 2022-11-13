@@ -125,7 +125,7 @@ static void minigame_typer_update(nkF32 dt)
         {
             nkF32 old_value = g_minigame_typer.angles[i];
             nkF32 new_value = g_minigame_typer.angles[i];
-            while(fabs(old_value-new_value) <= 0.15f || fabs(old_value-new_value) >= 0.25f)
+            while(fabsf(old_value-new_value) <= 0.15f || fabsf(old_value-new_value) >= 0.25f)
                 new_value = rng_num_range(&g_rng_v, LETTER_MIN_ANGLE,LETTER_MAX_ANGLE);
             g_minigame_typer.angles[i] = new_value;
         }

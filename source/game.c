@@ -51,7 +51,7 @@ static void game_init(void)
 
     load_all_assets();
 
-    clock_t seed = clock();
+    nkU32 seed = time(NULL);
 
     rng_init(&g_rng_l, seed);
     rng_init(&g_rng_v, seed);
