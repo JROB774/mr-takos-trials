@@ -87,6 +87,11 @@ static const nkChar* get_base_path(void)
     return g_ctx.base_path;
 }
 
+static void terminate(void)
+{
+    g_ctx.running = NK_FALSE;
+}
+
 static void fatal_error(const nkChar* fmt, ...)
 {
     nkChar message_buffer[1024] = NK_ZERO_MEM;
@@ -123,7 +128,7 @@ static nkS32 window_get_height(void)
 static void set_fullscreen(nkBool enable)
 {
     SDL_SetWindowFullscreen(g_ctx.window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode.
+    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode. // @Incomplete: Don't re-enable if it wasn't enabled before...
 }
 
 static nkBool get_fullscreen(void)
