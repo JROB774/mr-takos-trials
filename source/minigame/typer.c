@@ -122,12 +122,6 @@ static void minigame_typer_quit(void)
 
 static void minigame_typer_update(nkF32 dt)
 {
-    // @Temporary: Debug word change.
-    if(is_key_pressed(KeyCode_F5))
-    {
-        minigame_typer_select_new_word();
-    }
-
     // Compare the current text input with what the user has left to type.
     nkChar* current_word = g_minigame_typer.words[g_minigame_typer.current_word];
     nkChar* text_input = get_current_text_input();
@@ -145,6 +139,7 @@ static void minigame_typer_update(nkF32 dt)
             }
         }
     }
+    // If the word is complete then advance!
     if(strcmp(g_minigame_typer.input, current_word) == 0)
     {
         minigame_typer_select_new_word();
