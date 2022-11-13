@@ -39,12 +39,12 @@ static void app_init(void)
 
     load_all_assets();
 
-    show_cursor(NK_FALSE);
+    // show_cursor(NK_FALSE); // @Incomplete: Hide the cursor when we have a custom graphic!
 
     menu_init();
     game_init();
 
-    g_appstate = AppState_Game;
+    g_appstate = AppState_Menu;
 }
 
 static void app_quit(void)
