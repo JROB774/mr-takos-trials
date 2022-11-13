@@ -203,7 +203,6 @@ static void minigame_typer_update(nkF32 dt)
                         sound_play(g_asset_sfx_wrong_buzzer, 0);
 
                         g_minigame_typer.wrong_countdown = WRONG_COUNTDOWN;
-                        g_minigame_typer.success_countdown = 0.0f;
 
                         g_minigame_typer.combo = 0;
                         g_minigame_typer.score -= 50;
