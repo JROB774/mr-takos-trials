@@ -10,6 +10,8 @@ typedef struct GameState
 {
     MiniGame minigame;
     nkF32    timer;
+    nkF32    timer_smooth;
+    nkF32    timer_grainy;
 }
 GameState;
 
@@ -45,6 +47,11 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
     imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], body_color);
 }
 
+static nkF32 get_render_angle(void)
+{
+    return nk_sin_range(-0.2f, 0.2f, rng_num_range(&g_rng_v, 0,100) + (g_state.timer_grainy * 8.5f));
+}
+
 static void game_init(void)
 {
     g_state.minigame = MiniGame_Typer;
@@ -61,6 +68,9 @@ static void game_init(void)
     minigame_typer_init();
 
     g_state.timer = 20.0f;
+
+    g_state.timer_smooth = 0.0f;
+    g_state.timer_grainy = 0.0f;
 }
 
 static void game_quit(void)
@@ -72,6 +82,15 @@ static void game_quit(void)
 
 static void game_update(nkF32 dt)
 {
+    // Update values related to doing random number generation.
+    static const nkF32 GRAINY_TIMER_INTERVAL = 0.5f;
+    g_state.timer_smooth += dt;
+    if(g_state.timer_smooth >= GRAINY_TIMER_INTERVAL)
+    {
+        g_state.timer_smooth -= GRAINY_TIMER_INTERVAL;
+        g_state.timer_grainy += GRAINY_TIMER_INTERVAL;
+    }
+
     switch(g_state.minigame)
     {
         case MiniGame_Typer: minigame_typer_update(dt); break;
@@ -88,6 +107,9 @@ static void game_render_timer(void)
 {
     static const nkF32 LETTER_WIDTH = 15.0f;
     static const nkF32 PADDING = 4.0f;
+    static const nkF32 DANGER_TIME = 5.0f;
+
+    rng_init(&g_rng_v, clock());
 
     nkF32 width = LETTER_WIDTH * 5.0f;
 
@@ -96,10 +118,13 @@ static void game_render_timer(void)
     nkF32 x = (SCREEN_WIDTH - width) * 0.5f;
     nkF32 y = PADDING;
 
+    nkF32 ox = (g_state.timer <= 0.0f) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
+    nkF32 oy = (g_state.timer <= 0.0f) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
+
     x -= (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
     y += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.h * 0.5f);
 
-    render_item(x,y, ATLAS_UI, ATLAS_UI_CLOCK_BODY, 1.0f);
+    render_item(x+ox,y+oy, ATLAS_UI, ATLAS_UI_CLOCK_BODY, 1.0f);
 
     nkChar timer_buffer[8] = NK_ZERO_MEM;
     sprintf(timer_buffer, "%04.1f0", g_state.timer);
@@ -108,11 +133,14 @@ static void game_render_timer(void)
 
     for(nkU32 i=0,n=strlen(timer_buffer); i<n; ++i)
     {
+        ox = (g_state.timer <= DANGER_TIME) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
+        oy = (g_state.timer <= DANGER_TIME) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
+
         nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((timer_buffer[i] - '0') * 2) + 1);
-        if(timer_buffer[i] == '.')
-            index = ATLAS_UI_TIMER_DOT_BODY;
+        if(timer_buffer[i] == '.') index = ATLAS_UI_TIMER_DOT_BODY;
+
         x += LETTER_WIDTH * 0.5f;
-        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 1.0f);
+        render_item_ex(x+ox,y+oy, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 1.0f);
         x += LETTER_WIDTH * 0.5f;
     }
 

@@ -25,6 +25,9 @@ static void minigame_typer_draw_word(const nkU32 word_index)
 
     nkU32 word_length = strlen(word);
 
+    // Make sure random stuff is consistent across multiple frames.
+    rng_init(&g_rng_v, __LINE__);
+
     nkF32 x = 0.0f;
     nkF32 y = 0.0f;
     nkF32 w = 0.0f;
@@ -46,10 +49,11 @@ static void minigame_typer_draw_word(const nkU32 word_index)
     for(nkU32 i=0; i<word_length; ++i)
     {
         nkS32 index = ((toupper(word[i]) - 'A') * 2) + 1;
+        nkF32 angle = get_render_angle();
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
 
-        render_item(x,y, ATLAS_LETTER, index, (g_minigame_typer.input[i] != word[i]) ? 0.5f : 1.0f);
+        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index, (g_minigame_typer.input[i] != word[i]) ? 0.5f : 1.0f);
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
         x += WORD_SPACING;
