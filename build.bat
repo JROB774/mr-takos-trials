@@ -1,9 +1,7 @@
 @echo off
 setlocal
 
-set platform=%~1
-
-if "%~2"=="assets" goto build_assets
+if "%~1"=="assets" goto build_assets
 if "%~1"=="win32" goto build_win32
 if "%~1"=="web" goto build_web
 
@@ -12,11 +10,23 @@ goto end
 
 :build_assets
 echo ----------------------------------------
+
+if "%~2"=="" goto asset_error
+
+set platform=%~2
+
 if not exist binary\%platform% mkdir binary\%platform%
 python assets/build_assets.py %platform%
+
+goto end
+
+:asset_error
+echo please specify build target (win32, web)...
+
 goto end
 
 :build_win32
+echo ----------------------------------------
 
 set defs=-D BUILD_NATIVE
 set idir=-I ../../depends/sdl/include -I ../../depends/sdl_mixer/include -I ../../depends/nksdk/nklibs -I ../../depends/glew/include -I ../../depends/glew/source -I ../../depends/stb
@@ -45,6 +55,8 @@ popd
 goto end
 
 :build_web
+echo ----------------------------------------
+
 call depends\emsdk\emsdk install latest
 call depends\emsdk\emsdk activate latest
 call depends\emsdk\emsdk_env.bat
