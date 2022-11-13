@@ -2,12 +2,68 @@
 
 typedef struct MiniGameTyper
 {
+    nkU32    current_word;
     nkChar** words;
     nkU32    word_count;
 }
 MiniGameTyper;
 
 static MiniGameTyper g_minigame_typer;
+
+static void minigame_typer_draw_word(const nkU32 word_index)
+{
+    static const nkVec4 SHADOW_COLOR = { 1.0f,1.0f,1.0f,0.6f };
+    static const nkVec4 BODY_COLOR = { 1.0f,1.0f,1.0f,1.0f };
+
+    static const nkF32 WORD_SPACING = 3.0f;
+
+    static const nkVec2 SHADOW_OFFSET = { 4.0f,4.0f };
+
+    const nkChar* word = g_minigame_typer.words[word_index];
+
+    nkU32 word_length = strlen(word);
+
+    nkF32 x = 0.0f;
+    nkF32 y = 0.0f;
+    nkF32 w = 0.0f;
+    nkF32 h = 0.0f;
+
+    // Calculate the bounds of the word so we can render it centered.
+    for(nkU32 i=0; i<word_length; ++i)
+    {
+        nkS32 index = ((toupper(word[i]) - 'A') * 2) + 1;
+        w += ATLAS_LETTER[index].clip_bounds.w + WORD_SPACING;
+        h = nk_max(h, ATLAS_LETTER[index].clip_bounds.h);
+    }
+
+    x = (SCREEN_WIDTH - w) * 0.5f;
+    y = SCREEN_HEIGHT * 0.5f;
+
+    imm_begin_texture_batch(g_asset_letter);
+
+    for(nkU32 i=0; i<word_length; ++i)
+    {
+        nkS32 index_shadow = ((toupper(word[i]) - 'A') * 2) + 0;
+        nkS32 index_body = ((toupper(word[i]) - 'A') * 2) + 1;
+
+        x += ((ATLAS_LETTER[index_body].clip_bounds.w * 0.5f));
+
+        nkF32 bx = x;
+        nkF32 by = y;
+        nkF32 sx = x + SHADOW_OFFSET.x;
+        nkF32 sy = y + SHADOW_OFFSET.y;
+
+        imm_set_texture_color(SHADOW_COLOR);
+        imm_atlas_batched_ex(sx,sy, 1,1, 0, NULL, &ATLAS_LETTER[index_shadow]);
+        imm_set_texture_color(BODY_COLOR);
+        imm_atlas_batched_ex(bx,by, 1,1, 0, NULL, &ATLAS_LETTER[index_body]);
+
+        x += ((ATLAS_LETTER[index_body].clip_bounds.w * 0.5f));
+        x += WORD_SPACING;
+    }
+
+    imm_end_texture_batch();
+}
 
 static void minigame_typer_init(void)
 {
@@ -41,6 +97,8 @@ static void minigame_typer_init(void)
             length++;
         }
     }
+
+    g_minigame_typer.current_word = rand() % g_minigame_typer.word_count;
 }
 
 static void minigame_typer_quit(void)
@@ -50,12 +108,16 @@ static void minigame_typer_quit(void)
 
 static void minigame_typer_update(nkF32 dt)
 {
-    // @Incomplete: ...
+    // @Temporary: Debug word change.
+    if(is_key_pressed(KeyCode_F5))
+    {
+        g_minigame_typer.current_word = rand() % g_minigame_typer.word_count;
+    }
 }
 
 static void minigame_typer_render(void)
 {
-    // @Incomplete: ...
+    minigame_typer_draw_word(g_minigame_typer.current_word);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

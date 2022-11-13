@@ -41,6 +41,7 @@ static void game_render(void)
 
     set_blend_mode(BlendMode_Alpha);
 
+    imm_set_texture_color(NK_V4_WHITE);
     imm_texture(g_asset_background, hsw,hsh, NULL);
 
     switch(g_minigame)
