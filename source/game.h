@@ -11,8 +11,6 @@ static RNG g_rng_v; // Visual - Used for generating visual related randomness.
 static void render_item   (nkF32 x, nkF32 y,                                  const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 alpha);
 static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 alpha);
 
-static nkF32 get_render_angle(void);
-
 static void   game_init      (void);
 static void   game_quit      (void);
 static void   game_update    (nkF32 dt);

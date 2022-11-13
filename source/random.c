@@ -30,7 +30,7 @@ static nkF32 rng_num(RNG* rng)
 
 static nkF32 rng_num_range(RNG* rng, nkF32 min, nkF32 max)
 {
-    return (min + NK_CAST(nkF32,rng_int(rng)) / (NK_CAST(nkF32,NK_S32_MAX) / max-min));
+    return (min + NK_CAST(nkF32,rng_int(rng)) / (NK_CAST(nkF32,NK_S32_MAX) / (max-min)));
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

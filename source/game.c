@@ -10,8 +10,6 @@ typedef struct GameState
 {
     MiniGame minigame;
     nkF32    timer;
-    nkF32    timer_smooth;
-    nkF32    timer_grainy;
 }
 GameState;
 
@@ -47,11 +45,6 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
     imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], body_color);
 }
 
-static nkF32 get_render_angle(void)
-{
-    return nk_sin_range(-0.2f, 0.2f, rng_num_range(&g_rng_v, 0,100) + (g_state.timer_grainy * 8.5f));
-}
-
 static void game_init(void)
 {
     g_state.minigame = MiniGame_Typer;
@@ -68,9 +61,6 @@ static void game_init(void)
     minigame_typer_init();
 
     g_state.timer = 20.0f;
-
-    g_state.timer_smooth = 0.0f;
-    g_state.timer_grainy = 0.0f;
 }
 
 static void game_quit(void)
@@ -82,15 +72,6 @@ static void game_quit(void)
 
 static void game_update(nkF32 dt)
 {
-    // Update values related to doing random number generation.
-    static const nkF32 GRAINY_TIMER_INTERVAL = 0.5f;
-    g_state.timer_smooth += dt;
-    if(g_state.timer_smooth >= GRAINY_TIMER_INTERVAL)
-    {
-        g_state.timer_smooth -= GRAINY_TIMER_INTERVAL;
-        g_state.timer_grainy += GRAINY_TIMER_INTERVAL;
-    }
-
     switch(g_state.minigame)
     {
         case MiniGame_Typer: minigame_typer_update(dt); break;
@@ -108,8 +89,6 @@ static void game_render_timer(void)
     static const nkF32 LETTER_WIDTH = 15.0f;
     static const nkF32 PADDING = 4.0f;
     static const nkF32 DANGER_TIME = 5.0f;
-
-    rng_init(&g_rng_v, clock());
 
     nkF32 width = LETTER_WIDTH * 5.0f;
 

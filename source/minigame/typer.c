@@ -1,11 +1,16 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define LETTER_MIN_ANGLE -0.4f
+#define LETTER_MAX_ANGLE  0.4f
+
 typedef struct MiniGameTyper
 {
     nkU32    current_word;
     nkChar** words;
     nkU32    word_count;
     nkChar   input[32];
+    nkF32    angles[32];
+    nkF32    timer;
 }
 MiniGameTyper;
 
@@ -25,8 +30,6 @@ static void minigame_typer_draw_word(const nkU32 word_index)
 
     nkU32 word_length = strlen(word);
 
-    // Make sure random stuff is consistent across multiple frames.
-    rng_init(&g_rng_v, __LINE__);
 
     nkF32 x = 0.0f;
     nkF32 y = 0.0f;
@@ -49,7 +52,7 @@ static void minigame_typer_draw_word(const nkU32 word_index)
     for(nkU32 i=0; i<word_length; ++i)
     {
         nkS32 index = ((toupper(word[i]) - 'A') * 2) + 1;
-        nkF32 angle = get_render_angle();
+        nkF32 angle = g_minigame_typer.angles[i];
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
 
@@ -96,6 +99,14 @@ static void minigame_typer_init(void)
     }
 
     minigame_typer_select_new_word();
+
+    // Setup the initial rendering angles;
+    for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
+    {
+        g_minigame_typer.angles[i] = rng_num_range(&g_rng_v, LETTER_MIN_ANGLE,LETTER_MAX_ANGLE);
+    }
+
+    g_minigame_typer.timer = 0.0f;
 }
 
 static void minigame_typer_quit(void)
@@ -105,6 +116,21 @@ static void minigame_typer_quit(void)
 
 static void minigame_typer_update(nkF32 dt)
 {
+    // Update the letter render angles at a fixed interval.
+    g_minigame_typer.timer += dt;
+    if(g_minigame_typer.timer >= 0.5f)
+    {
+        g_minigame_typer.timer -= 0.5f;
+        for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
+        {
+            nkF32 old_value = g_minigame_typer.angles[i];
+            nkF32 new_value = g_minigame_typer.angles[i];
+            while(fabs(old_value-new_value) <= 0.15f || fabs(old_value-new_value) >= 0.25f)
+                new_value = rng_num_range(&g_rng_v, LETTER_MIN_ANGLE,LETTER_MAX_ANGLE);
+            g_minigame_typer.angles[i] = new_value;
+        }
+    }
+
     if(game_is_playing())
     {
         // Compare the current text input with what the user has left to type.
