@@ -116,12 +116,20 @@ static nkVec2 font_get_text_bounds(Font font, const nkChar* text)
 
 static nkF32 font_get_text_width(Font font, const nkChar* text)
 {
+    NK_ASSERT(font);
     return font_get_text_bounds(font, text).x;
 }
 
 static nkF32 font_get_text_height(Font font, const nkChar* text)
 {
+    NK_ASSERT(font);
     return font_get_text_bounds(font, text).y;
+}
+
+static nkF32 font_get_px_height(Font font)
+{
+    NK_ASSERT(font);
+    return font->px_height;
 }
 
 static void font_draw_text(Font font, nkF32 x, nkF32 y, const nkChar* text, nkVec4 color)
