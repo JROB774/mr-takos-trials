@@ -162,7 +162,6 @@ static void set_fullscreen(nkBool enable)
     if(g_ctx.fullscreen == enable) return;
     if(enable) cache_window_bounds();
     SDL_SetWindowFullscreen(g_ctx.window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
-    SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode. // @Incomplete: Don't re-enable if it wasn't enabled before...
     g_ctx.fullscreen = enable;
 }
 
