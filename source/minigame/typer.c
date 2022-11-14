@@ -249,7 +249,6 @@ static void minigame_typer_render(void)
         nkF32 x2 = (SCREEN_WIDTH * 0.5f) + 80.0f;
         nkF32 y  = SCREEN_HEIGHT - 32.0f;
 
-        render_item_ex(x1,y, 0.8f,0.8f, g_minigame_typer.angles[29], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
         render_item_ex(x2,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
     }
 
