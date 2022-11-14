@@ -82,14 +82,19 @@ static void game_update(nkF32 dt)
             g_gamestate.game_timer = 0.0f;
         }
 
-        // Play appropriate sounds.
-        if(prev_timer > 0.0f && g_gamestate.game_timer <= 0.0f)
-        {
-            sound_play(g_asset_sfx_alarm_clock, 0);
-        }
+        // Do the end game logic.
         if(prev_timer > 5.0f && g_gamestate.game_timer <= 5.0f)
         {
             sound_play(g_asset_sfx_clock_ticking, 0);
+        }
+        if(prev_timer > 0.0f && g_gamestate.game_timer <= 0.0f)
+        {
+            sound_play(g_asset_sfx_alarm_clock, 0);
+
+            switch(g_gamestate.minigame)
+            {
+                case MiniGame_Typer: minigame_typer_end(); break;
+            }
         }
     }
 }

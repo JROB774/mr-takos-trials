@@ -138,6 +138,11 @@ static void minigame_typer_init(void)
     }
 }
 
+static void minigame_typer_quit(void)
+{
+    free(g_minigame_typer.words);
+}
+
 static void minigame_typer_start(void)
 {
     minigame_typer_select_new_word();
@@ -151,9 +156,13 @@ static void minigame_typer_start(void)
     g_minigame_typer.wrong_countdown = 0.0f;
 }
 
-static void minigame_typer_quit(void)
+static void minigame_typer_end(void)
 {
-    free(g_minigame_typer.words);
+    if(g_minigame_typer.score > g_save.highscore_typer)
+    {
+        g_save.highscore_typer = g_minigame_typer.score;
+        save_game_data();
+    }
 }
 
 static void minigame_typer_update(nkF32 dt)
