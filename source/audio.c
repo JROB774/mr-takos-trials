@@ -34,9 +34,8 @@ static void audio_init(void)
         fatal_error("Failed to open SDL2 Mixer audio device: %s", Mix_GetError());
     Mix_AllocateChannels(64);
 
-    // @Incomplete: Load these from a file!
-    set_sound_volume(1.0f);
-    set_music_volume(1.0f);
+    set_sound_volume(0.8f);
+    set_music_volume(0.7f);
 }
 
 static void audio_quit(void)
