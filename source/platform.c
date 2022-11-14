@@ -59,6 +59,7 @@
 #include "font.h"
 #include "input.h"
 #include "assets.h"
+#include "save.h"
 
 #include "audio.c"
 #include "render.c"
@@ -73,6 +74,7 @@
 #include "font.c"
 #include "input.c"
 #include "assets.c"
+#include "save.c"
 
 #pragma pack(push,1)
 typedef struct ProgramState
@@ -422,11 +424,15 @@ static void main_init(void)
 
     app_init();
 
+    load_game_data();
+
     g_ctx.running = NK_TRUE;
 }
 
 static void main_quit(void)
 {
+    save_game_data();
+
     app_quit();
 
     postprocess_quit();
