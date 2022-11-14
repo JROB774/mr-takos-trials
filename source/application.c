@@ -1,18 +1,18 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index)
+static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier)
 {
-    nkF32 sx = x + SHADOW_OFFSET.x;
-    nkF32 sy = y + SHADOW_OFFSET.y;
+    nkF32 sx = x + (SHADOW_OFFSET.x * shadow_offset_multiplier);
+    nkF32 sy = y + (SHADOW_OFFSET.y * shadow_offset_multiplier);
 
     imm_atlas_batched(sx,sy, &atlas_clips[atlas_clip_index-1], SHADOW_COLOR);
     imm_atlas_batched(x,y, &atlas_clips[atlas_clip_index], BODY_COLOR);
 }
 
-static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index)
+static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier)
 {
-    nkF32 xs = x + (SHADOW_OFFSET.x * sx);
-    nkF32 ys = y + (SHADOW_OFFSET.y * sy);
+    nkF32 xs = x + (SHADOW_OFFSET.x * shadow_offset_multiplier);
+    nkF32 ys = y + (SHADOW_OFFSET.y * shadow_offset_multiplier);
 
     imm_atlas_batched_ex(xs,ys, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index-1], SHADOW_COLOR);
     imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], BODY_COLOR);

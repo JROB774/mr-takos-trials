@@ -29,8 +29,12 @@ static void cursor_update(nkF32 dt)
 static void cursor_render(void)
 {
     if(g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT) return; // Hide the cursor after a bit of inactivity.
+
+    nkF32 p_off = (is_mouse_button_down(MouseButton_Left)) ? 1.0f : 0.0f;
+    nkF32 s_off = (is_mouse_button_down(MouseButton_Left)) ? 0.6f : 1.0f;
+
     imm_begin_texture_batch(g_asset_ui);
-    render_item(g_cursor.pos.x,g_cursor.pos.y, ATLAS_UI, ATLAS_UI_CURSOR_BODY);
+    render_item(g_cursor.pos.x-p_off,g_cursor.pos.y-p_off, ATLAS_UI, ATLAS_UI_CURSOR_BODY, s_off);
     imm_end_texture_batch();
 }
 
