@@ -1,9 +1,10 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-#define SUCCESS_COUNTDOWN 0.8f
-#define WRONG_COUNTDOWN   0.8f
-#define LETTER_MIN_ANGLE -0.4f
-#define LETTER_MAX_ANGLE  0.4f
+#define SUCCESS_COUNTDOWN  0.8f
+#define WRONG_COUNTDOWN    0.8f
+#define ANGLE_CHANGE_SPEED 0.5f
+#define LETTER_MIN_ANGLE  -0.4f
+#define LETTER_MAX_ANGLE   0.4f
 
 typedef struct MiniGameTyper
 {
@@ -14,7 +15,7 @@ typedef struct MiniGameTyper
     nkF32    angles[32];
     nkS32    score;
     nkS32    combo;
-    nkF32    timer;
+    nkF32    angle_timer;
     nkF32    success_countdown;
     nkF32    wrong_countdown;
 }
@@ -49,7 +50,7 @@ static void minigame_typer_draw_word(const nkU32 word_index)
     // Calculate the bounds of the word so we can render it centered.
     for(nkU32 i=0; i<word_length; ++i)
     {
-        nkS32 index = ((toupper(word[i]) - 'A') * 2) + 1;
+        nkS32 index = ATLAS_LETTER_SOLID_A_SHADOW + (((toupper(word[i]) - 'A') * 2) + 1);
         w += ATLAS_LETTER[index].clip_bounds.w + WORD_SPACING;
         h = nk_max(h, ATLAS_LETTER[index].clip_bounds.h);
     }
@@ -61,12 +62,15 @@ static void minigame_typer_draw_word(const nkU32 word_index)
 
     for(nkU32 i=0; i<word_length; ++i)
     {
-        nkS32 index = ((toupper(word[i]) - 'A') * 2) + 1;
+        nkS32 index = (g_minigame_typer.input[i] != word[i]) ? ATLAS_LETTER_FADED_A_SHADOW : ATLAS_LETTER_SOLID_A_SHADOW;;
+
+        index += (((toupper(word[i]) - 'A') * 2) + 1);
+
         nkF32 angle = g_minigame_typer.angles[i];
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
 
-        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index, (g_minigame_typer.input[i] != word[i]) ? 0.5f : 1.0f);
+        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index, 1.0f);
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
         x += WORD_SPACING;
@@ -127,18 +131,21 @@ static void minigame_typer_init(void)
         }
     }
 
-    minigame_typer_select_new_word();
-
     // Setup the initial rendering angles;
     for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
     {
         g_minigame_typer.angles[i] = rng_num_range(&g_rng_v, LETTER_MIN_ANGLE,LETTER_MAX_ANGLE);
     }
+}
+
+static void minigame_typer_start(void)
+{
+    minigame_typer_select_new_word();
 
     g_minigame_typer.score = 0;
     g_minigame_typer.combo = 0;
 
-    g_minigame_typer.timer = 0.0f;
+    g_minigame_typer.angle_timer = 0.0f;
 
     g_minigame_typer.success_countdown = 0.0f;
     g_minigame_typer.wrong_countdown = 0.0f;
@@ -152,10 +159,10 @@ static void minigame_typer_quit(void)
 static void minigame_typer_update(nkF32 dt)
 {
     // Update the letter render angles at a fixed interval.
-    g_minigame_typer.timer += dt;
-    if(g_minigame_typer.timer >= 0.5f)
+    g_minigame_typer.angle_timer += dt;
+    if(g_minigame_typer.angle_timer >= ANGLE_CHANGE_SPEED)
     {
-        g_minigame_typer.timer -= 0.5f;
+        g_minigame_typer.angle_timer -= ANGLE_CHANGE_SPEED;
         for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
         {
             nkF32 old_value = g_minigame_typer.angles[i];

@@ -3,6 +3,7 @@
 
 static void minigame_typer_init  (void);
 static void minigame_typer_quit  (void);
+static void minigame_typer_start (void);
 static void minigame_typer_update(nkF32 dt);
 static void minigame_typer_render(void);
 
