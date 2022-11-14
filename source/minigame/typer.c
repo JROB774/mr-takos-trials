@@ -245,18 +245,17 @@ static void minigame_typer_render(void)
     // Draw the happy face if the player got a word.
     if(g_minigame_typer.success_countdown > 0.0f)
     {
-        nkF32 x1 = (SCREEN_WIDTH * 0.5f) - 80.0f;
-        nkF32 x2 = (SCREEN_WIDTH * 0.5f) + 80.0f;
-        nkF32 y  = SCREEN_HEIGHT - 32.0f;
+        nkF32 x = (SCREEN_WIDTH * 0.5f) + 80.0f;
+        nkF32 y = (SCREEN_HEIGHT - 32.0f);
 
-        render_item_ex(x2,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
+        render_item_ex(x,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
     }
 
     // Draw the sad face if the player is on timeout.
     if(g_minigame_typer.wrong_countdown > 0.0f)
     {
-        nkF32 x = SCREEN_WIDTH * 0.5f;
-        nkF32 y = SCREEN_HEIGHT * 0.5f;
+        nkF32 x = (SCREEN_WIDTH * 0.5f);
+        nkF32 y = (SCREEN_HEIGHT * 0.5f);
 
         render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
     }
