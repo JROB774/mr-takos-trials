@@ -157,9 +157,15 @@ static void game_render(void)
             nkF32 x = SCREEN_WIDTH * 0.5f;
             nkF32 y = SCREEN_HEIGHT * 0.5f;
 
-            render_item_ex(x,y, 1,1, 0, ATLAS_UI, index, 1.0f);
+            render_item(x,y, ATLAS_UI, index, 1.0f);
         }
     }
+
+    // Render the pause button.
+    nkF32 px = SCREEN_WIDTH - 32.0f;
+    nkF32 py = 32.0f;
+
+    render_item(px,py, ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);
 
     imm_end_texture_batch();
 }

@@ -39,7 +39,7 @@ static void app_init(void)
 
     load_all_assets();
 
-    // show_cursor(NK_FALSE); // @Incomplete: Hide the cursor when we have a custom graphic!
+    show_cursor(NK_FALSE);
 
     menu_init();
     game_init();
@@ -80,6 +80,12 @@ static void app_render(void)
         case AppState_Menu: menu_render(); break;
         case AppState_Game: game_render(); break;
     }
+
+    // @Incomplete: Hide the mouse cursor when it has been inactive long enough...
+    nkVec2 mp = get_screen_mouse_pos();
+    imm_begin_texture_batch(g_asset_ui);
+    render_item(mp.x,mp.y, ATLAS_UI, ATLAS_UI_CURSOR_BODY, 1.0f);
+    imm_end_texture_batch();
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
