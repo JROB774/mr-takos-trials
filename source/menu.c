@@ -21,12 +21,6 @@ static const nkChar* MAIN_MENU_OPTIONS[] =
 
 NK_STATIC_ASSERT(MainMenuOption_TOTAL == NK_ARRAY_SIZE(MAIN_MENU_OPTIONS), main_menu_option_size_mismatch);
 
-static nkBool mouse_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
-{
-    nkVec2 m = get_screen_mouse_pos();
-    return ((m.x >= x) && (m.y >= y) && (m.x < (x+w)) && (m.y < (y+h)));
-}
-
 static void menu_init(void)
 {
     // Nothing...
@@ -47,11 +41,15 @@ static void menu_update(nkF32 dt)
         nkF32 w = font_get_text_bounds(g_asset_font, MAIN_MENU_OPTIONS[i]).x;
         nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
 
-        if(mouse_in_bounds(x,y-(h*0.75f),w,h) && is_mouse_button_pressed(MouseButton_Left))
+        if(cursor_in_bounds(x,y-(h*0.75f),w,h) && is_mouse_button_pressed(MouseButton_Left))
         {
             switch(i)
             {
-                case MainMenuOption_Play: g_appstate = AppState_Game; break;
+                case MainMenuOption_Play:
+                {
+                    g_appstate = AppState_Game;
+                    game_start();
+                } break;
                 case MainMenuOption_Options: /* @Incomplete */ break;
                 case MainMenuOption_Awards: /* @Incomplete */ break;
                 case MainMenuOption_Credits: /* @Incomplete */ break;
@@ -76,7 +74,7 @@ static void menu_render(void)
         nkVec4 fg_color = (nkVec4){ 0.15f,0.10f,0.00f,1.0f };
         nkVec4 bg_color = (nkVec4){ 0.00f,0.00f,0.00f,0.3f };
 
-        if(mouse_in_bounds(x,y-(h*0.75f),w,h))
+        if(cursor_in_bounds(x,y-(h*0.75f),w,h))
         {
             fg_color.r += 0.3f;
             fg_color.g += 0.3f;

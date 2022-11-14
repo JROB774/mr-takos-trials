@@ -36,7 +36,6 @@ static void game_start(void)
 static void game_init(void)
 {
     minigame_typer_init();
-    game_start();
 }
 
 static void game_quit(void)

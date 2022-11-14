@@ -57,4 +57,14 @@ static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
             (g_cursor.pos.x < (x+w)) && (g_cursor.pos.y < (y+h)));
 }
 
+static void cursor_hide(void)
+{
+    g_cursor.idle_time = CURSOR_IDLE_TIMEOUT;
+}
+
+static void cursor_show(void)
+{
+    g_cursor.idle_time = 0.0f;
+}
+
 /*////////////////////////////////////////////////////////////////////////////*/
