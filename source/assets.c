@@ -2,9 +2,10 @@
 
 static void load_all_assets(void)
 {
-    g_asset_background          = load_asset_texture("back.png",   SamplerFilter_Linear, SamplerWrap_Clamp);
-    g_asset_letter              = load_asset_texture("letter.png", SamplerFilter_Linear, SamplerWrap_Clamp);
-    g_asset_ui                  = load_asset_texture("ui.png",     SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_background          = load_asset_texture("back.png",     SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_letter              = load_asset_texture("letter.png",   SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_ui                  = load_asset_texture("ui.png",       SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_vignette            = load_asset_texture("vignette.png", SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_wordlist            = load_asset_text   ("wordlist.txt");
     g_asset_font                = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 48.0f);
     g_asset_sfx_wrong_buzzer    = load_asset_sound  ("wrong_buzzer.wav");
@@ -28,6 +29,8 @@ static void free_all_assets(void)
 {
     texture_destroy(g_asset_background);
     texture_destroy(g_asset_letter);
+    texture_destroy(g_asset_ui);
+    texture_destroy(g_asset_vignette);
     free           (g_asset_wordlist);
     font_destroy   (g_asset_font);
     sound_destroy  (g_asset_sfx_wrong_buzzer);
