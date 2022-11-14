@@ -45,12 +45,16 @@ static void app_quit(void)
 
 static void app_update(nkF32 dt)
 {
+    pause_update(dt);
     cursor_update(dt);
 
-    switch(g_appstate)
+    if(!is_game_paused())
     {
-        case AppState_Menu: menu_update(dt); break;
-        case AppState_Game: game_update(dt); break;
+        switch(g_appstate)
+        {
+            case AppState_Menu: menu_update(dt); break;
+            case AppState_Game: game_update(dt); break;
+        }
     }
 }
 
@@ -65,12 +69,16 @@ static void app_render(void)
 
     imm_texture(g_asset_background, hsw,hsh, NULL, NK_V4_WHITE);
 
-    switch(g_appstate)
+    if(!is_game_paused())
     {
-        case AppState_Menu: menu_render(); break;
-        case AppState_Game: game_render(); break;
+        switch(g_appstate)
+        {
+            case AppState_Menu: menu_render(); break;
+            case AppState_Game: game_render(); break;
+        }
     }
 
+    pause_render();
     cursor_render();
 }
 
