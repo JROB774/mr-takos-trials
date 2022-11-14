@@ -13,6 +13,12 @@ static const nkChar* get_save_file_name(void)
     return file_name_buffer;
 }
 
+static void reset_game_data(void)
+{
+    memset(&g_save, 0, sizeof(g_save));
+    save_game_data();
+}
+
 static void save_game_data(void)
 {
     const nkChar* file_name = get_save_file_name();

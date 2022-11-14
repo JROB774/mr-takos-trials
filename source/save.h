@@ -16,7 +16,8 @@ SaveState;
 
 static SaveState g_save;
 
-static void save_game_data(void);
-static void load_game_data(void);
+static void reset_game_data(void);
+static void  save_game_data(void);
+static void  load_game_data(void);
 
 #endif /* SAVE_H__ ///////////////////////////////////////////////////////////*/
