@@ -36,8 +36,8 @@
 #define WINDOW_TITLE  "MR. TAKO'S TRIALS"
 #define WINDOW_XPOS   SDL_WINDOWPOS_CENTERED
 #define WINDOW_YPOS   SDL_WINDOWPOS_CENTERED
-#define WINDOW_WIDTH  1920 // @Incomplete: Change to be something smalle...
-#define WINDOW_HEIGHT 1080 // @Incomplete: Change to be something smalle...
+#define WINDOW_WIDTH  (SCREEN_WIDTH*2)
+#define WINDOW_HEIGHT (SCREEN_HEIGHT*2)
 #define WINDOW_FLAGS  SDL_WINDOW_HIDDEN|SDL_WINDOW_RESIZABLE|SDL_WINDOW_OPENGL
 
 #define SCREEN_WIDTH  480
