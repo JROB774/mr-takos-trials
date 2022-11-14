@@ -139,6 +139,23 @@ static void fatal_error(const nkChar* fmt, ...)
     abort();
 }
 
+static void user_error(const nkChar* fmt, ...)
+{
+    nkChar message_buffer[1024] = NK_ZERO_MEM;
+
+    va_list args;
+
+    va_start(args, fmt);
+    vsnprintf(message_buffer, NK_ARRAY_SIZE(message_buffer), fmt, args);
+    va_end(args);
+
+    #if defined(BUILD_DEBUG)
+    fprintf(stderr, "%s\n", message_buffer);
+    #endif
+
+    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", message_buffer, g_ctx.window);
+}
+
 static nkS32 window_get_width(void)
 {
     nkS32 width;
