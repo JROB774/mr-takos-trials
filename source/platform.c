@@ -43,6 +43,8 @@
 #define SCREEN_WIDTH  480
 #define SCREEN_HEIGHT 270
 
+#define PROGRAM_STATE_FILE "state.dat"
+
 #include "audio.h"
 #include "render.h"
 #include "immdraw.h"
@@ -68,6 +70,22 @@
 #include "input.c"
 #include "assets.c"
 
+#pragma pack(push,1)
+typedef struct ProgramState
+{
+    nkF32  sound_volume;
+    nkF32  music_volume;
+    nkS32  window_x;
+    nkS32  window_y;
+    nkS32  window_w;
+    nkS32  window_h;
+    nkS32  display;
+    nkBool fullscreen;
+    nkBool maximized;
+}
+ProgramState;
+#pragma pack(pop,1)
+
 typedef struct PlatformContext
 {
     SDL_Window*   window;
@@ -77,6 +95,12 @@ typedef struct PlatformContext
     VertexBuffer  screenbuffer;
     Shader        screenshader;
     nkChar*       base_path;
+    nkS32         window_x;
+    nkS32         window_y;
+    nkS32         window_w;
+    nkS32         window_h;
+    nkBool        maximized;
+    nkBool        fullscreen;
 }
 PlatformContext;
 
@@ -125,15 +149,26 @@ static nkS32 window_get_height(void)
     return height;
 }
 
+static void cache_window_bounds(void)
+{
+    if(g_ctx.maximized) SDL_RestoreWindow(g_ctx.window);
+    SDL_GetWindowPosition(g_ctx.window, &g_ctx.window_x, &g_ctx.window_y);
+    SDL_GetWindowSize(g_ctx.window, &g_ctx.window_w, &g_ctx.window_h);
+    if(g_ctx.maximized) SDL_MaximizeWindow(g_ctx.window);
+}
+
 static void set_fullscreen(nkBool enable)
 {
+    if(g_ctx.fullscreen == enable) return;
+    if(enable) cache_window_bounds();
     SDL_SetWindowFullscreen(g_ctx.window, (enable) ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
     SDL_ShowCursor(get_fullscreen() ? SDL_DISABLE : SDL_ENABLE); // Hide the cursor in fullscreen mode. // @Incomplete: Don't re-enable if it wasn't enabled before...
+    g_ctx.fullscreen = enable;
 }
 
 static nkBool get_fullscreen(void)
 {
-    return NK_CHECK_FLAGS(SDL_GetWindowFlags(g_ctx.window), SDL_WINDOW_FULLSCREEN_DESKTOP);
+    return g_ctx.fullscreen;
 }
 
 static void show_cursor(nkBool show)
@@ -144,6 +179,112 @@ static void show_cursor(nkBool show)
 static RenderTarget get_screen(void)
 {
     return g_ctx.screentarget;
+}
+
+static void load_program_state(void)
+{
+    char file_name[1024] = NK_ZERO_MEM;
+    strcpy(file_name, get_base_path());
+    strcat(file_name, PROGRAM_STATE_FILE);
+
+    if(!nk_file_exists(file_name)) return;
+
+    // Load the program state from disk.
+    ProgramState program_state = NK_ZERO_MEM;
+
+    FILE* file = fopen(file_name, "rb");
+    if(!file)
+    {
+        printf("Failed to open program state file: %s\n", file_name);
+        return;
+    }
+    size_t result = fread(&program_state, sizeof(program_state), 1, file);
+    fclose(file);
+    if(result != 1)
+    {
+        printf("Failed to read program state file: %s\n", file_name);
+        return;
+    }
+
+    // Set the program state values.
+    set_sound_volume(program_state.sound_volume);
+    set_music_volume(program_state.music_volume);
+
+    SDL_Rect display_bounds;
+    if(SDL_GetDisplayBounds(program_state.display, &display_bounds) < 0)
+    {
+        printf("Previous display no longer available, aborting window bounds restore!\n");
+    }
+    else
+    {
+        // Make sure the window is not out of bounds at all.
+        if(program_state.window_x != SDL_WINDOWPOS_CENTERED && program_state.window_x < display_bounds.x)
+            program_state.window_x = display_bounds.x;
+        if(program_state.window_x != SDL_WINDOWPOS_CENTERED && (program_state.window_x+program_state.window_w) >= display_bounds.w)
+            program_state.window_x = display_bounds.w - program_state.window_w;
+        if(program_state.window_y != SDL_WINDOWPOS_CENTERED && program_state.window_y < display_bounds.y)
+            program_state.window_y = display_bounds.y;
+        if(program_state.window_y != SDL_WINDOWPOS_CENTERED && (program_state.window_y+program_state.window_h) >= display_bounds.h)
+            program_state.window_y = display_bounds.h - program_state.window_h;
+    }
+
+    SDL_SetWindowSize(g_ctx.window, program_state.window_w,program_state.window_h);
+    SDL_SetWindowPosition(g_ctx.window, program_state.window_x,program_state.window_y);
+
+    // We don't set the context's maximized state here, we instead do it in the
+    // event loop so that it also gets set when the maximize button is toggled.
+    if(program_state.maximized) SDL_MaximizeWindow(g_ctx.window);
+
+    set_fullscreen(program_state.fullscreen);
+}
+
+static void save_program_state(void)
+{
+    // Set the program state values.
+    ProgramState program_state = NK_ZERO_MEM;
+
+    program_state.sound_volume = get_sound_volume();
+    program_state.music_volume = get_music_volume();
+
+    SDL_RestoreWindow(g_ctx.window);
+
+    if(!get_fullscreen())
+    {
+        SDL_GetWindowPosition(g_ctx.window, &program_state.window_x,&program_state.window_y);
+        SDL_GetWindowSize(g_ctx.window, &program_state.window_w,&program_state.window_h);
+    }
+    else
+    {
+        // Use the cached bounds as they represent the actual window pos and size.
+        program_state.window_x = g_ctx.window_x;
+        program_state.window_y = g_ctx.window_y;
+        program_state.window_w = g_ctx.window_w;
+        program_state.window_h = g_ctx.window_h;
+    }
+
+    program_state.maximized = g_ctx.maximized;
+    program_state.fullscreen = g_ctx.fullscreen;
+
+    program_state.display = SDL_GetWindowDisplayIndex(g_ctx.window);
+
+    // Write the program state to disk.
+    char file_name[1024] = NK_ZERO_MEM;
+    strcpy(file_name, get_base_path());
+    strcat(file_name, PROGRAM_STATE_FILE);
+
+    FILE* file = fopen(file_name, "wb");
+    if(!file)
+    {
+        printf("Failed to open program state file: %s\n", file_name);
+        return;
+    }
+    size_t result = fwrite(&program_state, sizeof(program_state), 1, file);
+    fclose(file);
+    if(result != 1)
+    {
+        printf("Failed to write program state file: %s\n", file_name);
+        return;
+    }
 }
 
 static void begin_render_frame(void)
@@ -320,6 +461,14 @@ static void main_loop(void)
                     } break;
                 }
             } break;
+            case SDL_WINDOWEVENT:
+            {
+                switch(event.window.event)
+                {
+                    case SDL_WINDOWEVENT_MAXIMIZED: g_ctx.maximized = NK_TRUE; break;
+                    case SDL_WINDOWEVENT_RESTORED: g_ctx.maximized = NK_FALSE; break;
+                }
+            } break;
             case(SDL_QUIT):
             {
                 g_ctx.running = NK_FALSE;
@@ -374,8 +523,10 @@ static void main_loop(void)
 int main(int argc, char** argv)
 {
     main_init();
+    load_program_state();
     while(g_ctx.running)
         main_loop();
+    save_program_state();
     main_quit();
     return 0;
 }
