@@ -1,33 +1,21 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 alpha)
+static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index)
 {
     nkF32 sx = x + SHADOW_OFFSET.x;
     nkF32 sy = y + SHADOW_OFFSET.y;
 
-    nkVec4 shadow_color = SHADOW_COLOR;
-    nkVec4 body_color = BODY_COLOR;
-
-    shadow_color.a *= alpha;
-    body_color.a *= alpha;
-
-    imm_atlas_batched(sx,sy, &atlas_clips[atlas_clip_index-1], shadow_color);
-    imm_atlas_batched(x,y, &atlas_clips[atlas_clip_index], body_color);
+    imm_atlas_batched(sx,sy, &atlas_clips[atlas_clip_index-1], SHADOW_COLOR);
+    imm_atlas_batched(x,y, &atlas_clips[atlas_clip_index], BODY_COLOR);
 }
 
-static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 alpha)
+static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index)
 {
     nkF32 xs = x + (SHADOW_OFFSET.x * sx);
     nkF32 ys = y + (SHADOW_OFFSET.y * sy);
 
-    nkVec4 shadow_color = SHADOW_COLOR;
-    nkVec4 body_color = BODY_COLOR;
-
-    shadow_color.a *= alpha;
-    body_color.a *= alpha;
-
-    imm_atlas_batched_ex(xs,ys, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index-1], shadow_color);
-    imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], body_color);
+    imm_atlas_batched_ex(xs,ys, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index-1], SHADOW_COLOR);
+    imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], BODY_COLOR);
 }
 
 static void app_init(void)
@@ -84,7 +72,7 @@ static void app_render(void)
     // @Incomplete: Hide the mouse cursor when it has been inactive long enough...
     nkVec2 mp = get_screen_mouse_pos();
     imm_begin_texture_batch(g_asset_ui);
-    render_item(mp.x,mp.y, ATLAS_UI, ATLAS_UI_CURSOR_BODY, 1.0f);
+    render_item(mp.x,mp.y, ATLAS_UI, ATLAS_UI_CURSOR_BODY);
     imm_end_texture_batch();
 }
 

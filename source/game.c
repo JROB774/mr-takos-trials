@@ -121,7 +121,7 @@ static void game_render(void)
     x -= (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
     y += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.h * 0.5f);
 
-    render_item(x+ox,y+oy, ATLAS_UI, ATLAS_UI_CLOCK_BODY, 1.0f);
+    render_item(x+ox,y+oy, ATLAS_UI, ATLAS_UI_CLOCK_BODY);
 
     x += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
 
@@ -137,7 +137,7 @@ static void game_render(void)
         if(timer_buffer[i] == '.') index = ATLAS_UI_TIMER_DOT_BODY;
 
         x += LETTER_WIDTH * 0.5f;
-        render_item_ex(x+ox,y+oy, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 1.0f);
+        render_item_ex(x+ox,y+oy, 0.7f,0.7f, 0.0f, ATLAS_UI, index);
         x += LETTER_WIDTH * 0.5f;
     }
 
@@ -157,7 +157,7 @@ static void game_render(void)
             nkF32 x = SCREEN_WIDTH * 0.5f;
             nkF32 y = SCREEN_HEIGHT * 0.5f;
 
-            render_item(x,y, ATLAS_UI, index, 1.0f);
+            render_item(x,y, ATLAS_UI, index);
         }
     }
 
@@ -165,7 +165,7 @@ static void game_render(void)
     nkF32 px = SCREEN_WIDTH - 32.0f;
     nkF32 py = 32.0f;
 
-    render_item(px,py, ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);
+    render_item(px,py, ATLAS_UI, ATLAS_UI_PAUSE_BODY);
 
     imm_end_texture_batch();
 }

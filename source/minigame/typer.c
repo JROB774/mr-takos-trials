@@ -70,7 +70,7 @@ static void minigame_typer_draw_word(const nkU32 word_index)
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
 
-        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index, 1.0f);
+        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index);
 
         x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
         x += WORD_SPACING;
@@ -93,7 +93,7 @@ static void minigame_typer_draw_score(void)
     {
         nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((score_buffer[i] - '0') * 2) + 1);
         x += LETTER_WIDTH * 0.5f;
-        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 1.0f);
+        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index);
         x += LETTER_WIDTH * 0.5f;
     }
 }
@@ -248,7 +248,7 @@ static void minigame_typer_render(void)
         nkF32 x = (SCREEN_WIDTH * 0.5f) + 80.0f;
         nkF32 y = (SCREEN_HEIGHT - 32.0f);
 
-        render_item_ex(x,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
+        render_item_ex(x,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY);
     }
 
     // Draw the sad face if the player is on timeout.
@@ -257,7 +257,7 @@ static void minigame_typer_render(void)
         nkF32 x = (SCREEN_WIDTH * 0.5f);
         nkF32 y = (SCREEN_HEIGHT * 0.5f);
 
-        render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
+        render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY);
     }
 
     imm_end_texture_batch();
