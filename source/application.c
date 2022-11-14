@@ -45,6 +45,8 @@ static void app_quit(void)
 
 static void app_update(nkF32 dt)
 {
+    cursor_update(dt);
+
     switch(g_appstate)
     {
         case AppState_Menu: menu_update(dt); break;
@@ -69,11 +71,7 @@ static void app_render(void)
         case AppState_Game: game_render(); break;
     }
 
-    // @Incomplete: Hide the mouse cursor when it has been inactive long enough...
-    nkVec2 mp = get_screen_mouse_pos();
-    imm_begin_texture_batch(g_asset_ui);
-    render_item(mp.x,mp.y, ATLAS_UI, ATLAS_UI_CURSOR_BODY);
-    imm_end_texture_batch();
+    cursor_render();
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
