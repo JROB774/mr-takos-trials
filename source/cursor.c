@@ -52,9 +52,12 @@ static void cursor_render(void)
 
 static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
 {
-    // @Incomplete: Check a box for more lenience...
-    return ((g_cursor.pos.x >= x) && (g_cursor.pos.y >= y) &&
-            (g_cursor.pos.x < (x+w)) && (g_cursor.pos.y < (y+h)));
+    nkF32 cx = g_cursor.pos.x - 16.0f;
+    nkF32 cy = g_cursor.pos.y - 16.0f;
+    nkF32 cw = 10.0f;
+    nkF32 ch = 10.0f;
+
+    return ((cx < (x+w)) && ((cx+ch) > x) && (cy < (y+h)) && ((cy+ch) > y));
 }
 
 static void cursor_hide(void)

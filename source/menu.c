@@ -74,7 +74,7 @@ static void menu_render(void)
         nkVec4 fg_color = (nkVec4){ 0.15f,0.10f,0.00f,1.0f };
         nkVec4 bg_color = (nkVec4){ 0.00f,0.00f,0.00f,0.3f };
 
-        if(cursor_in_bounds(x,y-(h*0.75f),w,h))
+        if(cursor_in_bounds(x,y-(h*0.5f),w,(h*0.5f)))
         {
             fg_color.r += 0.3f;
             fg_color.g += 0.3f;
