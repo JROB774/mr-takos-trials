@@ -13,13 +13,25 @@ static Cursor g_cursor;
 
 static void cursor_update(nkF32 dt)
 {
+    // Play click sound.
+    if(is_mouse_button_pressed(MouseButton_Left))
+    {
+        sound_play(g_asset_sfx_mouse_click, 0);
+    }
+
+    // Update idle timer.
     nkVec2 mouse = get_screen_mouse_pos();
-    if(nk_v2_equ(g_cursor.pos, mouse))
+
+    mouse.x = roundf(mouse.x);
+    mouse.y = roundf(mouse.y);
+
+    if(nk_v2_equ(g_cursor.pos, mouse) && !is_mouse_button_down(MouseButton_Left))
     {
         g_cursor.idle_time += dt;
         return; // Return early...
     }
 
+    // Update position.
     g_cursor.pos.x = mouse.x;
     g_cursor.pos.y = mouse.y;
 

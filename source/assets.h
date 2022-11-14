@@ -18,6 +18,7 @@ static Sound   g_asset_sfx_crowd_gasp;
 static Sound   g_asset_sfx_success_ding;
 static Sound   g_asset_sfx_smack[3];
 static Sound   g_asset_sfx_airhorn;
+static Sound   g_asset_sfx_mouse_click;
 
 static void load_all_assets(void);
 static void free_all_assets(void);
