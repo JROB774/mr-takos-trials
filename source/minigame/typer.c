@@ -33,51 +33,6 @@ static void minigame_typer_select_new_word(void)
     memset(g_minigame_typer.input, 0, sizeof(g_minigame_typer.input));
 }
 
-static void minigame_typer_draw_word(const nkU32 word_index)
-{
-    static const nkF32 WORD_SPACING = 3.0f;
-
-    const nkChar* word = g_minigame_typer.words[word_index];
-
-    nkU32 word_length = strlen(word);
-
-    nkF32 x = 0.0f;
-    nkF32 y = 0.0f;
-    nkF32 w = 0.0f;
-    nkF32 h = 0.0f;
-
-    // Calculate the bounds of the word so we can render it centered.
-    for(nkU32 i=0; i<word_length; ++i)
-    {
-        nkS32 index = ATLAS_LETTER_SOLID_A_SHADOW + (((toupper(word[i]) - 'A') * 2) + 1);
-        w += ATLAS_LETTER[index].clip_bounds.w + WORD_SPACING;
-        h = nk_max(h, ATLAS_LETTER[index].clip_bounds.h);
-    }
-
-    x = (SCREEN_WIDTH - w) * 0.5f;
-    y = SCREEN_HEIGHT * 0.5f;
-
-    imm_begin_texture_batch(g_asset_letter);
-
-    for(nkU32 i=0; i<word_length; ++i)
-    {
-        nkS32 index = (g_minigame_typer.input[i] != word[i]) ? ATLAS_LETTER_FADED_A_SHADOW : ATLAS_LETTER_SOLID_A_SHADOW;;
-
-        index += (((toupper(word[i]) - 'A') * 2) + 1);
-
-        nkF32 angle = g_minigame_typer.angles[i];
-
-        x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
-
-        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index, 1.0f);
-
-        x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
-        x += WORD_SPACING;
-    }
-
-    imm_end_texture_batch();
-}
-
 static void minigame_typer_init(void)
 {
     // Load the raw list of words into an array of strings for easy access.
@@ -215,7 +170,51 @@ static void minigame_typer_update(nkF32 dt)
 
 static void minigame_typer_render(void)
 {
-    minigame_typer_draw_word(g_minigame_typer.current_word);
+    // Draw the current word.
+
+    static const nkF32 WORD_SPACING = 3.0f;
+
+    const nkChar* word = g_minigame_typer.words[g_minigame_typer.current_word];
+
+    nkU32 word_length = strlen(word);
+
+    nkF32 x = 0.0f;
+    nkF32 y = 0.0f;
+    nkF32 w = 0.0f;
+    nkF32 h = 0.0f;
+
+    // Calculate the bounds of the word so we can render it centered.
+    for(nkU32 i=0; i<word_length; ++i)
+    {
+        nkS32 index = ATLAS_LETTER_SOLID_A_SHADOW + (((toupper(word[i]) - 'A') * 2) + 1);
+        w += ATLAS_LETTER[index].clip_bounds.w + WORD_SPACING;
+        h = nk_max(h, ATLAS_LETTER[index].clip_bounds.h);
+    }
+
+    x = (SCREEN_WIDTH - w) * 0.5f;
+    y = SCREEN_HEIGHT * 0.5f;
+
+    imm_begin_texture_batch(g_asset_letter);
+
+    for(nkU32 i=0; i<word_length; ++i)
+    {
+        nkS32 index = (g_minigame_typer.input[i] != word[i]) ? ATLAS_LETTER_FADED_A_SHADOW : ATLAS_LETTER_SOLID_A_SHADOW;;
+
+        index += (((toupper(word[i]) - 'A') * 2) + 1);
+
+        nkF32 angle = g_minigame_typer.angles[i];
+
+        x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
+
+        render_item_ex(x,y, 1,1, angle, ATLAS_LETTER, index, 1.0f);
+
+        x += ((ATLAS_LETTER[index].clip_bounds.w * 0.5f));
+        x += WORD_SPACING;
+    }
+
+    imm_end_texture_batch();
+
+    // Draw UI stuff.
 
     imm_begin_texture_batch(g_asset_ui);
 
