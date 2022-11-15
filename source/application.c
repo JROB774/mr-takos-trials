@@ -67,8 +67,11 @@ static void app_render(void)
 
     set_blend_mode(BlendMode_Alpha);
 
-    imm_texture(g_asset_background, hsw,hsh, NULL, NK_V4_WHITE);
-    // imm_texture(g_asset_vignette, hsw,hsh, NULL, (nkVec4){ 0.15f,0.10f,0.00f,0.5f });
+    #if 1
+    imm_texture(g_asset_back_paper, hsw,hsh, NULL, NK_V4_WHITE);
+    #else
+    imm_texture(g_asset_back_vignette, hsw,hsh, NULL, NK_V4_WHITE);
+    #endif
 
     if(!is_game_paused())
     {

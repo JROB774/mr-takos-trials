@@ -5,11 +5,11 @@
 #include "codegen/atlas_tako.h"
 #include "codegen/atlas_ui.h"
 
-static Texture g_asset_background;
+static Texture g_asset_back_paper;
+static Texture g_asset_back_vignette;
 static Texture g_asset_letter;
 static Texture g_asset_ui;
 static Texture g_asset_particle;
-static Texture g_asset_vignette;
 static nkChar* g_asset_wordlist;
 static Font    g_asset_font;
 static Sound   g_asset_sfx_wrong_buzzer;
