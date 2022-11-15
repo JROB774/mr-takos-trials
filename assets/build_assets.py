@@ -12,6 +12,10 @@ if len(sys.argv) <= 1:
 
 platform = sys.argv[1]
 
+if platform != "win32" and platform != "web":
+    print("invalid platform for building assets: {}".format(platform))
+    sys.exit(1)
+
 asset_out_dir = "binary/" + platform + "/assets/"
 asset_dir = "assets/"
 
