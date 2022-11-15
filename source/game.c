@@ -2,18 +2,53 @@
 
 #include "minigame/typer.c"
 
-NK_ENUM(MiniGame, nkS32)
+typedef void(*MiniGameHook_Init  )(void );
+typedef void(*MiniGameHook_Quit  )(void );
+typedef void(*MiniGameHook_Start )(void );
+typedef void(*MiniGameHook_End   )(void );
+typedef void(*MiniGameHook_Update)(nkF32);
+typedef void(*MiniGameHook_Render)(void );
+
+typedef struct MiniGameHooks
 {
-    MiniGame_Typer,
-    MiniGame_TOTAL
+    MiniGameHook_Init   init;
+    MiniGameHook_Quit   quit;
+    MiniGameHook_Start  start;
+    MiniGameHook_End    end;
+    MiniGameHook_Update update;
+    MiniGameHook_Render render;
+}
+MiniGameHooks;
+
+NK_ENUM(MiniGameID, nkS32)
+{
+    MiniGameID_Typer,
+    MiniGameID_TOTAL
 };
+
+#define REGISTER_MINIGAME(name) \
+{                               \
+    minigame_##name##_init,     \
+    minigame_##name##_quit,     \
+    minigame_##name##_start,    \
+    minigame_##name##_end,      \
+    minigame_##name##_update,   \
+    minigame_##name##_render    \
+}
+
+static const MiniGameHooks MINI_GAME_HOOKS[] =
+{
+    REGISTER_MINIGAME(typer)
+};
+
+NK_STATIC_ASSERT(MiniGameID_TOTAL == NK_ARRAY_SIZE(MINI_GAME_HOOKS), minigame_size_mismatch);
 
 typedef struct GameState
 {
-    MiniGame minigame;
-    nkF32    intro_timer;
-    nkF32    game_timer;
-    nkBool   in_intro;
+    MiniGameID current_minigame;
+    nkF32      intro_timer;
+    nkF32      game_timer;
+    nkBool     in_intro;
 }
 GameState;
 
@@ -21,34 +56,34 @@ static GameState g_gamestate;
 
 static void game_start(void)
 {
-    g_gamestate.minigame = MiniGame_Typer;
+    g_gamestate.current_minigame = MiniGameID_Typer;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
 
-    switch(g_gamestate.minigame)
-    {
-        case MiniGame_Typer: minigame_typer_start(); break;
-    }
+    MINI_GAME_HOOKS[g_gamestate.current_minigame].start();
 }
 
 static void game_init(void)
 {
-    minigame_typer_init();
+    for(nkS32 i=0; i<MiniGameID_TOTAL; ++i)
+    {
+        MINI_GAME_HOOKS[i].init();
+    }
 }
 
 static void game_quit(void)
 {
-    minigame_typer_quit();
+    for(nkS32 i=0; i<MiniGameID_TOTAL; ++i)
+    {
+        MINI_GAME_HOOKS[i].quit();
+    }
 }
 
 static void game_update(nkF32 dt)
 {
     // Update the current game.
-    switch(g_gamestate.minigame)
-    {
-        case MiniGame_Typer: minigame_typer_update(dt); break;
-    }
+    MINI_GAME_HOOKS[g_gamestate.current_minigame].update(dt);
 
     if(g_gamestate.intro_timer > 0.0f)
     {
@@ -89,11 +124,7 @@ static void game_update(nkF32 dt)
         if(prev_timer > 0.0f && g_gamestate.game_timer <= 0.0f)
         {
             sound_play(g_asset_sfx_alarm_clock, 0);
-
-            switch(g_gamestate.minigame)
-            {
-                case MiniGame_Typer: minigame_typer_end(); break;
-            }
+            MINI_GAME_HOOKS[g_gamestate.current_minigame].end();
         }
     }
 }
@@ -101,10 +132,7 @@ static void game_update(nkF32 dt)
 static void game_render(void)
 {
     // Render the current game.
-    switch(g_gamestate.minigame)
-    {
-        case MiniGame_Typer: minigame_typer_render(); break;
-    }
+    MINI_GAME_HOOKS[g_gamestate.current_minigame].render();
 
     imm_begin_texture_batch(g_asset_ui);
 
