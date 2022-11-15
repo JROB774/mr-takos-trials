@@ -18,6 +18,7 @@ typedef struct MiniGameTyper
     nkF32    angle_timer;
     nkF32    success_countdown;
     nkF32    wrong_countdown;
+    nkBool   played_highscore_sound;
 }
 MiniGameTyper;
 
@@ -96,6 +97,17 @@ static void minigame_typer_draw_score(void)
         render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 0.7f);
         x += LETTER_WIDTH * 0.5f;
     }
+
+    // If this score is a highscore then draw a cool crown.
+    if((g_save.highscore_typer <= g_minigame_typer.score) && (g_save.highscore_typer != 0))
+    {
+        render_item_ex(x+3.0f,y-23.0f, 1,1, 0.4f, ATLAS_UI, ATLAS_UI_CROWN_BODY, 0.7f);
+        if(!g_minigame_typer.played_highscore_sound)
+        {
+            g_minigame_typer.played_highscore_sound = NK_TRUE;
+            sound_play(g_asset_sfx_trumpet_fanfare, 0);
+        }
+    }
 }
 
 static void minigame_typer_init(void)
@@ -154,6 +166,8 @@ static void minigame_typer_start(void)
 
     g_minigame_typer.success_countdown = 0.0f;
     g_minigame_typer.wrong_countdown = 0.0f;
+
+    g_minigame_typer.played_highscore_sound = NK_FALSE;
 }
 
 static void minigame_typer_end(void)

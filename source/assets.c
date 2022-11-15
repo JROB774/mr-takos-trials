@@ -23,6 +23,7 @@ static void load_all_assets(void)
     g_asset_sfx_smack[2]        = load_asset_sound  ("smack_003.wav");
     g_asset_sfx_airhorn         = load_asset_sound  ("airhorn.wav");
     g_asset_sfx_mouse_click     = load_asset_sound  ("mouse_click.wav");
+    g_asset_sfx_trumpet_fanfare = load_asset_sound  ("trumpet_fanfare.wav");
 }
 
 static void free_all_assets(void)
@@ -48,6 +49,7 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_smack[2]);
     sound_destroy  (g_asset_sfx_airhorn);
     sound_destroy  (g_asset_sfx_mouse_click);
+    sound_destroy  (g_asset_sfx_trumpet_fanfare);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
