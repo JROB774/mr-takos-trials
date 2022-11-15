@@ -9,7 +9,7 @@ typedef struct SaveState
 {
     nkU32 version;
     nkU32 fourcc;
-    nkU32 highscore_typer;
+    nkU32 highscore[MiniGameID_TOTAL];
 }
 SaveState;
 #pragma pack(pop,1)

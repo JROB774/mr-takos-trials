@@ -1,5 +1,18 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+typedef struct GameState
+{
+    MiniGameID current_minigame;
+    nkF32      intro_timer;
+    nkF32      game_timer;
+    nkS32      game_score;
+    nkBool     played_highscore_sound;
+    nkBool     in_intro;
+}
+GameState;
+
+static GameState g_gamestate;
+
 #include "minigame/typer.c"
 #include "minigame/simon.c"
 
@@ -21,13 +34,6 @@ typedef struct MiniGameHooks
 }
 MiniGameHooks;
 
-NK_ENUM(MiniGameID, nkS32)
-{
-    MiniGameID_Typer,
-    MiniGameID_Simon,
-    MiniGameID_TOTAL
-};
-
 #define REGISTER_MINIGAME(name) \
 {                               \
     minigame_##name##_init,     \
@@ -46,27 +52,6 @@ static const MiniGameHooks MINI_GAME_HOOKS[] =
 
 NK_STATIC_ASSERT(MiniGameID_TOTAL == NK_ARRAY_SIZE(MINI_GAME_HOOKS), minigame_size_mismatch);
 
-typedef struct GameState
-{
-    MiniGameID current_minigame;
-    nkF32      intro_timer;
-    nkF32      game_timer;
-    nkBool     in_intro;
-}
-GameState;
-
-static GameState g_gamestate;
-
-static void game_start(void)
-{
-    g_gamestate.current_minigame = MiniGameID_Simon;
-
-    g_gamestate.intro_timer = 3.25f;
-    g_gamestate.game_timer = 20.0f;
-
-    MINI_GAME_HOOKS[g_gamestate.current_minigame].start();
-}
-
 static void game_init(void)
 {
     for(nkS32 i=0; i<MiniGameID_TOTAL; ++i)
@@ -83,10 +68,42 @@ static void game_quit(void)
     }
 }
 
+static void game_start(void)
+{
+    g_gamestate.current_minigame = MiniGameID_Typer;
+
+    g_gamestate.intro_timer = 3.25f;
+    g_gamestate.game_timer = 20.0f;
+
+    g_gamestate.game_score = 0;
+
+    g_gamestate.played_highscore_sound = NK_FALSE;
+
+    MINI_GAME_HOOKS[g_gamestate.current_minigame].start();
+}
+
+static void game_end(void)
+{
+    sound_play(g_asset_sfx_alarm_clock, 0);
+
+    MINI_GAME_HOOKS[g_gamestate.current_minigame].end();
+
+    if(g_gamestate.game_score > g_save.highscore[g_gamestate.current_minigame])
+    {
+        g_save.highscore[g_gamestate.current_minigame] = g_gamestate.game_score;
+        save_game_data();
+    }
+}
+
 static void game_update(nkF32 dt)
 {
     // Update the current game.
     MINI_GAME_HOOKS[g_gamestate.current_minigame].update(dt);
+
+    if(g_gamestate.game_score < 0)
+    {
+        g_gamestate.game_score = 0;
+    }
 
     if(g_gamestate.intro_timer > 0.0f)
     {
@@ -126,8 +143,7 @@ static void game_update(nkF32 dt)
         }
         if(prev_timer > 0.0f && g_gamestate.game_timer <= 0.0f)
         {
-            sound_play(g_asset_sfx_alarm_clock, 0);
-            MINI_GAME_HOOKS[g_gamestate.current_minigame].end();
+            game_end();
         }
     }
 }
@@ -192,6 +208,33 @@ static void game_render(void)
             nkF32 y = SCREEN_HEIGHT * 0.5f;
 
             render_item(x,y, ATLAS_UI, index, 1.0f);
+        }
+    }
+
+    // Render the score.
+    nkChar score_buffer[16] = NK_ZERO_MEM;
+    sprintf(score_buffer, "%05d", g_gamestate.game_score);
+
+    x = (SCREEN_WIDTH - (LETTER_WIDTH*strlen(score_buffer))) * 0.5f;
+    y = SCREEN_HEIGHT - 32.0f;
+
+    for(nkU32 i=0,n=strlen(score_buffer); i<n; ++i)
+    {
+        nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((score_buffer[i] - '0') * 2) + 1);
+        x += LETTER_WIDTH * 0.5f;
+        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 0.7f);
+        x += LETTER_WIDTH * 0.5f;
+    }
+
+    // If this score is a highscore then draw a cool crown.
+    if((g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score) &&
+       (g_save.highscore[g_gamestate.current_minigame] != 0))
+    {
+        render_item_ex(x+3.0f,y-23.0f, 1,1, 0.4f, ATLAS_UI, ATLAS_UI_CROWN_BODY, 0.7f);
+        if(!g_gamestate.played_highscore_sound)
+        {
+            g_gamestate.played_highscore_sound = NK_TRUE;
+            sound_play(g_asset_sfx_trumpet_fanfare, 0);
         }
     }
 

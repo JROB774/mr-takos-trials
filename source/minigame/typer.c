@@ -13,12 +13,10 @@ typedef struct MiniGameTyper
     nkU32    word_count;
     nkChar   input[32];
     nkF32    angles[32];
-    nkS32    score;
     nkS32    combo;
     nkF32    angle_timer;
     nkF32    success_countdown;
     nkF32    wrong_countdown;
-    nkBool   played_highscore_sound;
 }
 MiniGameTyper;
 
@@ -80,36 +78,6 @@ static void minigame_typer_draw_word(const nkU32 word_index)
     imm_end_texture_batch();
 }
 
-static void minigame_typer_draw_score(void)
-{
-    static const nkF32 LETTER_WIDTH = 15.0f;
-
-    nkChar score_buffer[16] = NK_ZERO_MEM;
-    sprintf(score_buffer, "%05d", g_minigame_typer.score);
-
-    nkF32 x = (SCREEN_WIDTH - (LETTER_WIDTH*strlen(score_buffer))) * 0.5f;
-    nkF32 y = SCREEN_HEIGHT - 32.0f;
-
-    for(nkU32 i=0,n=strlen(score_buffer); i<n; ++i)
-    {
-        nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((score_buffer[i] - '0') * 2) + 1);
-        x += LETTER_WIDTH * 0.5f;
-        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 0.7f);
-        x += LETTER_WIDTH * 0.5f;
-    }
-
-    // If this score is a highscore then draw a cool crown.
-    if((g_save.highscore_typer <= g_minigame_typer.score) && (g_save.highscore_typer != 0))
-    {
-        render_item_ex(x+3.0f,y-23.0f, 1,1, 0.4f, ATLAS_UI, ATLAS_UI_CROWN_BODY, 0.7f);
-        if(!g_minigame_typer.played_highscore_sound)
-        {
-            g_minigame_typer.played_highscore_sound = NK_TRUE;
-            sound_play(g_asset_sfx_trumpet_fanfare, 0);
-        }
-    }
-}
-
 static void minigame_typer_init(void)
 {
     // Load the raw list of words into an array of strings for easy access.
@@ -159,24 +127,17 @@ static void minigame_typer_start(void)
 {
     minigame_typer_select_new_word();
 
-    g_minigame_typer.score = 0;
     g_minigame_typer.combo = 0;
 
     g_minigame_typer.angle_timer = 0.0f;
 
     g_minigame_typer.success_countdown = 0.0f;
     g_minigame_typer.wrong_countdown = 0.0f;
-
-    g_minigame_typer.played_highscore_sound = NK_FALSE;
 }
 
 static void minigame_typer_end(void)
 {
-    if(g_minigame_typer.score > g_save.highscore_typer)
-    {
-        g_save.highscore_typer = g_minigame_typer.score;
-        save_game_data();
-    }
+    // Nothing...
 }
 
 static void minigame_typer_update(nkF32 dt)
@@ -226,7 +187,7 @@ static void minigame_typer_update(nkF32 dt)
                         g_minigame_typer.input[index] = tolower(text_input[i]);
 
                         g_minigame_typer.combo++;
-                        g_minigame_typer.score += 1 * g_minigame_typer.combo;
+                        g_gamestate.game_score += 1 * g_minigame_typer.combo;
                     }
                     else
                     {
@@ -235,12 +196,7 @@ static void minigame_typer_update(nkF32 dt)
                         g_minigame_typer.wrong_countdown = WRONG_COUNTDOWN;
 
                         g_minigame_typer.combo = 0;
-                        g_minigame_typer.score -= 50;
-
-                        if(g_minigame_typer.score < 0)
-                        {
-                            g_minigame_typer.score = 0;
-                        }
+                        g_gamestate.game_score -= 50;
                     }
                 }
             }
@@ -250,7 +206,7 @@ static void minigame_typer_update(nkF32 dt)
         if(strcmp(g_minigame_typer.input, current_word) == 0)
         {
             g_minigame_typer.success_countdown = SUCCESS_COUNTDOWN;
-            g_minigame_typer.score += 100; // Word bonus!
+            g_gamestate.game_score += 100; // Word bonus!
             minigame_typer_select_new_word();
             sound_play(g_asset_sfx_success_ding, 0);
         }
@@ -262,8 +218,6 @@ static void minigame_typer_render(void)
     minigame_typer_draw_word(g_minigame_typer.current_word);
 
     imm_begin_texture_batch(g_asset_ui);
-
-    minigame_typer_draw_score();
 
     // Draw the happy face if the player got a word.
     if(g_minigame_typer.success_countdown > 0.0f)
