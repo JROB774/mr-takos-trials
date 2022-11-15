@@ -1,6 +1,7 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
 #include "minigame/typer.c"
+#include "minigame/simon.c"
 
 typedef void(*MiniGameHook_Init  )(void );
 typedef void(*MiniGameHook_Quit  )(void );
@@ -23,6 +24,7 @@ MiniGameHooks;
 NK_ENUM(MiniGameID, nkS32)
 {
     MiniGameID_Typer,
+    MiniGameID_Simon,
     MiniGameID_TOTAL
 };
 
@@ -38,7 +40,8 @@ NK_ENUM(MiniGameID, nkS32)
 
 static const MiniGameHooks MINI_GAME_HOOKS[] =
 {
-    REGISTER_MINIGAME(typer)
+    REGISTER_MINIGAME(typer),
+    REGISTER_MINIGAME(simon)
 };
 
 NK_STATIC_ASSERT(MiniGameID_TOTAL == NK_ARRAY_SIZE(MINI_GAME_HOOKS), minigame_size_mismatch);
@@ -56,7 +59,7 @@ static GameState g_gamestate;
 
 static void game_start(void)
 {
-    g_gamestate.current_minigame = MiniGameID_Typer;
+    g_gamestate.current_minigame = MiniGameID_Simon;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
