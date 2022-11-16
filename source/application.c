@@ -1,15 +1,5 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-static nkF32 update_item_angle(nkF32 old_angle, nkF32 min, nkF32 max)
-{
-    nkF32 min_delta = 0.15f * (fabsf(min / 0.4f));
-    nkF32 max_delta = 0.25f * (fabsf(max / 0.4f));
-    nkF32 new_angle = old_angle;
-    while(fabsf(old_angle-new_angle) <= min_delta || fabsf(old_angle-new_angle) >= max_delta)
-        new_angle = rng_num_range(min,max);
-    return new_angle;
-}
-
 static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier)
 {
     nkF32 sx = x + (SHADOW_OFFSET.x * shadow_offset_multiplier);

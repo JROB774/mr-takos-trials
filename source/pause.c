@@ -7,8 +7,6 @@
 
 typedef struct PauseState
 {
-    nkF32  angle;
-    nkF32  angle_timer;
     nkBool paused;
 }
 PauseState;
@@ -38,14 +36,6 @@ static void pause_update(nkF32 dt)
     }
     else
     {
-        // Update the pause button.
-        g_pause.angle_timer += dt;
-        if(g_pause.angle_timer >= ITEM_ANGLE_CHANGE_SPEED)
-        {
-            g_pause.angle_timer -= ITEM_ANGLE_CHANGE_SPEED;
-            g_pause.angle = update_item_angle(g_pause.angle, -0.4f,0.4f);
-        }
-
         nkF32 x = PAUSE_BUTTON_X;
         nkF32 y = PAUSE_BUTTON_Y;
         nkF32 w = PAUSE_BUTTON_W;
@@ -97,7 +87,7 @@ static void pause_render(void)
         if(cursor_in_bounds(x,y,w,h))
         {
             nkF32 scale = (is_mouse_button_pressed(MouseButton_Left)) ? 1.3f : 1.1f;
-            render_item_ex(px,py, scale,scale, g_pause.angle, ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);
+            render_item_ex(px,py, scale,scale, g_gamestate.angles_big[GAME_MAX_ANGLES-3], ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);
         }
         else
         {

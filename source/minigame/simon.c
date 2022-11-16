@@ -31,8 +31,6 @@ typedef struct MiniGameSimon
     nkS32   pattern_length;
     nkS32   pattern_stage;
     nkS32   combo;
-    nkF32   angle;
-    nkF32   angle_timer;
     nkF32   anim_timer;
     nkF32   initial_timer;
     nkS32   selected;
@@ -92,14 +90,6 @@ static void minigame_simon_end(void)
 
 static void minigame_simon_update(nkF32 dt)
 {
-    // Update the render angle.
-    g_minigame_simon.angle_timer += dt;
-    if(g_minigame_simon.angle_timer >= ITEM_ANGLE_CHANGE_SPEED)
-    {
-        g_minigame_simon.angle_timer -= ITEM_ANGLE_CHANGE_SPEED;
-        g_minigame_simon.angle = update_item_angle(g_minigame_simon.angle, -0.1f,0.1f);
-    }
-
     // Update the animation timer.
     g_minigame_simon.anim_timer += dt;
     if(g_minigame_simon.anim_timer >= SIMON_ANIM_INTERVAL)
@@ -178,7 +168,7 @@ static void minigame_simon_render(void)
 
         if(game_is_playing() && !g_minigame_simon.playback_pattern && cursor_in_bounds(b.x,b.y,b.z,b.w))
         {
-            render_item_ex(x,y, 1,1, g_minigame_simon.angle, ATLAS_GAMESIMON, index, 1.0f);
+            render_item_ex(x,y, 1,1, g_gamestate.angles_lil[0], ATLAS_GAMESIMON, index, 1.0f);
         }
         else
         {

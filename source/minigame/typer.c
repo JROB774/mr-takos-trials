@@ -6,9 +6,7 @@ typedef struct MiniGameTyper
     nkChar** words;
     nkU32    word_count;
     nkChar   input[32];
-    nkF32    angles[32];
     nkS32    combo;
-    nkF32    angle_timer;
 }
 MiniGameTyper;
 
@@ -57,12 +55,6 @@ static void minigame_typer_init(void)
             length++;
         }
     }
-
-    // Setup the initial rendering angles;
-    for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
-    {
-        g_minigame_typer.angles[i] = rng_num_range(-0.4f,0.4f);
-    }
 }
 
 static void minigame_typer_quit(void)
@@ -86,17 +78,6 @@ static void minigame_typer_end(void)
 
 static void minigame_typer_update(nkF32 dt)
 {
-    // Update the letter render angles at a fixed interval.
-    g_minigame_typer.angle_timer += dt;
-    if(g_minigame_typer.angle_timer >= ITEM_ANGLE_CHANGE_SPEED)
-    {
-        g_minigame_typer.angle_timer -= ITEM_ANGLE_CHANGE_SPEED;
-        for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
-        {
-            g_minigame_typer.angles[i] = update_item_angle(g_minigame_typer.angles[i], -0.4f,0.4f);
-        }
-    }
-
     if(game_is_playing() && !game_is_in_timeout())
     {
         // Compare the current text input with what the user has left to type.
@@ -174,7 +155,7 @@ static void minigame_typer_render(void)
 
         index += (((toupper(word[i]) - 'A') * 2) + 1);
 
-        nkF32 angle = g_minigame_typer.angles[i];
+        nkF32 angle = g_gamestate.angles_big[i];
 
         x += ((ATLAS_GAMETYPER[index].clip_bounds.w * 0.5f));
 

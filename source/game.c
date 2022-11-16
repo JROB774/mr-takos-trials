@@ -3,6 +3,10 @@
 #define GAME_SUCCESS_COUNTDOWN 0.8f
 #define GAME_FAILURE_COUNTDOWN 0.8f
 
+#define GAME_MAX_ANGLES 128
+
+#define GAME_ANGLE_CHANGE_SPEED 0.5f
+
 typedef struct GameState
 {
     MiniGameID current_minigame;
@@ -15,6 +19,9 @@ typedef struct GameState
     nkF32      failure_countdown;
     nkVec2     success_pos;
     nkVec2     failure_pos;
+    nkF32      angle_timer;
+    nkF32      angles_big[GAME_MAX_ANGLES];
+    nkF32      angles_lil[GAME_MAX_ANGLES];
 }
 GameState;
 
@@ -59,11 +66,28 @@ static const MiniGameHooks MINI_GAME_HOOKS[] =
 
 NK_STATIC_ASSERT(MiniGameID_TOTAL == NK_ARRAY_SIZE(MINI_GAME_HOOKS), minigame_size_mismatch);
 
+static nkF32 game_update_angle(nkF32 old_angle, nkF32 min, nkF32 max)
+{
+    nkF32 min_delta = 0.15f * (fabsf(min / 0.4f));
+    nkF32 max_delta = 0.25f * (fabsf(max / 0.4f));
+    nkF32 new_angle = old_angle;
+    while(fabsf(old_angle-new_angle) <= min_delta || fabsf(old_angle-new_angle) >= max_delta)
+        new_angle = rng_num_range(min,max);
+    return new_angle;
+}
+
 static void game_init(void)
 {
     for(nkS32 i=0; i<MiniGameID_TOTAL; ++i)
     {
         MINI_GAME_HOOKS[i].init();
+    }
+
+    // Setup the initial angles.
+    for(nkS32 i=0; i<GAME_MAX_ANGLES; ++i)
+    {
+        g_gamestate.angles_big[i] = rng_num_range(-0.4f,0.4f);
+        g_gamestate.angles_lil[i] = rng_num_range(-0.1f,0.1f);
     }
 }
 
@@ -77,7 +101,7 @@ static void game_quit(void)
 
 static void game_start(void)
 {
-    g_gamestate.current_minigame = MiniGameID_Typer;
+    g_gamestate.current_minigame = MiniGameID_Simon;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
@@ -109,6 +133,18 @@ static void game_update(nkF32 dt)
 {
     // Update the current game.
     MINI_GAME_HOOKS[g_gamestate.current_minigame].update(dt);
+
+    // Update the render angles at a fixed interval.
+    g_gamestate.angle_timer += dt;
+    if(g_gamestate.angle_timer >= GAME_ANGLE_CHANGE_SPEED)
+    {
+        g_gamestate.angle_timer -= GAME_ANGLE_CHANGE_SPEED;
+        for(nkS32 i=0; i<GAME_MAX_ANGLES; ++i)
+        {
+            g_gamestate.angles_big[i] = game_update_angle(g_gamestate.angles_big[i], -0.4f,0.4f);
+            g_gamestate.angles_lil[i] = game_update_angle(g_gamestate.angles_lil[i], -0.1f,0.1f);
+        }
+    }
 
     // Keep the game score in bounds.
     if(g_gamestate.game_score < 0)
@@ -265,7 +301,7 @@ static void game_render(void)
         nkF32 x = g_gamestate.success_pos.x;
         nkF32 y = g_gamestate.success_pos.y;
 
-        render_item_ex(x,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
+        render_item_ex(x,y, 0.8f,0.8f, g_gamestate.angles_big[GAME_MAX_ANGLES-2], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
     }
 
     // Draw the sad face if the player is on timeout.
@@ -274,7 +310,7 @@ static void game_render(void)
         nkF32 x = g_gamestate.failure_pos.x;
         nkF32 y = g_gamestate.failure_pos.y;
 
-        render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
+        render_item_ex(x,y, 1,1, g_gamestate.angles_big[GAME_MAX_ANGLES-1], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
     }
 
     imm_end_texture_batch();
