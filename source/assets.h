@@ -25,6 +25,7 @@ static Sound   g_asset_sfx_smack[3];
 static Sound   g_asset_sfx_airhorn;
 static Sound   g_asset_sfx_mouse_click;
 static Sound   g_asset_sfx_trumpet_fanfare;
+static Sound   g_asset_sfx_simon[4];
 
 static void load_all_assets(void);
 static void free_all_assets(void);
@@ -37,3 +38,4 @@ static Texture  load_asset_texture(const nkChar* name, SamplerFilter filter, Sam
 static Shader   load_asset_shader (const nkChar* name);
 
 #endif /* ASSETS_H__ /////////////////////////////////////////////////////////*/
+

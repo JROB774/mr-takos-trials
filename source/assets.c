@@ -26,6 +26,10 @@ static void load_all_assets(void)
     g_asset_sfx_airhorn         = load_asset_sound  ("airhorn.wav");
     g_asset_sfx_mouse_click     = load_asset_sound  ("mouse_click.wav");
     g_asset_sfx_trumpet_fanfare = load_asset_sound  ("trumpet_fanfare.wav");
+    g_asset_sfx_simon[0]        = load_asset_sound  ("simon_ba.wav");
+    g_asset_sfx_simon[1]        = load_asset_sound  ("simon_be.wav");
+    g_asset_sfx_simon[2]        = load_asset_sound  ("simon_bo.wav");
+    g_asset_sfx_simon[3]        = load_asset_sound  ("simon_bu.wav");
 }
 
 static void free_all_assets(void)
@@ -54,6 +58,10 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_airhorn);
     sound_destroy  (g_asset_sfx_mouse_click);
     sound_destroy  (g_asset_sfx_trumpet_fanfare);
+    sound_destroy  (g_asset_sfx_simon[0]);
+    sound_destroy  (g_asset_sfx_simon[1]);
+    sound_destroy  (g_asset_sfx_simon[2]);
+    sound_destroy  (g_asset_sfx_simon[3]);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
