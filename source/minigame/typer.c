@@ -1,8 +1,5 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-#define TYPER_SUCCESS_COUNTDOWN 0.8f
-#define TYPER_WRONG_COUNTDOWN   0.8f
-
 typedef struct MiniGameTyper
 {
     nkU32    current_word;
@@ -12,8 +9,6 @@ typedef struct MiniGameTyper
     nkF32    angles[32];
     nkS32    combo;
     nkF32    angle_timer;
-    nkF32    success_countdown;
-    nkF32    wrong_countdown;
 }
 MiniGameTyper;
 
@@ -82,9 +77,6 @@ static void minigame_typer_start(void)
     minigame_typer_select_new_word();
 
     g_minigame_typer.combo = 0;
-
-    g_minigame_typer.success_countdown = 0.0f;
-    g_minigame_typer.wrong_countdown = 0.0f;
 }
 
 static void minigame_typer_end(void)
@@ -105,17 +97,7 @@ static void minigame_typer_update(nkF32 dt)
         }
     }
 
-    // Decrement the countdowns.
-    if(g_minigame_typer.success_countdown > 0.0f)
-    {
-        g_minigame_typer.success_countdown -= dt;
-    }
-    if(g_minigame_typer.wrong_countdown > 0.0f)
-    {
-        g_minigame_typer.wrong_countdown -= dt;
-    }
-
-    if(game_is_playing() && g_minigame_typer.wrong_countdown <= 0.0f)
+    if(game_is_playing() && !game_is_in_timeout())
     {
         // Compare the current text input with what the user has left to type.
         nkChar* current_word = g_minigame_typer.words[g_minigame_typer.current_word];
@@ -139,9 +121,7 @@ static void minigame_typer_update(nkF32 dt)
                     }
                     else
                     {
-                        sound_play(g_asset_sfx_wrong_buzzer, 0);
-
-                        g_minigame_typer.wrong_countdown = TYPER_WRONG_COUNTDOWN;
+                        game_display_failure((SCREEN_WIDTH * 0.5f), (SCREEN_HEIGHT * 0.5f));
 
                         g_minigame_typer.combo = 0;
                         g_gamestate.game_score -= 50;
@@ -153,10 +133,9 @@ static void minigame_typer_update(nkF32 dt)
         // If the word is complete then advance!
         if(strcmp(g_minigame_typer.input, current_word) == 0)
         {
-            g_minigame_typer.success_countdown = TYPER_SUCCESS_COUNTDOWN;
+            game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
             g_gamestate.game_score += 100; // Word bonus!
             minigame_typer_select_new_word();
-            sound_play(g_asset_sfx_success_ding, 0);
         }
     }
 }
@@ -203,30 +182,6 @@ static void minigame_typer_render(void)
 
         x += ((ATLAS_GAMETYPER[index].clip_bounds.w * 0.5f));
         x += WORD_SPACING;
-    }
-
-    imm_end_texture_batch();
-
-    // Draw UI stuff.
-
-    imm_begin_texture_batch(g_asset_ui);
-
-    // Draw the happy face if the player got a word.
-    if(g_minigame_typer.success_countdown > 0.0f)
-    {
-        nkF32 x = (SCREEN_WIDTH * 0.5f) + 80.0f;
-        nkF32 y = (SCREEN_HEIGHT - 32.0f);
-
-        render_item_ex(x,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
-    }
-
-    // Draw the sad face if the player is on timeout.
-    if(g_minigame_typer.wrong_countdown > 0.0f)
-    {
-        nkF32 x = (SCREEN_WIDTH * 0.5f);
-        nkF32 y = (SCREEN_HEIGHT * 0.5f);
-
-        render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
     }
 
     imm_end_texture_batch();

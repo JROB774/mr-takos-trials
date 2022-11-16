@@ -1,5 +1,8 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define GAME_SUCCESS_COUNTDOWN 0.8f
+#define GAME_FAILURE_COUNTDOWN 0.8f
+
 typedef struct GameState
 {
     MiniGameID current_minigame;
@@ -8,6 +11,10 @@ typedef struct GameState
     nkS32      game_score;
     nkBool     played_highscore_sound;
     nkBool     in_intro;
+    nkF32      success_countdown;
+    nkF32      failure_countdown;
+    nkVec2     success_pos;
+    nkVec2     failure_pos;
 }
 GameState;
 
@@ -70,7 +77,7 @@ static void game_quit(void)
 
 static void game_start(void)
 {
-    g_gamestate.current_minigame = MiniGameID_Simon;
+    g_gamestate.current_minigame = MiniGameID_Typer;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
@@ -78,6 +85,9 @@ static void game_start(void)
     g_gamestate.game_score = 0;
 
     g_gamestate.played_highscore_sound = NK_FALSE;
+
+    g_gamestate.success_countdown = 0.0f;
+    g_gamestate.failure_countdown = 0.0f;
 
     MINI_GAME_HOOKS[g_gamestate.current_minigame].start();
 }
@@ -100,9 +110,20 @@ static void game_update(nkF32 dt)
     // Update the current game.
     MINI_GAME_HOOKS[g_gamestate.current_minigame].update(dt);
 
+    // Keep the game score in bounds.
     if(g_gamestate.game_score < 0)
     {
         g_gamestate.game_score = 0;
+    }
+
+    // Decrement the success/failure timers.
+    if(g_gamestate.success_countdown > 0.0f)
+    {
+        g_gamestate.success_countdown -= dt;
+    }
+    if(g_gamestate.failure_countdown > 0.0f)
+    {
+        g_gamestate.failure_countdown -= dt;
     }
 
     if(g_gamestate.intro_timer > 0.0f)
@@ -238,7 +259,41 @@ static void game_render(void)
         }
     }
 
+    // Draw the happy face if the player was successful.
+    if(g_gamestate.success_countdown > 0.0f)
+    {
+        nkF32 x = g_gamestate.success_pos.x;
+        nkF32 y = g_gamestate.success_pos.y;
+
+        render_item_ex(x,y, 0.8f,0.8f, g_minigame_typer.angles[30], ATLAS_UI, ATLAS_UI_FEEDBACK_HAPPY_BODY, 1.0f);
+    }
+
+    // Draw the sad face if the player is on timeout.
+    if(g_gamestate.failure_countdown > 0.0f)
+    {
+        nkF32 x = g_gamestate.failure_pos.x;
+        nkF32 y = g_gamestate.failure_pos.y;
+
+        render_item_ex(x,y, 1,1, g_minigame_typer.angles[31], ATLAS_UI, ATLAS_UI_FEEDBACK_SAD_BODY, 1.0f);
+    }
+
     imm_end_texture_batch();
+}
+
+static void game_display_success(nkF32 x, nkF32 y)
+{
+    g_gamestate.success_countdown = GAME_SUCCESS_COUNTDOWN;
+    g_gamestate.success_pos = (nkVec2){ x,y };
+
+    sound_play(g_asset_sfx_success_ding, 0);
+}
+
+static void game_display_failure(nkF32 x, nkF32 y)
+{
+    g_gamestate.failure_countdown = GAME_FAILURE_COUNTDOWN;
+    g_gamestate.failure_pos = (nkVec2){ x,y };
+
+    sound_play(g_asset_sfx_wrong_buzzer, 0);
 }
 
 static nkF32 game_get_timer(void)
@@ -249,6 +304,11 @@ static nkF32 game_get_timer(void)
 static nkBool game_is_playing(void)
 {
     return ((g_gamestate.game_timer > 0.0f) && (g_gamestate.intro_timer == 0.0f));
+}
+
+static nkBool game_is_in_timeout(void)
+{
+    return (g_gamestate.failure_countdown > 0.0f);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

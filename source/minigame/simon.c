@@ -6,6 +6,8 @@
 #define SIMON_PATTERN_INTERVAL 0.5f
 #define SIMON_ANIM_INTERVAL    0.3f
 
+#define SIMON_INITIAL_COOLDOWN 0.3f
+
 NK_ENUM(SimonID, nkS32)
 {
     SimonID_Ba,
@@ -32,6 +34,7 @@ typedef struct MiniGameSimon
     nkF32   angle;
     nkF32   angle_timer;
     nkF32   anim_timer;
+    nkF32   initial_timer;
     nkS32   selected;
     nkS32   playback_stage;
     nkF32   playback_timer;
@@ -78,6 +81,8 @@ static void minigame_simon_start(void)
 
     g_minigame_simon.combo = 0;
     g_minigame_simon.selected = -1;
+
+    g_minigame_simon.initial_timer = 0.0f;
 }
 
 static void minigame_simon_end(void)
@@ -107,23 +112,27 @@ static void minigame_simon_update(nkF32 dt)
     {
         if(g_minigame_simon.playback_pattern)
         {
-            // Playback the pattern to the user.
-            g_minigame_simon.playback_timer += dt;
-            if(g_minigame_simon.playback_timer >= SIMON_PATTERN_INTERVAL)
+            g_minigame_simon.initial_timer += dt;
+            if(g_minigame_simon.initial_timer >= SIMON_INITIAL_COOLDOWN)
             {
-                g_minigame_simon.playback_timer -= SIMON_PATTERN_INTERVAL;
-                if(g_minigame_simon.playback_stage >= g_minigame_simon.pattern_length)
+                // Playback the pattern to the user.
+                g_minigame_simon.playback_timer += dt;
+                if(g_minigame_simon.playback_timer >= SIMON_PATTERN_INTERVAL)
                 {
-                    g_minigame_simon.playback_pattern = NK_FALSE;
-                }
-                else
-                {
-                    nkS32 current = g_minigame_simon.pattern[g_minigame_simon.playback_stage];
-                    sound_play(g_asset_sfx_simon[current], 0);
+                    g_minigame_simon.playback_timer -= SIMON_PATTERN_INTERVAL;
+                    if(g_minigame_simon.playback_stage >= g_minigame_simon.pattern_length)
+                    {
+                        g_minigame_simon.playback_pattern = NK_FALSE;
+                    }
+                    else
+                    {
+                        nkS32 current = g_minigame_simon.pattern[g_minigame_simon.playback_stage];
+                        sound_play(g_asset_sfx_simon[current], 0);
 
-                    g_minigame_simon.playback_stage++;
-                    g_minigame_simon.selected = current;
-                    g_minigame_simon.anim_timer = 0.0f;
+                        g_minigame_simon.playback_stage++;
+                        g_minigame_simon.selected = current;
+                        g_minigame_simon.anim_timer = 0.0f;
+                    }
                 }
             }
         }
