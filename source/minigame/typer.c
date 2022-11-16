@@ -1,10 +1,7 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-#define SUCCESS_COUNTDOWN  0.8f
-#define WRONG_COUNTDOWN    0.8f
-#define ANGLE_CHANGE_SPEED 0.5f
-#define LETTER_MIN_ANGLE  -0.4f
-#define LETTER_MAX_ANGLE   0.4f
+#define SUCCESS_COUNTDOWN 0.8f
+#define WRONG_COUNTDOWN   0.8f
 
 typedef struct MiniGameTyper
 {
@@ -69,7 +66,7 @@ static void minigame_typer_init(void)
     // Setup the initial rendering angles;
     for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
     {
-        g_minigame_typer.angles[i] = rng_num_range(&g_rng_v, LETTER_MIN_ANGLE,LETTER_MAX_ANGLE);
+        g_minigame_typer.angles[i] = rng_num_range(&g_rng_v, -0.4f,0.4f);
     }
 }
 
@@ -101,16 +98,12 @@ static void minigame_typer_update(nkF32 dt)
 {
     // Update the letter render angles at a fixed interval.
     g_minigame_typer.angle_timer += dt;
-    if(g_minigame_typer.angle_timer >= ANGLE_CHANGE_SPEED)
+    if(g_minigame_typer.angle_timer >= ITEM_ANGLE_CHANGE_SPEED)
     {
-        g_minigame_typer.angle_timer -= ANGLE_CHANGE_SPEED;
+        g_minigame_typer.angle_timer -= ITEM_ANGLE_CHANGE_SPEED;
         for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
         {
-            nkF32 old_value = g_minigame_typer.angles[i];
-            nkF32 new_value = g_minigame_typer.angles[i];
-            while(fabsf(old_value-new_value) <= 0.15f || fabsf(old_value-new_value) >= 0.25f)
-                new_value = rng_num_range(&g_rng_v, LETTER_MIN_ANGLE,LETTER_MAX_ANGLE);
-            g_minigame_typer.angles[i] = new_value;
+            g_minigame_typer.angles[i] = update_item_angle(g_minigame_typer.angles[i], -0.4f,0.4f);
         }
     }
 

@@ -1,10 +1,5 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-#define PAUSE_ANGLE_CHANGE_SPEED 0.5f
-
-#define PAUSE_MIN_ANGLE -0.4f
-#define PAUSE_MAX_ANGLE  0.4f
-
 #define PAUSE_BUTTON_X (SCREEN_WIDTH - 60.0f)
 #define PAUSE_BUTTON_Y (                0.0f)
 #define PAUSE_BUTTON_W (               60.0f)
@@ -45,14 +40,10 @@ static void pause_update(nkF32 dt)
     {
         // Update the pause button.
         g_pause.angle_timer += dt;
-        if(g_pause.angle_timer >= ANGLE_CHANGE_SPEED)
+        if(g_pause.angle_timer >= ITEM_ANGLE_CHANGE_SPEED)
         {
-            g_pause.angle_timer -= ANGLE_CHANGE_SPEED;
-            nkF32 old_value = g_pause.angle;
-            nkF32 new_value = g_pause.angle;
-            while(fabsf(old_value-new_value) <= 0.15f || fabsf(old_value-new_value) >= 0.25f)
-                new_value = rng_num_range(&g_rng_v, PAUSE_MIN_ANGLE,PAUSE_MAX_ANGLE);
-            g_pause.angle = new_value;
+            g_pause.angle_timer -= ITEM_ANGLE_CHANGE_SPEED;
+            g_pause.angle = update_item_angle(g_pause.angle, -0.4f,0.4f);
         }
 
         nkF32 x = PAUSE_BUTTON_X;
