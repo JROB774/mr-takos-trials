@@ -4,8 +4,9 @@
 
 typedef struct Cursor
 {
-    nkVec2 pos;
-    nkF32  idle_time;
+    nkVec2     pos;
+    nkF32      idle_time;
+    CursorType type;
 }
 Cursor;
 
@@ -45,9 +46,16 @@ static void cursor_render(void)
     nkF32 p_off = (is_mouse_button_down(MouseButton_Left)) ? 1.0f : 0.0f;
     nkF32 s_off = (is_mouse_button_down(MouseButton_Left)) ? 0.6f : 1.0f;
 
+    nkS32 index = ATLAS_UI_CURSOR_ARROW_SHADOW + ((g_cursor.type * 2) + 1);
+
     imm_begin_texture_batch(g_asset_ui);
-    render_item(g_cursor.pos.x-p_off,g_cursor.pos.y-p_off, ATLAS_UI, ATLAS_UI_CURSOR_BODY, s_off);
+    render_item(g_cursor.pos.x-p_off,g_cursor.pos.y-p_off, ATLAS_UI, index, s_off);
     imm_end_texture_batch();
+}
+
+static void cursor_set_type(CursorType type)
+{
+    g_cursor.type = type;
 }
 
 static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)

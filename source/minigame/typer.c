@@ -80,6 +80,8 @@ static void minigame_typer_quit(void)
 
 static void minigame_typer_start(void)
 {
+    cursor_set_type(CursorType_Arrow);
+
     minigame_typer_select_new_word();
 
     g_minigame_typer.combo = 0;
