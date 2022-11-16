@@ -5,6 +5,7 @@ NK_ENUM(MiniGameID, nkS32)
 {
     MiniGameID_Typer,
     MiniGameID_Simon,
+    MiniGameID_Whack,
     MiniGameID_TOTAL
 };
 
