@@ -49,7 +49,8 @@ copy depends\sdl_mixer\bin\*.dll binary\win32\ > NUL
 copy depends\sdl\bin\*.dll binary\win32\ > NUL
 
 pushd binary\win32
-cl ../../source/platform.c %cflg% %defs% %idir% -Fe:tako.exe -link %lflg% %ldir% %libs%
+rc -i ../../redist/win32/res ../../redist/win32/res/icon.rc
+cl ../../source/platform.c %cflg% %defs% %idir% -Fe:tako.exe -link %lflg% %ldir% %libs%  ../../redist/win32/res/icon.res
 popd
 
 goto end
