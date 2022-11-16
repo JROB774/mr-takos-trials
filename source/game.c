@@ -70,7 +70,7 @@ static void game_quit(void)
 
 static void game_start(void)
 {
-    g_gamestate.current_minigame = MiniGameID_Simon;
+    g_gamestate.current_minigame = MiniGameID_Typer;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
