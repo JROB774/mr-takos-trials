@@ -123,8 +123,6 @@ static void minigame_typer_update(nkF32 dt)
 
 static void minigame_typer_render(void)
 {
-    // Draw the current word.
-
     static const nkF32 WORD_SPACING = 3.0f;
 
     const nkChar* word = g_minigame_typer.words[g_minigame_typer.current_word];
@@ -147,8 +145,8 @@ static void minigame_typer_render(void)
     x = (SCREEN_WIDTH - w) * 0.5f;
     y = SCREEN_HEIGHT * 0.5f;
 
+    // Draw the current word.
     imm_begin_texture_batch(g_asset_game_typer);
-
     for(nkU32 i=0; i<word_length; ++i)
     {
         nkS32 index = (g_minigame_typer.input[i] != word[i]) ? ATLAS_GAMETYPER_FADED_A_SHADOW : ATLAS_GAMETYPER_SOLID_A_SHADOW;;
@@ -164,7 +162,6 @@ static void minigame_typer_render(void)
         x += ((ATLAS_GAMETYPER[index].clip_bounds.w * 0.5f));
         x += WORD_SPACING;
     }
-
     imm_end_texture_batch();
 }
 

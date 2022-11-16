@@ -3,10 +3,10 @@
 #define SIMON_MIN_PATTERN_LENGTH 2
 #define SIMON_MAX_PATTERN_LENGTH 5
 
-#define SIMON_PATTERN_INTERVAL 0.5f
+#define SIMON_PATTERN_INTERVAL 0.4f
 #define SIMON_ANIM_INTERVAL    0.3f
 
-#define SIMON_INITIAL_COOLDOWN 0.3f
+#define SIMON_INITIAL_COOLDOWN 0.2f
 
 NK_ENUM(SimonID, nkS32)
 {
@@ -51,14 +51,10 @@ static void minigame_simon_generate_new_pattern(void)
     g_minigame_simon.playback_timer = 0.0f;
     g_minigame_simon.playback_pattern = NK_TRUE;
 
-    // @Temporary: Debug print the pattern
-    printf("Pattern: ");
     for(nkS32 i=0; i<g_minigame_simon.pattern_length; ++i)
     {
         g_minigame_simon.pattern[i] = rng_int_range(0,SimonID_TOTAL-1);
-        printf("%d ", g_minigame_simon.pattern[i]);
     }
-    printf("\n");
 }
 
 static void minigame_simon_init(void)
@@ -80,7 +76,7 @@ static void minigame_simon_start(void)
     g_minigame_simon.combo = 0;
     g_minigame_simon.selected = -1;
 
-    g_minigame_simon.initial_timer = 0.0f;
+    g_minigame_simon.initial_timer = SIMON_INITIAL_COOLDOWN;
 }
 
 static void minigame_simon_end(void)
@@ -102,8 +98,7 @@ static void minigame_simon_update(nkF32 dt)
     {
         if(g_minigame_simon.playback_pattern)
         {
-            g_minigame_simon.initial_timer += dt;
-            if(g_minigame_simon.initial_timer >= SIMON_INITIAL_COOLDOWN)
+            if(g_minigame_simon.initial_timer <= 0.0f)
             {
                 // Playback the pattern to the user.
                 g_minigame_simon.playback_timer += dt;
@@ -125,6 +120,10 @@ static void minigame_simon_update(nkF32 dt)
                     }
                 }
             }
+            else
+            {
+                g_minigame_simon.initial_timer -= dt;
+            }
         }
         else
         {
@@ -137,11 +136,40 @@ static void minigame_simon_update(nkF32 dt)
                 b.x -= b.z * 0.5f;
                 b.y -= b.w * 0.5f;
 
-                if(cursor_in_bounds(b.x,b.y,b.z,b.w) && is_mouse_button_pressed(MouseButton_Left))
+                if(cursor_in_bounds(b.x,b.y,b.z,b.w) && is_mouse_button_pressed(MouseButton_Left) && !game_is_in_timeout())
                 {
                     sound_play(g_asset_sfx_simon[i], 0);
                     g_minigame_simon.selected = i;
                     g_minigame_simon.anim_timer = 0.0f;
+
+                    nkBool correct = (i == g_minigame_simon.pattern[g_minigame_simon.pattern_stage]);
+                    if(correct)
+                    {
+                        g_minigame_simon.pattern_stage++;
+                        g_minigame_simon.combo++;
+
+                        g_gamestate.game_score += 5 * g_minigame_simon.combo;
+
+                        if(g_minigame_simon.pattern_stage >= g_minigame_simon.pattern_length)
+                        {
+                            game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
+                            g_minigame_simon.initial_timer = SIMON_INITIAL_COOLDOWN;
+
+                            g_gamestate.game_score += (g_minigame_simon.pattern_length * 100); // Pattern bonus!
+
+                            minigame_simon_generate_new_pattern();
+                        }
+                    }
+                    else
+                    {
+                        game_display_failure((SCREEN_WIDTH * 0.5f), (SCREEN_HEIGHT * 0.5f));
+                        g_minigame_simon.initial_timer = GAME_FAILURE_COUNTDOWN;
+
+                        g_minigame_typer.combo = 0;
+                        g_gamestate.game_score -= 50;
+
+                        minigame_simon_generate_new_pattern();
+                    }
                 }
             }
         }
@@ -166,7 +194,7 @@ static void minigame_simon_render(void)
         // Potentially play the singing animation.
         nkS32 index = ((g_minigame_simon.selected == i) ? (i*4)+3 : (i*4)+1);
 
-        if(game_is_playing() && !g_minigame_simon.playback_pattern && cursor_in_bounds(b.x,b.y,b.z,b.w))
+        if(game_is_playing() && !g_minigame_simon.playback_pattern && cursor_in_bounds(b.x,b.y,b.z,b.w) && !game_is_in_timeout())
         {
             render_item_ex(x,y, 1,1, g_gamestate.angles_lil[0], ATLAS_GAMESIMON, index, 1.0f);
         }
