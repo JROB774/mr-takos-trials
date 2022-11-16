@@ -9,7 +9,8 @@ static void load_all_assets(void)
     g_asset_game_typer          = load_asset_texture("gametyper.png",    SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_game_simon          = load_asset_texture("gamesimon.png",    SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_wordlist            = load_asset_text   ("wordlist.txt");
-    g_asset_font                = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 48.0f);
+    g_asset_font_big            = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 48.0f);
+    g_asset_font_lil            = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 28.0f);
     g_asset_sfx_wrong_buzzer    = load_asset_sound  ("wrong_buzzer.wav");
     g_asset_sfx_alarm_clock     = load_asset_sound  ("alarm_clock.wav");
     g_asset_sfx_clock_ticking   = load_asset_sound  ("clock_ticking.wav");
@@ -41,7 +42,8 @@ static void free_all_assets(void)
     texture_destroy(g_asset_game_typer);
     texture_destroy(g_asset_game_simon);
     free           (g_asset_wordlist);
-    font_destroy   (g_asset_font);
+    font_destroy   (g_asset_font_big);
+    font_destroy   (g_asset_font_lil);
     sound_destroy  (g_asset_sfx_wrong_buzzer);
     sound_destroy  (g_asset_sfx_alarm_clock);
     sound_destroy  (g_asset_sfx_clock_ticking);

@@ -61,16 +61,16 @@ static void pause_render(void)
     if(g_pause.paused)
     {
         // Render pause menu.
-        nkF32 w = font_get_text_bounds(g_asset_font, "Paused").x;
-        nkF32 h = font_get_px_height(g_asset_font) * 0.75f;
+        nkF32 w = font_get_text_bounds(g_asset_font_big, "Paused").x;
+        nkF32 h = font_get_px_height(g_asset_font_big) * 0.75f;
         nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
         nkF32 y = (SCREEN_HEIGHT * 0.5f) + (h * 0.25f);
 
         nkVec4 fg_color = (nkVec4){ 0.15f,0.10f,0.00f,1.0f };
         nkVec4 bg_color = (nkVec4){ 0.00f,0.00f,0.00f,0.3f };
 
-        font_draw_text(g_asset_font, x+2,y+2, "Paused", bg_color);
-        font_draw_text(g_asset_font, x,y, "Paused", fg_color);
+        font_draw_text(g_asset_font_big, x+2,y+2, "Paused", bg_color);
+        font_draw_text(g_asset_font_big, x,y, "Paused", fg_color);
     }
     else
     {
