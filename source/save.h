@@ -12,7 +12,7 @@ typedef struct SaveState
     nkU32 highscore[MiniGameID_TOTAL];
 }
 SaveState;
-#pragma pack(pop,1)
+#pragma pack(pop)
 
 static SaveState g_save;
 

@@ -10,6 +10,10 @@
 #define NK_MATH_IMPLEMENTATION
 #define NK_FILESYS_IMPLEMENTATION
 
+#if defined(BUILD_WEB)
+#include <emscripten.h>
+#endif // BUILD_WEB
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -92,7 +96,7 @@ typedef struct ProgramState
     nkBool maximized;
 }
 ProgramState;
-#pragma pack(pop,1)
+#pragma pack(pop)
 
 typedef struct PlatformContext
 {
@@ -561,7 +565,6 @@ int main(int argc, char** argv)
 #endif // BUILD_NATIVE
 
 #if defined(BUILD_WEB)
-#include <emscripten.h>
 void main_callback(void)
 {
     main_init();
