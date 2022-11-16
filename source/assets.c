@@ -58,12 +58,7 @@ static void free_all_assets(void)
 
 /*////////////////////////////////////////////////////////////////////////////*/
 
-#if defined(BUILD_NATIVE)
 #define ASSET_PATH "assets/"
-#endif // BUILD_NATIVE
-#if defined(BUILD_WEB)
-#define ASSET_PATH ""
-#endif // BUILD_WEB
 
 static Sound load_asset_sound(const nkChar* name)
 {
