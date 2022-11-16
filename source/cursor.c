@@ -15,7 +15,7 @@ static Cursor g_cursor;
 static void cursor_update(nkF32 dt)
 {
     // Play click sound.
-    if(is_mouse_button_pressed(MouseButton_Left) && g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT)
+    if(is_mouse_button_pressed(MouseButton_Left))
     {
         sound_play(g_asset_sfx_mouse_click, 0);
     }
