@@ -166,7 +166,7 @@ static void minigame_simon_update(nkF32 dt)
                         g_minigame_simon.initial_timer = GAME_FAILURE_COUNTDOWN;
 
                         g_minigame_typer.combo = 0;
-                        g_gamestate.game_score -= 50;
+                        g_gamestate.game_score -= 200;
 
                         minigame_simon_generate_new_pattern();
                     }
