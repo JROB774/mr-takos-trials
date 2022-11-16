@@ -1,5 +1,8 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define SIMON_MIN_PATTERN_LENGTH 3
+#define SIMON_MAX_PATTERN_LENGTH 8
+
 NK_ENUM(SimonID, nkS32)
 {
     SimonID_Ba,
@@ -11,12 +14,15 @@ NK_ENUM(SimonID, nkS32)
 
 typedef struct MiniGameSimon
 {
-    SimonID pattern[8];
+    SimonID pattern[SIMON_MAX_PATTERN_LENGTH];
     nkS32   pattern_length;
     nkS32   pattern_stage;
     nkS32   combo;
     nkF32   angle;
     nkF32   angle_timer;
+    nkS32   playback_stage;
+    nkF32   playback_timer;
+    nkBool  playback_pattern;
 }
 MiniGameSimon;
 
@@ -24,13 +30,21 @@ static MiniGameSimon g_minigame_simon;
 
 static void minigame_simon_generate_new_pattern(void)
 {
-    g_minigame_simon.pattern_length = rng_int_range(&g_rng_l, 0, NK_ARRAY_SIZE(g_minigame_simon.pattern)-1);
+    g_minigame_simon.pattern_length = rng_int_range(SIMON_MIN_PATTERN_LENGTH,SIMON_MAX_PATTERN_LENGTH);
     g_minigame_simon.pattern_stage = 0;
 
+    g_minigame_simon.playback_stage = 0;
+    g_minigame_simon.playback_timer = 0.0f;
+    g_minigame_simon.playback_pattern = NK_TRUE;
+
+    // @Temporary: Debug print the pattern
+    printf("Pattern: ");
     for(nkS32 i=0; i<g_minigame_simon.pattern_length; ++i)
     {
-        g_minigame_simon.pattern[i] = rng_int_range(&g_rng_l, 0,SimonID_TOTAL-1);
+        g_minigame_simon.pattern[i] = rng_int_range(0,SimonID_TOTAL-1);
+        printf("%d ", g_minigame_simon.pattern[i]);
     }
+    printf("\n");
 }
 
 static void minigame_simon_init(void)
@@ -66,6 +80,19 @@ static void minigame_simon_update(nkF32 dt)
         g_minigame_simon.angle_timer -= ITEM_ANGLE_CHANGE_SPEED;
         g_minigame_simon.angle = update_item_angle(g_minigame_simon.angle, -0.1f,0.1f);
     }
+
+    // Update game logic.
+    if(game_is_playing())
+    {
+        if(g_minigame_simon.playback_pattern)
+        {
+            // @Incomplete: Playback the pattern...
+        }
+        else
+        {
+            // @Incomplete: Allow user input...
+        }
+    }
 }
 
 static void minigame_simon_render(void)
@@ -91,7 +118,7 @@ static void minigame_simon_render(void)
         b.x -= b.z * 0.5f;
         b.y -= b.w * 0.5f;
 
-        if(game_is_playing() && cursor_in_bounds(b.x,b.y,b.z,b.w))
+        if(game_is_playing() && !g_minigame_simon.playback_pattern && cursor_in_bounds(b.x,b.y,b.z,b.w))
         {
             render_item_ex(x,y, 1,1, g_minigame_simon.angle, ATLAS_GAMESIMON, (i*4)+1, 1.0f);
         }

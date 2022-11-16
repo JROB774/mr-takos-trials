@@ -24,7 +24,7 @@ static void minigame_typer_select_new_word(void)
     // Generate a new word and make sure it's not the same as the previous word.
     nkU32 new_word = g_minigame_typer.current_word;
     while(new_word == g_minigame_typer.current_word)
-        new_word = rng_int(&g_rng_l) % g_minigame_typer.word_count;
+        new_word = rng_int() % g_minigame_typer.word_count;
     g_minigame_typer.current_word = new_word;
 
     memset(g_minigame_typer.input, 0, sizeof(g_minigame_typer.input));
@@ -66,7 +66,7 @@ static void minigame_typer_init(void)
     // Setup the initial rendering angles;
     for(nkS32 i=0,n=NK_ARRAY_SIZE(g_minigame_typer.angles); i<n; ++i)
     {
-        g_minigame_typer.angles[i] = rng_num_range(&g_rng_v, -0.4f,0.4f);
+        g_minigame_typer.angles[i] = rng_num_range(-0.4f,0.4f);
     }
 }
 
@@ -128,7 +128,7 @@ static void minigame_typer_update(nkF32 dt)
                 nkU32 index = strlen(g_minigame_typer.input);
                 if(index < strlen(current_word))
                 {
-                    sound_play(g_asset_sfx_office_stamp[rng_int_range(&g_rng_v, 0,4)], 0);
+                    sound_play(g_asset_sfx_office_stamp[rng_int_range(0,4)], 0);
 
                     if(toupper(text_input[i]) == toupper(current_word[index]))
                     {

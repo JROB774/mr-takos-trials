@@ -6,7 +6,7 @@ static nkF32 update_item_angle(nkF32 old_angle, nkF32 min, nkF32 max)
     nkF32 max_delta = 0.25f * (fabsf(max / 0.4f));
     nkF32 new_angle = old_angle;
     while(fabsf(old_angle-new_angle) <= min_delta || fabsf(old_angle-new_angle) >= max_delta)
-        new_angle = rng_num_range(&g_rng_v, min,max);
+        new_angle = rng_num_range(min,max);
     return new_angle;
 }
 
@@ -30,10 +30,7 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
 
 static void app_init(void)
 {
-    nkU32 seed = time(NULL);
-
-    rng_init(&g_rng_l, seed);
-    rng_init(&g_rng_v, seed);
+    rng_init(time(NULL));
 
     load_all_assets();
 

@@ -1,36 +1,28 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-static void rng_init(RNG* rng, nkU32 seed)
+static void rng_init(nkU32 seed)
 {
-    NK_ASSERT(rng);
-    rng->a = ((seed      ) & 0xFFFF);
-    rng->b = ((seed >> 16) & 0xFFFF);
+    srand(seed);
 }
 
-// https://www.codeproject.com/Articles/25172/Simple-Random-Number-Generation
-static nkS32 rng_int(RNG* rng)
+static nkS32 rng_int(void)
 {
-    NK_ASSERT(rng);
-
-    rng->a = 36969 * (rng->a & 65535) + (rng->a >> 16);
-    rng->b = 18000 * (rng->b & 65535) + (rng->b >> 16);
-
-    return (((rng->a << 16) + rng->b) & NK_S32_MAX);
+    return rand();
 }
 
-static nkS32 rng_int_range(RNG* rng, nkS32 min, nkS32 max)
+static nkS32 rng_int_range(nkS32 min, nkS32 max)
 {
-    return ((rng_int(rng) % ((max+1)-min)) + min);
+    return ((rng_int() % ((max+1)-min)) + min);
 }
 
-static nkF32 rng_num(RNG* rng)
+static nkF32 rng_num(void)
 {
-    return (NK_CAST(nkF32,rng_int(rng)) / NK_CAST(nkF32,NK_S32_MAX));
+    return (NK_CAST(nkF32,rng_int()) / NK_CAST(nkF32,RAND_MAX));
 }
 
-static nkF32 rng_num_range(RNG* rng, nkF32 min, nkF32 max)
+static nkF32 rng_num_range(nkF32 min, nkF32 max)
 {
-    return (min + NK_CAST(nkF32,rng_int(rng)) / (NK_CAST(nkF32,NK_S32_MAX) / (max-min)));
+    return (min + NK_CAST(nkF32,rng_int()) / (NK_CAST(nkF32,RAND_MAX) / (max-min)));
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

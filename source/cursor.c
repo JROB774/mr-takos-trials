@@ -15,7 +15,7 @@ static Cursor g_cursor;
 static void cursor_update(nkF32 dt)
 {
     // Play click sound.
-    if(is_mouse_button_pressed(MouseButton_Left))
+    if(is_mouse_button_pressed(MouseButton_Left) && g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT)
     {
         sound_play(g_asset_sfx_mouse_click, 0);
     }
@@ -60,6 +60,8 @@ static void cursor_set_type(CursorType type)
 
 static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
 {
+    if(g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT) return NK_FALSE;
+
     nkF32 cx = g_cursor.pos.x - 16.0f;
     nkF32 cy = g_cursor.pos.y - 16.0f;
     nkF32 cw = 10.0f;

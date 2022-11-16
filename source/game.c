@@ -70,7 +70,7 @@ static void game_quit(void)
 
 static void game_start(void)
 {
-    g_gamestate.current_minigame = MiniGameID_Typer;
+    g_gamestate.current_minigame = MiniGameID_Simon;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
@@ -165,8 +165,8 @@ static void game_render(void)
     nkF32 x = (SCREEN_WIDTH - width) * 0.5f;
     nkF32 y = PADDING;
 
-    nkF32 ox = (g_gamestate.game_timer <= 0.0f) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
-    nkF32 oy = (g_gamestate.game_timer <= 0.0f) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
+    nkF32 ox = (g_gamestate.game_timer <= 0.0f) ? rng_int_range(-1,1) : 0.0f;
+    nkF32 oy = (g_gamestate.game_timer <= 0.0f) ? rng_int_range(-1,1) : 0.0f;
 
     x -= (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.w * 0.5f) + PADDING;
     y += (ATLAS_UI[ATLAS_UI_CLOCK_BODY].clip_bounds.h * 0.5f);
@@ -180,8 +180,8 @@ static void game_render(void)
 
     for(nkU32 i=0,n=strlen(timer_buffer); i<n; ++i)
     {
-        ox = (g_gamestate.game_timer <= DANGER_TIME) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
-        oy = (g_gamestate.game_timer <= DANGER_TIME) ? rng_int_range(&g_rng_v, -1,1) : 0.0f;
+        ox = (g_gamestate.game_timer <= DANGER_TIME) ? rng_int_range(-1,1) : 0.0f;
+        oy = (g_gamestate.game_timer <= DANGER_TIME) ? rng_int_range(-1,1) : 0.0f;
 
         nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((timer_buffer[i] - '0') * 2) + 1);
         if(timer_buffer[i] == '.') index = ATLAS_UI_TIMER_DOT_BODY;
