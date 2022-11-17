@@ -31,6 +31,19 @@ static void load_all_assets(void)
     g_asset_sfx_simon[1]        = load_asset_sound  ("simon_be.wav");
     g_asset_sfx_simon[2]        = load_asset_sound  ("simon_bo.wav");
     g_asset_sfx_simon[3]        = load_asset_sound  ("simon_bu.wav");
+    g_asset_sfx_page_flip[ 0]   = load_asset_sound  ("page_flip_001.wav");
+    g_asset_sfx_page_flip[ 1]   = load_asset_sound  ("page_flip_002.wav");
+    g_asset_sfx_page_flip[ 2]   = load_asset_sound  ("page_flip_003.wav");
+    g_asset_sfx_page_flip[ 3]   = load_asset_sound  ("page_flip_004.wav");
+    g_asset_sfx_page_flip[ 4]   = load_asset_sound  ("page_flip_005.wav");
+    g_asset_sfx_page_flip[ 5]   = load_asset_sound  ("page_flip_006.wav");
+    g_asset_sfx_page_flip[ 6]   = load_asset_sound  ("page_flip_007.wav");
+    g_asset_sfx_page_flip[ 7]   = load_asset_sound  ("page_flip_008.wav");
+    g_asset_sfx_page_flip[ 8]   = load_asset_sound  ("page_flip_009.wav");
+    g_asset_sfx_page_flip[ 9]   = load_asset_sound  ("page_flip_010.wav");
+    g_asset_sfx_page_flip[10]   = load_asset_sound  ("page_flip_011.wav");
+    g_asset_sfx_paper_rustle[0] = load_asset_sound  ("paper_rustle_001.wav");
+    g_asset_sfx_paper_rustle[1] = load_asset_sound  ("paper_rustle_002.wav");
 }
 
 static void free_all_assets(void)
@@ -64,6 +77,19 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_simon[1]);
     sound_destroy  (g_asset_sfx_simon[2]);
     sound_destroy  (g_asset_sfx_simon[3]);
+    sound_destroy  (g_asset_sfx_page_flip[ 0]);
+    sound_destroy  (g_asset_sfx_page_flip[ 1]);
+    sound_destroy  (g_asset_sfx_page_flip[ 2]);
+    sound_destroy  (g_asset_sfx_page_flip[ 3]);
+    sound_destroy  (g_asset_sfx_page_flip[ 4]);
+    sound_destroy  (g_asset_sfx_page_flip[ 5]);
+    sound_destroy  (g_asset_sfx_page_flip[ 6]);
+    sound_destroy  (g_asset_sfx_page_flip[ 7]);
+    sound_destroy  (g_asset_sfx_page_flip[ 8]);
+    sound_destroy  (g_asset_sfx_page_flip[ 9]);
+    sound_destroy  (g_asset_sfx_page_flip[10]);
+    sound_destroy  (g_asset_sfx_paper_rustle[0]);
+    sound_destroy  (g_asset_sfx_paper_rustle[1]);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

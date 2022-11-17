@@ -27,6 +27,8 @@ static Sound   g_asset_sfx_airhorn;
 static Sound   g_asset_sfx_mouse_click;
 static Sound   g_asset_sfx_trumpet_fanfare;
 static Sound   g_asset_sfx_simon[4];
+static Sound   g_asset_sfx_page_flip[11];
+static Sound   g_asset_sfx_paper_rustle[2];
 
 static void load_all_assets(void);
 static void free_all_assets(void);

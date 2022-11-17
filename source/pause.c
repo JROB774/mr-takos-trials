@@ -25,6 +25,7 @@ static void pause_update(nkF32 dt)
     // Check for the pause button hotkey.
     if(is_key_pressed(KeyCode_Escape))
     {
+        sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
         g_pause.paused = !g_pause.paused;
     }
 
@@ -39,6 +40,7 @@ static void pause_update(nkF32 dt)
 
         if(cursor_in_bounds(x,y-(h*0.5f),w,(h*0.5f)) && is_mouse_button_pressed(MouseButton_Left))
         {
+            sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
             g_pause.paused = NK_FALSE;
         }
     }
@@ -51,6 +53,7 @@ static void pause_update(nkF32 dt)
 
         if(cursor_in_bounds(x,y,w,h) && is_mouse_button_pressed(MouseButton_Left))
         {
+            sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
             g_pause.paused = NK_TRUE;
         }
     }

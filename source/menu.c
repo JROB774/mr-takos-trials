@@ -44,6 +44,12 @@ static void menu_quit(void)
     // Nothing...
 }
 
+static void change_menu_state(MenuState new_state)
+{
+    sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
+    g_menustate = new_state;
+}
+
 static void update_back_button(void)
 {
     nkF32 x = BACK_BUTTON_X;
@@ -53,7 +59,7 @@ static void update_back_button(void)
 
     if(cursor_in_bounds(x,y,w,h) && is_mouse_button_pressed(MouseButton_Left))
     {
-        g_menustate = MenuState_Main;
+        change_menu_state(MenuState_Main);
     }
 }
 static void render_back_button(void)
@@ -83,7 +89,7 @@ static void menu_update_title(nkF32 dt)
 {
     if(is_mouse_button_pressed(MouseButton_Left))
     {
-        g_menustate = MenuState_Main;
+        change_menu_state(MenuState_Main);
     }
 }
 
@@ -107,9 +113,9 @@ static void menu_update_main(nkF32 dt)
                     game_start();
                 } break;
 
-                case MainMenuOption_Options: g_menustate = MenuState_Options; break;
-                case MainMenuOption_Awards: g_menustate = MenuState_Awards; break;
-                case MainMenuOption_Credits: g_menustate = MenuState_Credits; break;
+                case MainMenuOption_Options: change_menu_state(MenuState_Options); break;
+                case MainMenuOption_Awards: change_menu_state(MenuState_Awards); break;
+                case MainMenuOption_Credits: change_menu_state(MenuState_Credits); break;
 
                 case MainMenuOption_Exit: terminate(); break;
             }
