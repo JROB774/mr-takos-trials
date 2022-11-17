@@ -32,7 +32,15 @@ static void pause_update(nkF32 dt)
     if(g_pause.paused)
     {
         // Update pause menu.
-        // @Incomplete: ...
+        nkF32 h = font_get_px_height(g_asset_font_lil) * 0.75f;
+        nkF32 y = (SCREEN_HEIGHT * 0.5f) + (h * 0.25f) + 60.0f;
+        nkF32 w = font_get_text_bounds(g_asset_font_lil, "Resume").x;
+        nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
+
+        if(cursor_in_bounds(x,y-(h*0.5f),w,(h*0.5f)) && is_mouse_button_pressed(MouseButton_Left))
+        {
+            g_pause.paused = NK_FALSE;
+        }
     }
     else
     {
@@ -61,16 +69,33 @@ static void pause_render(void)
     if(g_pause.paused)
     {
         // Render pause menu.
-        nkF32 w = font_get_text_bounds(g_asset_font_big, "Paused").x;
-        nkF32 h = font_get_px_height(g_asset_font_big) * 0.75f;
-        nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
-        nkF32 y = (SCREEN_HEIGHT * 0.5f) + (h * 0.25f);
+        nkF32 x,y,w,h;
 
-        nkVec4 fg_color = (nkVec4){ 0.15f,0.10f,0.00f,1.0f };
-        nkVec4 bg_color = (nkVec4){ 0.00f,0.00f,0.00f,0.3f };
+        w = font_get_text_bounds(g_asset_font_big, "Paused").x;
+        h = font_get_px_height(g_asset_font_big) * 0.75f;
+        x = (SCREEN_WIDTH - w) * 0.5f;
+        y = (SCREEN_HEIGHT * 0.5f) + (h * 0.25f);
 
-        font_draw_text(g_asset_font_big, x+2,y+2, "Paused", bg_color);
-        font_draw_text(g_asset_font_big, x,y, "Paused", fg_color);
+        font_draw_text(g_asset_font_big, x+2,y+2, "Paused", DEBUG_FONT_BG_COLOR);
+        font_draw_text(g_asset_font_big, x,y, "Paused", DEBUG_FONT_FG_COLOR);
+
+        h = font_get_px_height(g_asset_font_lil) * 0.75f;
+        y = (SCREEN_HEIGHT * 0.5f) + (h * 0.25f) + 60.0f;
+        w = font_get_text_bounds(g_asset_font_lil, "Resume").x;
+        x = (SCREEN_WIDTH - w) * 0.5f;
+
+        nkVec4 fg_color = DEBUG_FONT_FG_COLOR;
+        nkVec4 bg_color = DEBUG_FONT_BG_COLOR;
+
+        if(cursor_in_bounds(x,y-(h*0.5f),w,(h*0.5f)))
+        {
+            fg_color.r += 0.3f;
+            fg_color.g += 0.3f;
+            fg_color.b += 0.3f;
+        }
+
+        font_draw_text(g_asset_font_lil, x+2,y+2, "Resume", bg_color);
+        font_draw_text(g_asset_font_lil, x,y, "Resume", fg_color);
     }
     else
     {
