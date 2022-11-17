@@ -153,7 +153,7 @@ static void minigame_typer_render(void)
 
         index += (((toupper(word[i]) - 'A') * 2) + 1);
 
-        nkF32 angle = g_gamestate.angles_big[i];
+        nkF32 angle = g_angles_big[i];
 
         x += ((ATLAS_GAMETYPER[index].clip_bounds.w * 0.5f));
 

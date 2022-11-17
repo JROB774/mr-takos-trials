@@ -30,6 +30,13 @@ static void app_init(void)
     game_init();
 
     g_appstate = AppState_Menu;
+
+    // Setup the initial angles.
+    for(nkS32 i=0; i<APP_MAX_ANGLES; ++i)
+    {
+        g_angles_big[i] = rng_num_range(-0.4f,0.4f);
+        g_angles_lil[i] = rng_num_range(-0.1f,0.1f);
+    }
 }
 
 static void app_quit(void)
@@ -40,8 +47,29 @@ static void app_quit(void)
     free_all_assets();
 }
 
+static nkF32 app_update_angle(nkF32 old_angle, nkF32 min, nkF32 max)
+{
+    nkF32 min_delta = 0.15f * (fabsf(min / 0.4f));
+    nkF32 max_delta = 0.25f * (fabsf(max / 0.4f));
+    nkF32 new_angle = old_angle;
+    while(fabsf(old_angle-new_angle) <= min_delta || fabsf(old_angle-new_angle) >= max_delta)
+        new_angle = rng_num_range(min,max);
+    return new_angle;
+}
 static void app_update(nkF32 dt)
 {
+    // Update the render angles at a fixed interval.
+    g_angle_timer += dt;
+    if(g_angle_timer >= APP_ANGLE_CHANGE_SPEED)
+    {
+        g_angle_timer -= APP_ANGLE_CHANGE_SPEED;
+        for(nkS32 i=0; i<APP_MAX_ANGLES; ++i)
+        {
+            g_angles_big[i] = app_update_angle(g_angles_big[i], -0.4f,0.4f);
+            g_angles_lil[i] = app_update_angle(g_angles_lil[i], -0.1f,0.1f);
+        }
+    }
+
     pause_update(dt);
     cursor_update(dt);
 

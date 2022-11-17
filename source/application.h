@@ -1,6 +1,10 @@
 #ifndef APPLICATION_H__ /*////////////////////////////////////////////////////*/
 #define APPLICATION_H__
 
+#define APP_ANGLE_CHANGE_SPEED 0.5f
+
+#define APP_MAX_ANGLES 128
+
 NK_ENUM(AppState, nkS32)
 {
     AppState_Menu,
@@ -8,6 +12,10 @@ NK_ENUM(AppState, nkS32)
 };
 
 static AppState g_appstate;
+
+static nkF32 g_angle_timer;
+static nkF32 g_angles_big[APP_MAX_ANGLES];
+static nkF32 g_angles_lil[APP_MAX_ANGLES];
 
 static const nkVec4 SHADOW_COLOR  = { 1.0f,1.0f,1.0f,0.6f };
 static const nkVec4 BODY_COLOR    = { 1.0f,1.0f,1.0f,1.0f };

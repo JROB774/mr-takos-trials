@@ -87,7 +87,7 @@ static void pause_render(void)
         if(cursor_in_bounds(x,y,w,h))
         {
             nkF32 scale = (is_mouse_button_pressed(MouseButton_Left)) ? 1.3f : 1.1f;
-            render_item_ex(px,py, scale,scale, g_gamestate.angles_big[GAME_MAX_ANGLES-3], ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);
+            render_item_ex(px,py, scale,scale, g_angles_big[APP_MAX_ANGLES-3], ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);
         }
         else
         {

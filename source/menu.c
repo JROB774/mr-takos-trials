@@ -1,5 +1,10 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define BACK_BUTTON_X  0.0f
+#define BACK_BUTTON_Y  0.0f
+#define BACK_BUTTON_W 60.0f
+#define BACK_BUTTON_H 60.0f
+
 NK_ENUM(MenuState, nkS32)
 {
     MenuState_Title,
@@ -24,6 +29,9 @@ static const nkChar* MAIN_MENU_OPTIONS[] = { "Play Game", "Options", "Awards", "
 
 NK_STATIC_ASSERT(MainMenuOption_TOTAL == NK_ARRAY_SIZE(MAIN_MENU_OPTIONS), main_menu_option_size_mismatch);
 
+static const nkVec4 DEBUG_FONT_FG_COLOR = { 0.15f,0.10f,0.00f,1.0f };
+static const nkVec4 DEBUG_FONT_BG_COLOR = { 0.00f,0.00f,0.00f,0.3f };
+
 static MenuState g_menustate;
 
 static void menu_init(void)
@@ -34,6 +42,41 @@ static void menu_init(void)
 static void menu_quit(void)
 {
     // Nothing...
+}
+
+static void update_back_button(void)
+{
+    nkF32 x = BACK_BUTTON_X;
+    nkF32 y = BACK_BUTTON_Y;
+    nkF32 w = BACK_BUTTON_W;
+    nkF32 h = BACK_BUTTON_H;
+
+    if(cursor_in_bounds(x,y,w,h) && is_mouse_button_pressed(MouseButton_Left))
+    {
+        g_menustate = MenuState_Main;
+    }
+}
+static void render_back_button(void)
+{
+    nkF32 x = BACK_BUTTON_X;
+    nkF32 y = BACK_BUTTON_Y;
+    nkF32 w = BACK_BUTTON_W;
+    nkF32 h = BACK_BUTTON_H;
+
+    nkF32 bx = x + (w * 0.5f);
+    nkF32 by = y + (h * 0.5f);
+
+    imm_begin_texture_batch(g_asset_ui);
+    if(cursor_in_bounds(x,y,w,h))
+    {
+        nkF32 scale = (is_mouse_button_pressed(MouseButton_Left)) ? 1.3f : 1.1f;
+        render_item_ex(bx,by, scale,scale, g_angles_big[APP_MAX_ANGLES-3], ATLAS_UI, ATLAS_UI_BACK_BODY, 1.0f);
+    }
+    else
+    {
+        render_item(bx,by, ATLAS_UI, ATLAS_UI_BACK_BODY, 1.0f);
+    }
+    imm_end_texture_batch();
 }
 
 static void menu_update_title(nkF32 dt)
@@ -54,7 +97,7 @@ static void menu_update_main(nkF32 dt)
         nkF32 w = font_get_text_bounds(g_asset_font_big, MAIN_MENU_OPTIONS[i]).x;
         nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
 
-        if(cursor_in_bounds(x,y-(h*0.75f),w,h) && is_mouse_button_pressed(MouseButton_Left))
+        if(cursor_in_bounds(x,y-(h*0.5f),w,(h*0.5f)) && is_mouse_button_pressed(MouseButton_Left))
         {
             switch(i)
             {
@@ -63,9 +106,11 @@ static void menu_update_main(nkF32 dt)
                     g_appstate = AppState_Game;
                     game_start();
                 } break;
-                case MainMenuOption_Options: /* @Incomplete */ break;
-                case MainMenuOption_Awards: /* @Incomplete */ break;
-                case MainMenuOption_Credits: /* @Incomplete */ break;
+
+                case MainMenuOption_Options: g_menustate = MenuState_Options; break;
+                case MainMenuOption_Awards: g_menustate = MenuState_Awards; break;
+                case MainMenuOption_Credits: g_menustate = MenuState_Credits; break;
+
                 case MainMenuOption_Exit: terminate(); break;
             }
         }
@@ -76,16 +121,19 @@ static void menu_update_main(nkF32 dt)
 
 static void menu_update_options(nkF32 dt)
 {
+    update_back_button();
     // @Incomplete: ...
 }
 
 static void menu_update_awards(nkF32 dt)
 {
+    update_back_button();
     // @Incomplete: ...
 }
 
 static void menu_update_credits(nkF32 dt)
 {
+    update_back_button();
     // @Incomplete: ...
 }
 
@@ -103,7 +151,24 @@ static void menu_update(nkF32 dt)
 
 static void menu_render_title(void)
 {
-    // @Incomplete: ...
+    nkF32 x,y,w,h;
+
+    // Render the title.
+    h = font_get_px_height(g_asset_font_big) * 0.75f;
+    y = ((SCREEN_HEIGHT - ((MainMenuOption_TOTAL-1) * h)) * 0.5f) + (h * 0.25f);
+    w = font_get_text_bounds(g_asset_font_big, "Mr. Tako's Trials").x;
+    x = (SCREEN_WIDTH - w) * 0.5f;
+
+    font_draw_text(g_asset_font_big, x+2,y+2, "Mr. Tako's Trials", DEBUG_FONT_BG_COLOR);
+    font_draw_text(g_asset_font_big, x,y, "Mr. Tako's Trials", DEBUG_FONT_FG_COLOR);
+
+    // Render the info.
+    y += 140.0f;
+    w = font_get_text_bounds(g_asset_font_lil, "Click to Continue").x;
+    x = (SCREEN_WIDTH - w) * 0.5f;
+
+    font_draw_text(g_asset_font_lil, x+2,y+2, "Click to Continue", DEBUG_FONT_BG_COLOR);
+    font_draw_text(g_asset_font_lil, x,y, "Click to Continue", DEBUG_FONT_FG_COLOR);
 }
 
 static void menu_render_main(void)
@@ -116,8 +181,8 @@ static void menu_render_main(void)
         nkF32 w = font_get_text_bounds(g_asset_font_big, MAIN_MENU_OPTIONS[i]).x;
         nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
 
-        nkVec4 fg_color = (nkVec4){ 0.15f,0.10f,0.00f,1.0f };
-        nkVec4 bg_color = (nkVec4){ 0.00f,0.00f,0.00f,0.3f };
+        nkVec4 fg_color = DEBUG_FONT_FG_COLOR;
+        nkVec4 bg_color = DEBUG_FONT_BG_COLOR;
 
         if(cursor_in_bounds(x,y-(h*0.5f),w,(h*0.5f)))
         {
@@ -135,16 +200,19 @@ static void menu_render_main(void)
 
 static void menu_render_options(void)
 {
+    render_back_button();
     // @Incomplete: ...
 }
 
 static void menu_render_awards(void)
 {
+    render_back_button();
     // @Incomplete: ...
 }
 
 static void menu_render_credits(void)
 {
+    render_back_button();
     // @Incomplete: ...
 }
 

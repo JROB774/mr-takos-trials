@@ -196,7 +196,7 @@ static void minigame_simon_render(void)
 
         if(game_is_playing() && !g_minigame_simon.playback_pattern && cursor_in_bounds(b.x,b.y,b.z,b.w) && !game_is_in_timeout())
         {
-            render_item_ex(x,y, 1,1, g_gamestate.angles_lil[0], ATLAS_GAMESIMON, index, 1.0f);
+            render_item_ex(x,y, 1,1, g_angles_lil[0], ATLAS_GAMESIMON, index, 1.0f);
         }
         else
         {
