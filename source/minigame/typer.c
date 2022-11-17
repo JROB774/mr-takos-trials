@@ -1,12 +1,45 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+static const nkChar* TYPER_WORDLIST[] =
+{
+"apple", "apricot", "aptly", "accept", "admiral", "anvil", "badly", "bubble", "bomb", "boom", "buckle",
+"backed", "batted", "baton", "blunder", "ball", "band", "beard", "bend", "bread", "crumble", "crab",
+"cretin", "crazy", "crack", "corn", "clapped", "cold", "crib", "cram", "crumb", "clobber", "could",
+"destroy", "deeply", "dumb", "daft", "dimly", "damp", "dime", "dread", "dribble", "dance", "daily",
+"epic", "evil", "empire", "ember", "enter", "ended", "emblem", "ending", "envy", "ever", "electric",
+"elect", "fight", "fire", "fright", "fate", "flabby", "flop", "found", "finder", "friend", "fiend",
+"file", "fail", "flipped", "flip", "flipper", "ghost", "grumble", "grim", "grave", "grabbed", "grab",
+"grown", "gown", "glob", "group", "gang", "grail", "gained", "grin", "goal", "higher", "height", "help",
+"handy", "hinder", "hard", "harden", "herd", "heard", "hear", "held", "happy", "hoard", "hump", "hopped",
+"hippo", "igloo", "idol", "idle", "island", "indigo", "ideal", "idea", "idiot", "imbecile", "isle",
+"inlet", "inset", "iron", "ironed", "icon", "ignite", "inert", "jumping", "jump", "jailed", "joyous",
+"joyful", "jumble", "jelly", "joined", "jargon", "jumper", "killer", "killed", "kite", "kiln", "kilt",
+"kipper", "kitted", "knight", "knot", "knife", "knee", "lonely", "lobbed", "long", "leap", "lamped",
+"leapt", "lame", "lingo", "lion", "lychee", "lending", "lied", "laid", "lead", "light", "late", "lane",
+"lain", "leaned", "life", "left", "lady", "ladder", "manned", "mainly", "main", "monday", "maid", "madder",
+"matey", "mate", "mighty", "morn", "maiden", "modal", "minor", "miner", "magpie", "master", "martian",
+"morgue", "moaned", "martyr", "noble", "nylon", "night", "named", "name", "need", "notion", "neptune",
+"noted", "never", "nailed", "nail", "orange", "option", "open", "oval", "opal", "ogle", "ooze", "oozing",
+"openly", "onto", "omen", "oven", "opera", "organ", "orphan", "odor", "person", "preach", "painful",
+"pain", "pander", "pending", "plan", "played", "playful", "paid", "payee", "payer", "pretend", "prior",
+"phantom", "pardon", "poach", "plopped", "ponder", "power", "pray", "prey", "porch", "perch", "quit",
+"quantum", "quiet", "quitter", "quaint", "quibble", "quart", "queen", "robot", "risen", "rise", "random",
+"rainbow", "rely", "rained", "rain", "riot", "rondo", "react", "rate", "rein", "rind", "rend", "render",
+"rhino", "runner", "ready", "real", "rail", "railway", "ripen", "show", "shown", "shore", "short", "shunt",
+"shin", "shine", "shiny", "shamble", "sorrow", "slapper", "slap", "simple", "spam", "slump", "spot", "stop",
+"stomp", "stolen", "style", "scam", "scum", "slim", "snap", "spool", "spun", "spin", "tramp", "trophy",
+"triumph", "tripped", "trip", "trim", "taller", "tame", "team", "teller", "tied", "tanned", "timed",
+"timer", "time", "tram", "tuesday", "tipper", "there", "their", "them", "then", "thin", "thimble", "thumb",
+"thine", "trine", "tinned", "utopia", "usurp", "unify", "unity", "union", "undo", "upped", "upper",
+"uranus", "ugly", "vicious", "victory", "vein", "vain", "veil", "vile", "vanity", "valiant", "window",
+"winner", "wend", "wind", "winder", "willow", "warned", "wonky", "wand", "worded", "word", "wanted", "well",
+};
+
 typedef struct MiniGameTyper
 {
-    nkU32    current_word;
-    nkChar** words;
-    nkU32    word_count;
-    nkChar   input[32];
-    nkS32    combo;
+    nkU32  current_word;
+    nkChar input[32];
+    nkS32  combo;
 }
 MiniGameTyper;
 
@@ -17,7 +50,7 @@ static void minigame_typer_select_new_word(void)
     // Generate a new word and make sure it's not the same as the previous word.
     nkU32 new_word = g_minigame_typer.current_word;
     while(new_word == g_minigame_typer.current_word)
-        new_word = rng_int() % g_minigame_typer.word_count;
+        new_word = rng_int() % NK_ARRAY_SIZE(TYPER_WORDLIST);
     g_minigame_typer.current_word = new_word;
 
     memset(g_minigame_typer.input, 0, sizeof(g_minigame_typer.input));
@@ -25,41 +58,12 @@ static void minigame_typer_select_new_word(void)
 
 static void minigame_typer_init(void)
 {
-    // Load the raw list of words into an array of strings for easy access.
-    g_minigame_typer.words = malloc(512*sizeof(nkChar*));
-    if(!g_minigame_typer.words) fatal_error("Failed to allocate words!");
-
-    nkU32 start = 0;
-    nkU32 length = 0;
-
-    for(nkU32 i=0,n=strlen(g_asset_wordlist); i<n; ++i)
-    {
-        nkChar c = g_asset_wordlist[i];
-        if((c == '\n' || c == '\r'))
-        {
-            if(length > 0)
-            {
-                nkU32 wordsize = (length+1)*sizeof(nkChar);
-                nkChar* word = malloc(wordsize);
-                if(!word) fatal_error("Failed to allocate word!");
-                memset(word, 0, wordsize);
-                strncpy(word, g_asset_wordlist+start, length);
-                g_minigame_typer.words[g_minigame_typer.word_count] = word;
-                g_minigame_typer.word_count++;
-            }
-            start = i+1;
-            length = 0;
-        }
-        else
-        {
-            length++;
-        }
-    }
+    // Nothing...
 }
 
 static void minigame_typer_quit(void)
 {
-    free(g_minigame_typer.words);
+    // Nothing...
 }
 
 static void minigame_typer_start(void)
@@ -81,7 +85,7 @@ static void minigame_typer_update(nkF32 dt)
     if(game_is_playing() && !game_is_in_timeout())
     {
         // Compare the current text input with what the user has left to type.
-        nkChar* current_word = g_minigame_typer.words[g_minigame_typer.current_word];
+        const nkChar* current_word = TYPER_WORDLIST[g_minigame_typer.current_word];
         nkChar* text_input = get_current_text_input();
 
         if(text_input && strlen(text_input) > 0)
@@ -125,7 +129,7 @@ static void minigame_typer_render(void)
 {
     static const nkF32 WORD_SPACING = 3.0f;
 
-    const nkChar* word = g_minigame_typer.words[g_minigame_typer.current_word];
+    const nkChar* word = TYPER_WORDLIST[g_minigame_typer.current_word];
 
     nkU32 word_length = strlen(word);
 

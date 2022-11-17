@@ -8,7 +8,6 @@ static void load_all_assets(void)
     g_asset_ui                  = load_asset_texture("ui.png",           SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_game_typer          = load_asset_texture("gametyper.png",    SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_game_simon          = load_asset_texture("gamesimon.png",    SamplerFilter_Linear, SamplerWrap_Clamp);
-    g_asset_wordlist            = load_asset_text   ("wordlist.txt");
     g_asset_font_big            = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 48.0f);
     g_asset_font_lil            = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 28.0f);
     g_asset_sfx_wrong_buzzer    = load_asset_sound  ("wrong_buzzer.wav");
@@ -54,7 +53,6 @@ static void free_all_assets(void)
     texture_destroy(g_asset_ui);
     texture_destroy(g_asset_game_typer);
     texture_destroy(g_asset_game_simon);
-    free           (g_asset_wordlist);
     font_destroy   (g_asset_font_big);
     font_destroy   (g_asset_font_lil);
     sound_destroy  (g_asset_sfx_wrong_buzzer);
@@ -116,20 +114,6 @@ static Music load_asset_music(const nkChar* name)
     strcat(buffer, name);
 
     return music_create(buffer);
-}
-
-static nkChar* load_asset_text(const nkChar* name)
-{
-    nkChar buffer[1024] = NK_ZERO_MEM;
-    strcpy(buffer, get_base_path());
-    strcat(buffer, ASSET_PATH);
-    strcat(buffer, "strings/");
-    strcat(buffer, name);
-
-    nkFileContent file_content;
-    if(!nk_read_file_content(&file_content, buffer, nkFileReadMode_Text))
-        fatal_error("Failed to load text from file: %s", buffer);
-    return file_content.data;
 }
 
 static Font load_asset_font(const nkChar* name, nkF32 px_height)

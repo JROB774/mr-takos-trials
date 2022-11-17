@@ -13,7 +13,6 @@ static Texture g_asset_ui;
 static Texture g_asset_particle;
 static Texture g_asset_game_typer;
 static Texture g_asset_game_simon;
-static nkChar* g_asset_wordlist;
 static Font    g_asset_font_big;
 static Font    g_asset_font_lil;
 static Sound   g_asset_sfx_wrong_buzzer;
@@ -35,7 +34,6 @@ static void free_all_assets(void);
 
 static Sound    load_asset_sound  (const nkChar* name);
 static Music    load_asset_music  (const nkChar* name);
-static nkChar*  load_asset_text   (const nkChar* name);
 static Font     load_asset_font   (const nkChar* name, nkF32 px_height);
 static Texture  load_asset_texture(const nkChar* name, SamplerFilter filter, SamplerWrap wrap);
 static Shader   load_asset_shader (const nkChar* name);

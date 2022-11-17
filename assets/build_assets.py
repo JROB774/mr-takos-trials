@@ -23,12 +23,6 @@ asset_dir = "assets/"
 if os.path.exists(asset_out_dir):
     shutil.rmtree(asset_out_dir)
 
-# copy text strings
-strings_out_dir = asset_out_dir + "strings/"
-strings_in_dir = asset_dir + "strings/"
-
-shutil.copytree(strings_in_dir, strings_out_dir)
-
 # copy fonts
 fonts_out_dir = asset_out_dir + "fonts/"
 fonts_in_dir = asset_dir + "fonts/"
