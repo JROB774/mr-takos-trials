@@ -250,14 +250,16 @@ static void game_render(void)
     }
 
     // If this score is a highscore then draw a cool crown.
-    if((g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score) &&
-       (g_save.highscore[g_gamestate.current_minigame] != 0))
+    if(g_gamestate.game_timer <= 0.0f)
     {
-        render_item_ex(x+3.0f,y-23.0f, 1,1, 0.4f, ATLAS_UI, ATLAS_UI_CROWN_BODY, 0.7f);
-        if(!g_gamestate.played_highscore_sound)
+        if(g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score)
         {
-            g_gamestate.played_highscore_sound = NK_TRUE;
-            sound_play(g_asset_sfx_trumpet_fanfare, 0);
+            render_item_ex(x+3.0f,y-23.0f, 1,1, 0.4f, ATLAS_UI, ATLAS_UI_CROWN_BODY, 0.7f);
+            if(!g_gamestate.played_highscore_sound)
+            {
+                g_gamestate.played_highscore_sound = NK_TRUE;
+                sound_play(g_asset_sfx_trumpet_fanfare, 0);
+            }
         }
     }
 
