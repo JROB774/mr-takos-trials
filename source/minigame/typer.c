@@ -153,7 +153,7 @@ static void minigame_typer_render(void)
     imm_begin_texture_batch(g_asset_font);
     for(nkU32 i=0; i<word_length; ++i)
     {
-        nkS32 index = (g_minigame_typer.input[i] != word[i]) ? ATLAS_FONT_FADED_A_SHADOW : ATLAS_FONT_SOLID_A_SHADOW;;
+        nkS32 index = (g_minigame_typer.input[i] != word[i]) ? ATLAS_FONT_FADED_A_SHADOW : ATLAS_FONT_SOLID_A_SHADOW;
 
         index += (((toupper(word[i]) - 'A') * 2) + 1);
 
