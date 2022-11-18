@@ -36,7 +36,7 @@ static void pause_update(nkF32 dt)
     {
         // Update pause menu.
         nkF32 y = 168.0f;
-        if(update_text_button("RESUME", y, PAUSE_TEXT_SCALE))
+        if(update_simple_button("RESUME", y, PAUSE_TEXT_SCALE))
         {
             sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
             g_pause.paused = NK_FALSE;
@@ -44,7 +44,7 @@ static void pause_update(nkF32 dt)
 
         y += bitmap_font_line_advance(PAUSE_TEXT_SCALE);
 
-        if(update_text_button("MENU", y, PAUSE_TEXT_SCALE))
+        if(update_simple_button("MENU", y, PAUSE_TEXT_SCALE))
         {
             sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
             g_pause.paused = NK_FALSE;
@@ -83,9 +83,9 @@ static void pause_render(void)
 
         nkF32 y = 168.0f;
 
-        render_text_button("RESUME", y, PAUSE_TEXT_SCALE);
+        render_simple_button("RESUME", y, PAUSE_TEXT_SCALE);
         y += bitmap_font_line_advance(PAUSE_TEXT_SCALE);
-        render_text_button("MENU", y, PAUSE_TEXT_SCALE);
+        render_simple_button("MENU", y, PAUSE_TEXT_SCALE);
     }
     else
     {

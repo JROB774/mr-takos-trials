@@ -25,7 +25,7 @@ static void change_menu_state(MenuState new_state)
     g_menustate = new_state;
 }
 
-static void update_back_button(void)
+static nkBool update_back_button(void)
 {
     nkF32 x = BACK_BUTTON_X;
     nkF32 y = BACK_BUTTON_Y;
@@ -35,7 +35,10 @@ static void update_back_button(void)
     if(cursor_in_bounds(x,y,w,h) && is_mouse_button_pressed(MouseButton_Left))
     {
         change_menu_state(MenuState_Main);
+        return NK_TRUE;
     }
+
+    return NK_FALSE;
 }
 
 static void render_back_button(void)
@@ -118,7 +121,7 @@ static void menu_update_main(nkF32 dt)
     nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
-        if(update_text_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE))
+        if(update_simple_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE))
         {
             switch(i)
             {
@@ -144,7 +147,7 @@ static void menu_render_main(void)
     nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
-        render_text_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE);
+        render_simple_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE);
         y += bitmap_font_line_advance(MENU_TEXT_SCALE);
     }
 }
@@ -153,19 +156,67 @@ static void menu_render_main(void)
 // Options
 // =============================================================================
 
+NK_ENUM(OptionsMenuOption, nkS32)
+{
+    OptionsMenuOption_Window,
+    OptionsMenuOption_Sound,
+    OptionsMenuOption_Music,
+    OptionsMenuOption_Reset,
+    OptionsMenuOption_TOTAL
+};
+
 static void menu_update_options(nkF32 dt)
 {
+    // @Incomplete: On returning to the main menu save the options...
     if(is_key_pressed(KeyCode_Escape))
         change_menu_state(MenuState_Main);
     update_back_button();
 
+    nkF32 y = bitmap_font_block_y_off(OptionsMenuOption_TOTAL, MENU_TEXT_SCALE);
+
+    // Fullscreen toggle.
+    if(update_toggle_button("WINDOWED", "FULLSCREEN", get_fullscreen(), y, MENU_TEXT_SCALE))
+        set_fullscreen(!get_fullscreen());
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+
+    // Sound slider.
+    nkF32 sound = update_slider_button("SOUND", get_sound_volume(), y, MENU_TEXT_SCALE);
+    if(sound != get_sound_volume()) set_sound_volume(sound);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+
+    // Music slider.
+    nkF32 music = update_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
+    if(music != get_music_volume()) set_music_volume(music);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+
+    // Reset save stages.
     // @Incomplete: ...
+    update_simple_button("RESET SAVE", y, MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
 }
 
 static void menu_render_options(void)
 {
     render_back_button();
+
+    nkF32 y = bitmap_font_block_y_off(OptionsMenuOption_TOTAL, MENU_TEXT_SCALE);
+
+    // Fullscreen toggle.
+    render_toggle_button("WINDOWED", "FULLSCREEN", get_fullscreen(), y, MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+
+    // Sound slider.
+    render_slider_button("SOUND", get_sound_volume(), y, MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+
+    // Music slider.
+    render_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+
+    // Reset save stages.
     // @Incomplete: ...
+    render_simple_button("RESET SAVE", y, MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
 }
 
 // =============================================================================

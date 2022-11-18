@@ -18,19 +18,42 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
     imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], BODY_COLOR);
 }
 
-static nkBool update_text_button(const nkChar* text, nkF32 y, nkF32 scale)
+static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 {
     ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
     return (cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h) && is_mouse_button_pressed(MouseButton_Left));
 }
 
-static void render_text_button(const nkChar* text, nkF32 y, nkF32 scale)
+static void render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 {
     FontStyle style = FontStyle_Faded;
     ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
     if(cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h))
         style = FontStyle_Rotate;
     render_bitmap_font_aligned(text, Alignment_Center, y, scale, style);
+}
+
+static nkBool update_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)
+{
+    return update_simple_button((toggle) ? text_a : text_b, y, scale);
+}
+
+static void render_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)
+{
+    render_simple_button((toggle) ? text_a : text_b, y, scale);
+}
+
+static nkF32 update_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
+{
+    // @Incomplete: ...
+    update_simple_button(text, y, scale);
+    return value;
+}
+
+static void render_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
+{
+    // @Incomplete: ...
+    render_simple_button(text, y, scale);
 }
 
 static void app_init(void)
