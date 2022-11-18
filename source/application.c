@@ -33,7 +33,6 @@ static void render_text_button(const nkChar* text, nkF32 y, nkF32 scale)
     render_bitmap_font_aligned(text, Alignment_Center, y, scale, style);
 }
 
-
 static void app_init(void)
 {
     rng_init(time(NULL));

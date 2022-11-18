@@ -75,24 +75,19 @@ static void menu_update_title(nkF32 dt)
 
 static void menu_render_title(void)
 {
-    nkF32 x,y,w,h;
-
+    // @Incomplete: Debug title (not final visuals).
     // Render the title.
-    h = font_get_px_height(g_asset_font_big) * 0.75f;
-    y = ((SCREEN_HEIGHT - (4 * h)) * 0.5f) + (h * 0.25f);
-    w = font_get_text_bounds(g_asset_font_big, "Mr. Tako's Trials").x;
-    x = (SCREEN_WIDTH - w) * 0.5f;
-
+    nkF32 h = font_get_px_height(g_asset_font_big) * 0.75f;
+    nkF32 y = ((SCREEN_HEIGHT - (4 * h)) * 0.5f) + (h * 0.25f);
+    nkF32 w = font_get_text_bounds(g_asset_font_big, "Mr. Tako's Trials").x;
+    nkF32 x = (SCREEN_WIDTH - w) * 0.5f;
     font_draw_text(g_asset_font_big, x+2,y+2, "Mr. Tako's Trials", DEBUG_FONT_BG_COLOR);
     font_draw_text(g_asset_font_big, x,y, "Mr. Tako's Trials", DEBUG_FONT_FG_COLOR);
 
-    // Render the info.
-    y += 140.0f;
-    w = font_get_text_bounds(g_asset_font_lil, "Click to Continue").x;
-    x = (SCREEN_WIDTH - w) * 0.5f;
-
-    font_draw_text(g_asset_font_lil, x+2,y+2, "Click to Continue", DEBUG_FONT_BG_COLOR);
-    font_draw_text(g_asset_font_lil, x,y, "Click to Continue", DEBUG_FONT_FG_COLOR);
+    // Render the "click to start" prompt.
+    imm_begin_texture_batch(g_asset_ui);
+    render_item(SCREEN_WIDTH * 0.5f, 220.0f, ATLAS_UI, ATLAS_UI_START_BODY, 1.0f);
+    imm_end_texture_batch();
 }
 
 // =============================================================================
@@ -115,8 +110,12 @@ NK_STATIC_ASSERT(MainMenuOption_TOTAL == NK_ARRAY_SIZE(MAIN_MENU_OPTIONS), main_
 
 static void menu_update_main(nkF32 dt)
 {
-    nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
+    if(is_key_pressed(KeyCode_Escape))
+    {
+        change_menu_state(MenuState_Title);
+    }
 
+    nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
         if(update_text_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE))
@@ -156,7 +155,10 @@ static void menu_render_main(void)
 
 static void menu_update_options(nkF32 dt)
 {
+    if(is_key_pressed(KeyCode_Escape))
+        change_menu_state(MenuState_Main);
     update_back_button();
+
     // @Incomplete: ...
 }
 
@@ -172,7 +174,10 @@ static void menu_render_options(void)
 
 static void menu_update_awards(nkF32 dt)
 {
+    if(is_key_pressed(KeyCode_Escape))
+        change_menu_state(MenuState_Main);
     update_back_button();
+
     // @Incomplete: ...
 }
 
@@ -188,7 +193,10 @@ static void menu_render_awards(void)
 
 static void menu_update_credits(nkF32 dt)
 {
+    if(is_key_pressed(KeyCode_Escape))
+        change_menu_state(MenuState_Main);
     update_back_button();
+
     // @Incomplete: ...
 }
 
