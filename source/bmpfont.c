@@ -37,21 +37,28 @@ static void render_bitmap_font(const nkChar* text, nkF32 x, nkF32 y, nkF32 scale
     imm_begin_texture_batch(g_asset_font);
     for(nkU32 i=0; i<text_length; ++i)
     {
-        nkS32 index = (NK_CHECK_FLAGS(style, FontStyle_Faded)) ? ATLAS_FONT_FADED_A_SHADOW : ATLAS_FONT_SOLID_A_SHADOW;
-        index += (((toupper(text[i]) - 'A') * 2) + 1);
-
-        nkF32 angle = 0.0f;
-        if(NK_CHECK_FLAGS(style, FontStyle_Rotate))
+        if(text[i] == ' ')
         {
-            angle = g_angles_big[i];
+            x += (ATLAS_FONT[ATLAS_FONT_SOLID_A_SHADOW].clip_bounds.w * 0.5f) * scale;
         }
+        else
+        {
+            nkS32 index = (NK_CHECK_FLAGS(style, FontStyle_Faded)) ? ATLAS_FONT_FADED_A_SHADOW : ATLAS_FONT_SOLID_A_SHADOW;
+            index += (((toupper(text[i]) - 'A') * 2) + 1);
 
-        nkF32 ox = (NK_CHECK_FLAGS(style, FontStyle_Shake)) ? rng_int_range(-1,1) : 0.0f;
-        nkF32 oy = (NK_CHECK_FLAGS(style, FontStyle_Shake)) ? rng_int_range(-1,1) : 0.0f;
+            nkF32 angle = 0.0f;
+            if(NK_CHECK_FLAGS(style, FontStyle_Rotate))
+            {
+                angle = g_angles_big[i];
+            }
 
-        x += ((ATLAS_FONT[index].clip_bounds.w * 0.5f)) * scale;
-        render_item_ex(x+ox,y+oy, scale,scale, angle, ATLAS_FONT, index, 1.0f);
-        x += ((ATLAS_FONT[index].clip_bounds.w * 0.5f)) * scale;
+            nkF32 ox = (NK_CHECK_FLAGS(style, FontStyle_Shake)) ? rng_int_range(-1,1) : 0.0f;
+            nkF32 oy = (NK_CHECK_FLAGS(style, FontStyle_Shake)) ? rng_int_range(-1,1) : 0.0f;
+
+            x += ((ATLAS_FONT[index].clip_bounds.w * 0.5f)) * scale;
+            render_item_ex(x+ox,y+oy, scale,scale, angle, ATLAS_FONT, index, 1.0f);
+            x += ((ATLAS_FONT[index].clip_bounds.w * 0.5f)) * scale;
+        }
     }
     imm_end_texture_batch();
 }
