@@ -86,7 +86,6 @@ static void app_update(nkF32 dt)
         }
     }
 
-    pause_update(dt);
     cursor_update(dt);
 
     if(!is_game_paused())
@@ -97,6 +96,9 @@ static void app_update(nkF32 dt)
             case AppState_Game: game_update(dt); break;
         }
     }
+
+    // Make sure to go after normal update stuff to avoid issues...
+    pause_update(dt);
 }
 
 static void app_render(void)

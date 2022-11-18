@@ -5,10 +5,7 @@
 #define PAUSE_BUTTON_W (               60.0f)
 #define PAUSE_BUTTON_H (               60.0f)
 
-#define PAUSE_TITLE_YPOS   48.0f
-#define PAUSE_RESUME_YPOS 160.0f
-#define PAUSE_TITLE_SCALE   1.0f
-#define PAUSE_RESUME_SCALE  0.5f
+#define PAUSE_TEXT_SCALE 0.7f
 
 typedef struct PauseState
 {
@@ -38,10 +35,20 @@ static void pause_update(nkF32 dt)
     if(g_pause.paused)
     {
         // Update pause menu.
-        if(update_text_button("RESUME", 168.0f, 0.7f))
+        nkF32 y = 168.0f;
+        if(update_text_button("RESUME", y, PAUSE_TEXT_SCALE))
         {
             sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
             g_pause.paused = NK_FALSE;
+        }
+
+        y += bitmap_font_line_advance(PAUSE_TEXT_SCALE);
+
+        if(update_text_button("MENU", y, PAUSE_TEXT_SCALE))
+        {
+            sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
+            g_pause.paused = NK_FALSE;
+            g_appstate = AppState_Menu;
         }
     }
     else
@@ -73,7 +80,12 @@ static void pause_render(void)
     {
         // Render pause menu.
         render_bitmap_font_aligned("PAUSED", Alignment_Center, 48.0f, 1.0f, FontStyle_None);
-        render_text_button("RESUME", 168.0f, 0.7f);
+
+        nkF32 y = 168.0f;
+
+        render_text_button("RESUME", y, PAUSE_TEXT_SCALE);
+        y += bitmap_font_line_advance(PAUSE_TEXT_SCALE);
+        render_text_button("MENU", y, PAUSE_TEXT_SCALE);
     }
     else
     {
