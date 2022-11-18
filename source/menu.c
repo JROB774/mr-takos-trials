@@ -119,8 +119,7 @@ static void menu_update_main(nkF32 dt)
 
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
-        ImmRect bounds = get_bitmap_font_bounds_aligned(MAIN_MENU_OPTIONS[i], Alignment_Center, y, MENU_TEXT_SCALE, FontStyle_None);
-        if(cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h) && is_mouse_button_pressed(MouseButton_Left))
+        if(update_text_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE))
         {
             switch(i)
             {
@@ -144,14 +143,9 @@ static void menu_update_main(nkF32 dt)
 static void menu_render_main(void)
 {
     nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
-
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
-        FontStyle style = FontStyle_Faded;
-        ImmRect bounds = get_bitmap_font_bounds_aligned(MAIN_MENU_OPTIONS[i], Alignment_Center, y, MENU_TEXT_SCALE, FontStyle_None);
-        if(cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h))
-            style = FontStyle_Rotate;
-        render_bitmap_font_aligned(MAIN_MENU_OPTIONS[i], Alignment_Center, y, MENU_TEXT_SCALE, style);
+        render_text_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE);
         y += bitmap_font_line_advance(MENU_TEXT_SCALE);
     }
 }
