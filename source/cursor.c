@@ -51,6 +51,15 @@ static void cursor_render(void)
     imm_begin_texture_batch(g_asset_ui);
     render_item(g_cursor.pos.x-p_off,g_cursor.pos.y-p_off, ATLAS_UI, index, s_off);
     imm_end_texture_batch();
+
+    // Debug render the cursor's bounding box.
+    #if 0
+    nkF32 cx = g_cursor.pos.x - 16.0f;
+    nkF32 cy = g_cursor.pos.y - 16.0f;
+    nkF32 cw = 10.0f;
+    nkF32 ch = 10.0f;
+    imm_rect_filled(cx,cy,cw,ch, (nkVec4){ 1.0f,0.0f,0.0f,0.5f });
+    #endif
 }
 
 static void cursor_set_type(CursorType type)

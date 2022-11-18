@@ -18,7 +18,9 @@ NK_ENUM(Alignment, nkS32)
 
 static void    render_bitmap_font_aligned    (const nkChar* text, Alignment alignmment, nkF32 y, nkF32 scale, FontStyle style);
 static void    render_bitmap_font            (const nkChar* text,              nkF32 x, nkF32 y, nkF32 scale, FontStyle style);
-static void    bitmap_font_line_advance      (nkF32* y, nkF32 scale);
+static nkF32   bitmap_font_line_advance      (nkF32 scale);
+static nkF32   bitmap_font_block_height      (nkS32 lines, nkF32 scale);
+static nkF32   bitmap_font_block_y_off       (nkS32 lines, nkF32 scale);
 static ImmRect get_bitmap_font_bounds_aligned(const nkChar* text, Alignment alignmment, nkF32 y, nkF32 scale, FontStyle style);
 static ImmRect get_bitmap_font_bounds        (const nkChar* text,              nkF32 x, nkF32 y, nkF32 scale, FontStyle style);
 

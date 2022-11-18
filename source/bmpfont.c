@@ -1,6 +1,6 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
-#define BITMAP_FONT_LINE_PADDING 12.0f
+#define BITMAP_FONT_LINE_PADDING 20.0f
 
 static nkF32 get_bitmap_font_width(const nkChar* text, nkF32 scale)
 {
@@ -56,9 +56,21 @@ static void render_bitmap_font(const nkChar* text, nkF32 x, nkF32 y, nkF32 scale
     imm_end_texture_batch();
 }
 
-static void bitmap_font_line_advance(nkF32* y, nkF32 scale)
+static nkF32 bitmap_font_line_advance(nkF32 scale)
 {
-    (*y) += ((ATLAS_FONT[ATLAS_FONT_SOLID_A_BODY].clip_bounds.h + BITMAP_FONT_LINE_PADDING) * scale);
+    return ((ATLAS_FONT[ATLAS_FONT_SOLID_A_BODY].clip_bounds.h + BITMAP_FONT_LINE_PADDING) * scale);
+}
+
+static nkF32 bitmap_font_block_height(nkS32 lines, nkF32 scale)
+{
+    return ((bitmap_font_line_advance(scale) * lines) - (BITMAP_FONT_LINE_PADDING * scale));
+}
+
+static nkF32 bitmap_font_block_y_off(nkS32 lines, nkF32 scale)
+{
+    nkF32 height = bitmap_font_block_height(lines, scale);
+    nkF32 y = (SCREEN_HEIGHT - height) * 0.5f;
+    return (y + ((ATLAS_FONT[ATLAS_FONT_SOLID_A_BODY].clip_bounds.h * scale) * 0.5f));
 }
 
 static ImmRect get_bitmap_font_bounds_aligned(const nkChar* text, Alignment alignment, nkF32 y, nkF32 scale, FontStyle style)
@@ -68,9 +80,11 @@ static ImmRect get_bitmap_font_bounds_aligned(const nkChar* text, Alignment alig
 
 static ImmRect get_bitmap_font_bounds(const nkChar* text, nkF32 x, nkF32 y, nkF32 scale, FontStyle style)
 {
-    ImmRect bounds = { x, y, 0.0f, 0.0f };
+    ImmRect bounds = NK_ZERO_MEM;
+    bounds.x = x;
+    bounds.y = y - ((ATLAS_FONT[ATLAS_FONT_SOLID_A_BODY].clip_bounds.h * scale) * 0.5f);
     bounds.w = get_bitmap_font_width(text, scale);
-    bounds.h = ((ATLAS_FONT[ATLAS_FONT_SOLID_A_BODY].clip_bounds.h + BITMAP_FONT_LINE_PADDING) * scale);
+    bounds.h = (ATLAS_FONT[ATLAS_FONT_SOLID_A_BODY].clip_bounds.h * scale);
     return bounds;
 }
 

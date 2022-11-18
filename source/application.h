@@ -1,6 +1,9 @@
 #ifndef APPLICATION_H__ /*////////////////////////////////////////////////////*/
 #define APPLICATION_H__
 
+static const nkVec4 DEBUG_FONT_FG_COLOR = { 0.15f,0.10f,0.00f,1.0f };
+static const nkVec4 DEBUG_FONT_BG_COLOR = { 0.00f,0.00f,0.00f,0.3f };
+
 #define APP_ANGLE_CHANGE_SPEED 0.5f
 
 #define APP_MAX_ANGLES 128
