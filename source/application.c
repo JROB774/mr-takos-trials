@@ -46,14 +46,12 @@ static void render_toggle_button(const nkChar* text_a, const nkChar* text_b, nkB
 static nkF32 update_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
 {
     // @Incomplete: ...
-    update_simple_button(text, y, scale);
     return value;
 }
 
 static void render_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
 {
     // @Incomplete: ...
-    render_simple_button(text, y, scale);
 }
 
 static void app_init(void)
