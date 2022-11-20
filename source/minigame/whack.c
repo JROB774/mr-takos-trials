@@ -12,7 +12,7 @@ static void minigame_whack_quit(void)
 
 static void minigame_whack_start(void)
 {
-    // @Incomplete: ...
+    cursor_set_type(CursorType_Shovel);
 }
 
 static void minigame_whack_end(void)

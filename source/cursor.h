@@ -5,6 +5,7 @@ NK_ENUM(CursorType, nkS32)
 {
     CursorType_Arrow,
     CursorType_Pointer,
+    CursorType_Shovel,
     CursorType_TOTAL
 };
 
