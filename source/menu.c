@@ -201,7 +201,7 @@ static void menu_update_options(nkF32 dt)
         g_resetsave++;
         if(g_resetsave == 3)
         {
-            // @Incomplete: Delete the save...
+            reset_game_data();
         }
     }
     y += bitmap_font_line_advance(MENU_TEXT_SCALE);
