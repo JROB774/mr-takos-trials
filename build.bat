@@ -4,8 +4,9 @@ setlocal
 if "%~1"=="assets" goto build_assets
 if "%~1"=="win32" goto build_win32
 if "%~1"=="web" goto build_web
+if "%~1"=="tools" goto build_tools
 
-echo please specify build target (win32, web)...
+echo please specify build target (win32, web, tools, assets)...
 goto end
 
 :build_assets
@@ -22,6 +23,18 @@ goto end
 
 :asset_error
 echo please specify build target (win32, web)...
+
+goto end
+
+:build_tools
+echo ----------------------------------------
+
+if not exist tools mkdir tools
+
+pushd tools
+cl ../source/tools/packer.c -Fe:packer.exe
+del *.obj
+popd
 
 goto end
 
