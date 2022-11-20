@@ -43,6 +43,9 @@ static void load_all_assets(void)
     g_asset_sfx_page_flip[10]   = load_asset_sound  ("page_flip_011.wav");
     g_asset_sfx_paper_rustle[0] = load_asset_sound  ("paper_rustle_001.wav");
     g_asset_sfx_paper_rustle[1] = load_asset_sound  ("paper_rustle_002.wav");
+    g_asset_sfx_gasp_small      = load_asset_sound  ("gasp_small.wav");
+    g_asset_sfx_gasp_large      = load_asset_sound  ("gasp_large.wav");
+    g_asset_sfx_explosion       = load_asset_sound  ("explosion.wav");
 }
 
 static void free_all_assets(void)
@@ -88,6 +91,9 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_page_flip[10]);
     sound_destroy  (g_asset_sfx_paper_rustle[0]);
     sound_destroy  (g_asset_sfx_paper_rustle[1]);
+    sound_destroy  (g_asset_sfx_gasp_small);
+    sound_destroy  (g_asset_sfx_gasp_large);
+    sound_destroy  (g_asset_sfx_explosion);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

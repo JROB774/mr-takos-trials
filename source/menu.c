@@ -18,11 +18,13 @@ NK_ENUM(MenuState, nkS32)
 };
 
 static MenuState g_menustate;
+static nkS32     g_resetsave;
 
 static void change_menu_state(MenuState new_state)
 {
     sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
     g_menustate = new_state;
+    g_resetsave = 0; // Revert the "reset save" button clicks value.
 }
 
 static nkBool update_back_button(void)
@@ -156,6 +158,9 @@ static void menu_render_main(void)
 // Options
 // =============================================================================
 
+static const nkChar* RESET_SAVE_LABELS[4] = { "RESET SAVE", "ARE YOU SURE", "LAST CHANCE", "SAVE NUKED" };
+static Sound*        RESET_SAVE_SOUNDS[3] = { &g_asset_sfx_gasp_small, &g_asset_sfx_gasp_large, &g_asset_sfx_explosion };
+
 NK_ENUM(OptionsMenuOption, nkS32)
 {
     OptionsMenuOption_Window,
@@ -190,8 +195,15 @@ static void menu_update_options(nkF32 dt)
     y += bitmap_font_line_advance(MENU_TEXT_SCALE);
 
     // Reset save stages.
-    // @Incomplete: ...
-    update_simple_button("RESET SAVE", y, MENU_TEXT_SCALE);
+    if(update_simple_button(RESET_SAVE_LABELS[g_resetsave], y, MENU_TEXT_SCALE) && g_resetsave < 3)
+    {
+        sound_play(*RESET_SAVE_SOUNDS[g_resetsave], 0);
+        g_resetsave++;
+        if(g_resetsave == 3)
+        {
+            // @Incomplete: Delete the save...
+        }
+    }
     y += bitmap_font_line_advance(MENU_TEXT_SCALE);
 }
 
@@ -214,8 +226,7 @@ static void menu_render_options(void)
     y += bitmap_font_line_advance(MENU_TEXT_SCALE);
 
     // Reset save stages.
-    // @Incomplete: ...
-    render_simple_button("RESET SAVE", y, MENU_TEXT_SCALE);
+    render_simple_button(RESET_SAVE_LABELS[g_resetsave], y, MENU_TEXT_SCALE);
     y += bitmap_font_line_advance(MENU_TEXT_SCALE);
 }
 
