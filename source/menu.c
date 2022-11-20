@@ -80,7 +80,6 @@ static void menu_update_title(nkF32 dt)
 
 static void menu_render_title(void)
 {
-    // @Incomplete: Debug title (not final visuals).
     // Render the title.
     nkF32 h = font_get_px_height(g_asset_font_big) * 0.75f;
     nkF32 y = ((SCREEN_HEIGHT - (4 * h)) * 0.5f) + (h * 0.25f);
@@ -172,7 +171,6 @@ NK_ENUM(OptionsMenuOption, nkS32)
 
 static void menu_update_options(nkF32 dt)
 {
-    // @Incomplete: On returning to the main menu save the options...
     if(is_key_pressed(KeyCode_Escape))
         change_menu_state(MenuState_Main);
     update_back_button();
