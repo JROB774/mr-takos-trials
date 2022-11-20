@@ -269,9 +269,10 @@ static void render_target_bind(RenderTarget target)
     else glBindFramebuffer(GL_FRAMEBUFFER, target->handle);
 }
 
-static GLuint shader_compile(const nkChar* source, GLenum type)
+static GLuint shader_compile(const nkChar* source, nkU64 bytes, GLenum type)
 {
     const nkChar* sources[2] = { NULL, source };
+    const GLint lengths[2] = { -1, bytes };
 
     #if defined(BUILD_NATIVE)
     if(type == GL_VERTEX_SHADER) sources[0] = "#version 330\n#define VERT_SHADER 1\n";
@@ -284,7 +285,7 @@ static GLuint shader_compile(const nkChar* source, GLenum type)
     #endif // BUILD_WEB
 
     GLuint shader = glCreateShader(type);
-    glShaderSource(shader, 2, sources, NULL);
+    glShaderSource(shader, 2, sources, lengths);
     glCompileShader(shader);
 
     GLint success;
@@ -312,8 +313,8 @@ static Shader shader_create(void* data, nkU64 bytes)
     if(!shader)
         fatal_error("Failed to allocate shader!");
 
-    GLuint vert = shader_compile(data, GL_VERTEX_SHADER);
-    GLuint frag = shader_compile(data, GL_FRAGMENT_SHADER);
+    GLuint vert = shader_compile(data, bytes, GL_VERTEX_SHADER);
+    GLuint frag = shader_compile(data, bytes, GL_FRAGMENT_SHADER);
 
     shader->program = glCreateProgram();
 

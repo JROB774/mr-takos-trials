@@ -85,14 +85,28 @@ static nkBool is_music_playing(void)
     return Mix_PlayingMusic();
 }
 
-static Sound sound_create(const nkChar* file_name)
+static Sound sound_create_from_file(const nkChar* file_name)
 {
     Sound sound = ALLOCATE_AUDIO_TYPE(Sound);
     if(!sound)
         fatal_error("Failed to allocate sound!");
     sound->chunk = Mix_LoadWAV(file_name);
     if(!sound->chunk)
-        fatal_error("Failed to load sound: %s (%s)", file_name, Mix_GetError());
+        fatal_error("Failed to load sound from file: %s (%s)", file_name, Mix_GetError());
+    return sound;
+}
+
+static Sound sound_create_from_data(void* data, nkU64 size)
+{
+    Sound sound = ALLOCATE_AUDIO_TYPE(Sound);
+    if(!sound)
+        fatal_error("Failed to allocate sound!");
+    SDL_RWops* rwops = SDL_RWFromMem(data, size);
+    if(!rwops)
+        fatal_error("Failed to create RWops from data! (%s)", SDL_GetError());
+    sound->chunk = Mix_LoadWAV_RW(rwops, SDL_TRUE);
+    if(!sound->chunk)
+        fatal_error("Failed to load sound from data! (%s)", Mix_GetError());
     return sound;
 }
 
@@ -133,14 +147,28 @@ static void sound_stop(SoundRef sound_ref)
     Mix_HaltChannel(sound_ref);
 }
 
-static Music music_create(const nkChar* file_name)
+static Music music_create_from_file(const nkChar* file_name)
 {
     Music music = ALLOCATE_AUDIO_TYPE(Music);
     if(!music)
         fatal_error("Failed to allocate music!");
     music->music = Mix_LoadMUS(file_name);
     if(!music->music)
-        fatal_error("Failed to load music: %s (%s)", file_name, Mix_GetError());
+        fatal_error("Failed to load music from file: %s (%s)", file_name, Mix_GetError());
+    return music;
+}
+
+static Music music_create_from_data(void* data, nkU64 size)
+{
+    Music music = ALLOCATE_AUDIO_TYPE(Music);
+    if(!music)
+        fatal_error("Failed to allocate music!");
+    SDL_RWops* rwops = SDL_RWFromMem(data, size);
+    if(!rwops)
+        fatal_error("Failed to create RWops from data! (%s)", SDL_GetError());
+    music->music = Mix_LoadMUS_RW(rwops, SDL_TRUE);
+    if(!music->music)
+        fatal_error("Failed to load music from data! (%s)", Mix_GetError());
     return music;
 }
 

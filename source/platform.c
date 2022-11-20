@@ -9,6 +9,7 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #define NK_MATH_IMPLEMENTATION
 #define NK_FILESYS_IMPLEMENTATION
+#define NK_PACK_IMPLEMENTATION
 
 #if defined(BUILD_WEB)
 #include <emscripten.h>
@@ -23,6 +24,7 @@
 #include <nk_define.h>
 #include <nk_math.h>
 #include <nk_filesys.h>
+#include <nk_pack.h>
 
 #include <stb_image.h>
 #include <stb_truetype.h>
@@ -416,6 +418,8 @@ static void main_init(void)
         printf("VSync Enabled!\n");
     }
 
+    load_assets_npak();
+
     renderer_init();
     imm_init();
     font_init();
@@ -453,6 +457,8 @@ static void main_quit(void)
     font_quit();
     imm_quit();
     renderer_quit();
+
+    free_assets_npak();
 
     SDL_free(g_ctx.base_path);
 

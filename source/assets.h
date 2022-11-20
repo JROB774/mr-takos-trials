@@ -33,8 +33,10 @@ static Sound   g_asset_sfx_gasp_large;
 static Sound   g_asset_sfx_explosion;
 static Sound   g_asset_sfx_cat_meow;
 
-static void load_all_assets(void);
-static void free_all_assets(void);
+static void load_assets_npak(void);
+static void free_assets_npak(void);
+static void load_all_assets (void);
+static void free_all_assets (void);
 
 static Sound    load_asset_sound  (const nkChar* name);
 static Music    load_asset_music  (const nkChar* name);

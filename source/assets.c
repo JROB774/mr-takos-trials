@@ -1,5 +1,22 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+static nkNPAK g_npak;
+
+static void load_assets_npak(void)
+{
+    #if defined(BUILD_NATIVE)
+    if(!nk_npak_load(&g_npak, "assets.npak"))
+        printf("Failed to load assets NPAK file!\n");
+    #endif // BUILD_NATIVE
+}
+
+static void free_assets_npak(void)
+{
+    #if defined(BUILD_NATIVE)
+    nk_npak_free(&g_npak);
+    #endif // BUILD_NATIVE
+}
+
 static void load_all_assets(void)
 {
     g_asset_back_paper          = load_asset_texture("backpaper.png",    SamplerFilter_Linear, SamplerWrap_Clamp);
@@ -100,33 +117,66 @@ static void free_all_assets(void)
 
 /*////////////////////////////////////////////////////////////////////////////*/
 
+// Assets will look in the NPAK file first (if in a native build) and then
+// fallback to looking to a file on disk if the file could not be found.
+
 #define ASSET_PATH "assets/"
 
 static Sound load_asset_sound(const nkChar* name)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
+
+    #if defined(BUILD_NATIVE)
+    strcat(buffer, "audio/sound/");
+    strcat(buffer, name);
+    nkU64 file_size;
+    void* file_data = nk_npak_get_file_data(&g_npak, buffer, &file_size);
+    if(file_data)
+        return sound_create_from_data(file_data, file_size);
+    #endif // BUILD_NATIVE
+
     strcpy(buffer, get_base_path());
     strcat(buffer, ASSET_PATH);
     strcat(buffer, "audio/sound/");
     strcat(buffer, name);
 
-    return sound_create(buffer);
+    return sound_create_from_file(buffer);
 }
 
 static Music load_asset_music(const nkChar* name)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
+
+    #if defined(BUILD_NATIVE)
+    strcat(buffer, "audio/music/");
+    strcat(buffer, name);
+    nkU64 file_size;
+    void* file_data = nk_npak_get_file_data(&g_npak, buffer, &file_size);
+    if(file_data)
+        return music_create_from_data(file_data, file_size);
+    #endif // BUILD_NATIVE
+
     strcpy(buffer, get_base_path());
     strcat(buffer, ASSET_PATH);
     strcat(buffer, "audio/music/");
     strcat(buffer, name);
 
-    return music_create(buffer);
+    return music_create_from_file(buffer);
 }
 
 static Font load_asset_font(const nkChar* name, nkF32 px_height)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
+
+    #if defined(BUILD_NATIVE)
+    strcat(buffer, "fonts/");
+    strcat(buffer, name);
+    nkU64 file_size;
+    void* file_data = nk_npak_get_file_data(&g_npak, buffer, &file_size);
+    if(file_data)
+        return font_create(file_data, NK_FALSE, px_height);
+    #endif // BUILD_NATIVE
+
     strcpy(buffer, get_base_path());
     strcat(buffer, ASSET_PATH);
     strcat(buffer, "fonts/");
@@ -142,6 +192,24 @@ static Font load_asset_font(const nkChar* name, nkF32 px_height)
 static Texture load_asset_texture(const nkChar* name, SamplerFilter filter, SamplerWrap wrap)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
+
+    #if defined(BUILD_NATIVE)
+    strcat(buffer, "textures/");
+    strcat(buffer, name);
+    nkU64 file_size;
+    void* file_data = nk_npak_get_file_data(&g_npak, buffer, &file_size);
+    if(file_data)
+    {
+        nkS32 w,h,bpp;
+        nkU8* data = stbi_load_from_memory(file_data, file_size, &w,&h,&bpp, 4);
+        if(!data)
+            fatal_error("Failed to load texture from NPAK: %s", buffer);
+        Texture texture = texture_create(w,h,4, data, filter, wrap);
+        stbi_image_free(data);
+        return texture;
+    }
+    #endif // BUILD_NATIVE
+
     strcpy(buffer, get_base_path());
     strcat(buffer, ASSET_PATH);
     strcat(buffer, "textures/");
@@ -159,6 +227,16 @@ static Texture load_asset_texture(const nkChar* name, SamplerFilter filter, Samp
 static Shader load_asset_shader(const nkChar* name)
 {
     nkChar buffer[1024] = NK_ZERO_MEM;
+
+    #if defined(BUILD_NATIVE)
+    strcat(buffer, "shaders/");
+    strcat(buffer, name);
+    nkU64 file_size;
+    void* file_data = nk_npak_get_file_data(&g_npak, buffer, &file_size);
+    if(file_data)
+        return shader_create(file_data, file_size);
+    #endif // BUILD_NATIVE
+
     strcpy(buffer, get_base_path());
     strcat(buffer, ASSET_PATH);
     strcat(buffer, "shaders/");
