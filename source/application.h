@@ -27,13 +27,6 @@ static const nkVec2 SHADOW_OFFSET = { 4.0f,4.0f };
 static void render_item   (nkF32 x, nkF32 y,                                  const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier);
 static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier);
 
-static nkBool update_simple_button(const nkChar* text,                                        nkF32 y, nkF32 scale);
-static void   render_simple_button(const nkChar* text,                                        nkF32 y, nkF32 scale);
-static nkBool update_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale);
-static void   render_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale);
-static nkF32  update_slider_button(const nkChar* text, nkF32 value,                           nkF32 y, nkF32 scale);
-static void   render_slider_button(const nkChar* text, nkF32 value,                           nkF32 y, nkF32 scale);
-
 static void app_init  (void);
 static void app_quit  (void);
 static void app_update(nkF32 dt);

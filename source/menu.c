@@ -6,6 +6,7 @@
 #define BACK_BUTTON_H 60.0f
 
 #define MENU_TEXT_SCALE 0.7f
+#define UI_SLIDER_GAP  12.0f
 
 NK_ENUM(MenuState, nkS32)
 {
@@ -18,7 +19,7 @@ NK_ENUM(MenuState, nkS32)
 };
 
 static MenuState g_menustate;
-static nkS32     g_resetsave;
+static nkU32     g_resetsave;
 
 static void change_menu_state(MenuState new_state)
 {
@@ -62,6 +63,109 @@ static void render_back_button(void)
     else
     {
         render_item(bx,by, ATLAS_UI, ATLAS_UI_BACK_BODY, 1.0f);
+    }
+    imm_end_texture_batch();
+}
+
+static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+{
+    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    return (cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h) && is_mouse_button_pressed(MouseButton_Left));
+}
+
+static void render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+{
+    FontStyle style = FontStyle_Faded;
+    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    if(cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h))
+        style = FontStyle_Rotate;
+    render_bitmap_font_aligned(text, Alignment_Center, y, scale, style);
+}
+
+static nkBool update_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)
+{
+    return update_simple_button((toggle) ? text_a : text_b, y, scale);
+}
+
+static void render_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)
+{
+    render_simple_button((toggle) ? text_a : text_b, y, scale);
+}
+
+static nkF32 update_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
+{
+    nkF32 segment_width = ATLAS_UI[ATLAS_UI_SLIDER_FADED_EMPTY_BODY].clip_bounds.w * scale;
+
+    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    bounds.x -= (((segment_width * 10) + UI_SLIDER_GAP) * 0.5f);
+    nkF32 x = bounds.x + bounds.w + UI_SLIDER_GAP; // The start of the slider segments.
+    bounds.w += (((segment_width * 10) + UI_SLIDER_GAP));
+
+    nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
+    ImmRect c = cursor_get_bounds();
+    if(hovered && is_mouse_button_pressed(MouseButton_Left))
+    {
+        if((c.x < x))
+        {
+            value = 0.0f;
+        }
+        else
+        {
+            for(nkS32 i=0; i<10; ++i)
+            {
+                if((c.x > x) && is_mouse_button_pressed(MouseButton_Left))
+                    value = NK_CAST(nkF32, (i+1)) / 10.0f;
+                x += segment_width;
+            }
+        }
+    }
+
+    return value;
+}
+
+static void render_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
+{
+    nkF32 segment_width = ATLAS_UI[ATLAS_UI_SLIDER_FADED_EMPTY_BODY].clip_bounds.w * scale;
+    nkS32 segments_filled = NK_CAST(nkS32, value * 10.0f);
+
+    nkS32 text_length = strlen(text);
+
+    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    bounds.x -= (((segment_width * 10) + UI_SLIDER_GAP) * 0.5f);
+    nkF32 x = bounds.x + bounds.w + UI_SLIDER_GAP; // The start of the slider segments.
+    bounds.w += (((segment_width * 10) + UI_SLIDER_GAP));
+
+    nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
+
+    FontStyle style = (hovered) ? FontStyle_Rotate : FontStyle_Faded;
+    render_bitmap_font(text, bounds.x, y, scale, style);
+
+    imm_begin_texture_batch(g_asset_ui);
+    for(nkS32 i=0; i<10; ++i)
+    {
+        nkS32 index = ATLAS_UI_SLIDER_FADED_EMPTY_BODY;
+        if(!NK_CHECK_FLAGS(style, FontStyle_Faded))
+            index = ATLAS_UI_SLIDER_SOLID_EMPTY_BODY;
+        if(hovered)
+        {
+            // Show the new value based on the cursor position.
+            ImmRect c = cursor_get_bounds();
+            if(c.x >= x) index += 2;
+        }
+        else
+        {
+            if(segments_filled > i) index += 2;
+        }
+
+        nkF32 angle = 0.0f;
+        if(NK_CHECK_FLAGS(style, FontStyle_Rotate))
+        {
+            angle = g_angles_lil[i+text_length];
+        }
+
+        x += (segment_width * 0.5f);
+        render_item_ex(x,y, scale,scale, angle, ATLAS_UI, index, 1.0f);
+        x += (segment_width * 0.5f);
     }
     imm_end_texture_batch();
 }
