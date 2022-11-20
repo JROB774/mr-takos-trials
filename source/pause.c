@@ -24,6 +24,8 @@ static void pause_update(nkF32 dt)
         return;
     }
 
+    nkBool prev_paused = g_pause.paused;
+
     // Check for the pause button hotkey.
     if(is_key_pressed(KeyCode_Escape))
     {
@@ -63,6 +65,13 @@ static void pause_update(nkF32 dt)
             sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
             g_pause.paused = NK_TRUE;
         }
+    }
+
+    // Pause/resume the ticking sound when entering/exiting pause.
+    if(prev_paused != g_pause.paused && g_appstate == AppState_Game && g_gamestate.tick_sound_ref != INVALID_SOUND_REF)
+    {
+        if(g_pause.paused) sound_pause(g_gamestate.tick_sound_ref);
+        else sound_resume(g_gamestate.tick_sound_ref);
     }
 }
 

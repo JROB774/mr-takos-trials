@@ -28,6 +28,8 @@ static nkBool is_music_playing(void);
 static Sound    sound_create (const nkChar* file_name);
 static void     sound_destroy(Sound sound);
 static SoundRef sound_play   (Sound sound, nkS32 loops);
+static void     sound_resume (SoundRef sound_ref);
+static void     sound_pause  (SoundRef sound_ref);
 static void     sound_stop   (SoundRef sound_ref);
 
 static Music music_create (const nkChar* file_name);

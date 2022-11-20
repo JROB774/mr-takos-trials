@@ -110,6 +110,16 @@ static SoundRef sound_play(Sound sound, nkS32 loops)
     return NK_CAST(SoundRef,channel);
 }
 
+static void sound_resume(SoundRef sound_ref)
+{
+    Mix_Resume(sound_ref);
+}
+
+static void sound_pause(SoundRef sound_ref)
+{
+    Mix_Pause(sound_ref);
+}
+
 static void sound_stop(SoundRef sound_ref)
 {
     Mix_HaltChannel(sound_ref);

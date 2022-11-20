@@ -15,6 +15,7 @@ typedef struct GameState
     nkF32      failure_countdown;
     nkVec2     success_pos;
     nkVec2     failure_pos;
+    SoundRef   tick_sound_ref;
 }
 GameState;
 
@@ -91,11 +92,15 @@ static void game_start(void)
     g_gamestate.success_countdown = 0.0f;
     g_gamestate.failure_countdown = 0.0f;
 
+    g_gamestate.tick_sound_ref = INVALID_SOUND_REF;
+
     MINI_GAME_HOOKS[g_gamestate.current_minigame].start();
 }
 
 static void game_end(void)
 {
+    g_gamestate.tick_sound_ref = INVALID_SOUND_REF;
+
     sound_play(g_asset_sfx_alarm_clock, 0);
 
     MINI_GAME_HOOKS[g_gamestate.current_minigame].end();
@@ -162,7 +167,7 @@ static void game_update(nkF32 dt)
         // Do the end game logic.
         if(prev_timer > 5.0f && g_gamestate.game_timer <= 5.0f)
         {
-            sound_play(g_asset_sfx_clock_ticking, 0);
+            g_gamestate.tick_sound_ref = sound_play(g_asset_sfx_clock_ticking, 0);
         }
         if(prev_timer > 0.0f && g_gamestate.game_timer <= 0.0f)
         {
