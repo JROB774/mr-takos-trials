@@ -71,6 +71,7 @@ static void app_update(nkF32 dt)
     }
 
     cursor_update(dt);
+    particles_update(dt);
 
     if(!is_game_paused())
     {
@@ -108,6 +109,8 @@ static void app_render(void)
             case AppState_Game: game_render(); break;
         }
     }
+
+    particles_render();
 
     pause_render();
     cursor_render();
