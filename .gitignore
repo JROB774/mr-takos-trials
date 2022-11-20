@@ -1,6 +1,7 @@
 assets/textures/temp/
 binary/
 source/codegen/
-tools/
+
+/tools/
 
 *.res

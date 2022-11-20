@@ -19,6 +19,8 @@ set platform=%~2
 if not exist binary\%platform% mkdir binary\%platform%
 python assets/build_assets.py %platform%
 
+if %platform%==win32 tools\packer.exe
+
 goto end
 
 :asset_error
@@ -32,7 +34,7 @@ echo ----------------------------------------
 if not exist tools mkdir tools
 
 pushd tools
-cl ../source/tools/packer.c -Fe:packer.exe
+cl ../source/tools/packer.c -I ../depends/nksdk/nklibs -Fe:packer.exe
 del *.obj
 popd
 
