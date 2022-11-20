@@ -1,5 +1,7 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
+#define UI_SLIDER_GAP 12.0f
+
 static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier)
 {
     nkF32 sx = x + (SHADOW_OFFSET.x * shadow_offset_multiplier);
@@ -45,13 +47,80 @@ static void render_toggle_button(const nkChar* text_a, const nkChar* text_b, nkB
 
 static nkF32 update_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
 {
-    // @Incomplete: ...
+    nkF32 segment_width = ATLAS_UI[ATLAS_UI_SLIDER_FADED_EMPTY_BODY].clip_bounds.w * scale;
+
+    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    bounds.x -= (((segment_width * 10) + UI_SLIDER_GAP) * 0.5f);
+    nkF32 x = bounds.x + bounds.w + UI_SLIDER_GAP; // The start of the slider segments.
+    bounds.w += (((segment_width * 10) + UI_SLIDER_GAP));
+
+    nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
+    ImmRect c = cursor_get_bounds();
+    if(hovered && is_mouse_button_pressed(MouseButton_Left))
+    {
+        if((c.x < x))
+        {
+            value = 0.0f;
+        }
+        else
+        {
+            for(nkS32 i=0; i<10; ++i)
+            {
+                if((c.x > x) && is_mouse_button_pressed(MouseButton_Left))
+                    value = NK_CAST(nkF32, (i+1)) / 10.0f;
+                x += segment_width;
+            }
+        }
+    }
+
     return value;
 }
 
 static void render_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32 scale)
 {
-    // @Incomplete: ...
+    nkF32 segment_width = ATLAS_UI[ATLAS_UI_SLIDER_FADED_EMPTY_BODY].clip_bounds.w * scale;
+    nkS32 segments_filled = NK_CAST(nkS32, value * 10.0f);
+
+    nkS32 text_length = strlen(text);
+
+    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    bounds.x -= (((segment_width * 10) + UI_SLIDER_GAP) * 0.5f);
+    nkF32 x = bounds.x + bounds.w + UI_SLIDER_GAP; // The start of the slider segments.
+    bounds.w += (((segment_width * 10) + UI_SLIDER_GAP));
+
+    nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
+
+    FontStyle style = (hovered) ? FontStyle_Rotate : FontStyle_Faded;
+    render_bitmap_font(text, bounds.x, y, scale, style);
+
+    imm_begin_texture_batch(g_asset_ui);
+    for(nkS32 i=0; i<10; ++i)
+    {
+        nkS32 index = ATLAS_UI_SLIDER_FADED_EMPTY_BODY;
+        if(!NK_CHECK_FLAGS(style, FontStyle_Faded))
+            index = ATLAS_UI_SLIDER_SOLID_EMPTY_BODY;
+        if(hovered)
+        {
+            // Show the new value based on the cursor position.
+            ImmRect c = cursor_get_bounds();
+            if(c.x >= x) index += 2;
+        }
+        else
+        {
+            if(segments_filled > i) index += 2;
+        }
+
+        nkF32 angle = 0.0f;
+        if(NK_CHECK_FLAGS(style, FontStyle_Rotate))
+        {
+            angle = g_angles_lil[i+text_length];
+        }
+
+        x += (segment_width * 0.5f);
+        render_item_ex(x,y, scale,scale, angle, ATLAS_UI, index, 1.0f);
+        x += (segment_width * 0.5f);
+    }
+    imm_end_texture_batch();
 }
 
 static void app_init(void)

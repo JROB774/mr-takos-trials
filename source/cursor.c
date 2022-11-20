@@ -54,11 +54,8 @@ static void cursor_render(void)
 
     // Debug render the cursor's bounding box.
     #if 0
-    nkF32 cx = g_cursor.pos.x - 16.0f;
-    nkF32 cy = g_cursor.pos.y - 16.0f;
-    nkF32 cw = 10.0f;
-    nkF32 ch = 10.0f;
-    imm_rect_filled(cx,cy,cw,ch, (nkVec4){ 1.0f,0.0f,0.0f,0.5f });
+    ImmRect b = cursor_get_bounds();
+    imm_rect_filled(b.x,b.y,b.w,b.h, (nkVec4){ 1.0f,0.0f,0.0f,0.5f });
     #endif
 }
 
@@ -70,13 +67,8 @@ static void cursor_set_type(CursorType type)
 static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
 {
     if(g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT) return NK_FALSE;
-
-    nkF32 cx = g_cursor.pos.x - 16.0f;
-    nkF32 cy = g_cursor.pos.y - 16.0f;
-    nkF32 cw = 10.0f;
-    nkF32 ch = 10.0f;
-
-    return ((cx < (x+w)) && ((cx+ch) > x) && (cy < (y+h)) && ((cy+ch) > y));
+    ImmRect b = cursor_get_bounds();
+    return ((b.x < (x+w)) && ((b.x+b.h) > x) && (b.y < (y+h)) && ((b.y+b.h) > y));
 }
 
 static void cursor_hide(void)
@@ -87,6 +79,16 @@ static void cursor_hide(void)
 static void cursor_show(void)
 {
     g_cursor.idle_time = 0.0f;
+}
+
+static ImmRect cursor_get_bounds(void)
+{
+    ImmRect bounds;
+    bounds.x = g_cursor.pos.x - 16.0f;
+    bounds.y = g_cursor.pos.y - 16.0f;
+    bounds.w = 10.0f;
+    bounds.h = 10.0f;
+    return bounds;
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
