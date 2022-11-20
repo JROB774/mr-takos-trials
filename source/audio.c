@@ -5,6 +5,8 @@
 #define MIXER_CHANNELS      2 // Stereo Sound
 #define MIXER_SAMPLE_SIZE   2048
 
+#define MAX_AUDIO_CHANNELS 64
+
 #define ALLOCATE_AUDIO_TYPE(name) malloc(sizeof(struct name##__Type))
 
 DEFINE_AUDIO_TYPE(Sound)
@@ -32,7 +34,7 @@ static void audio_init(void)
         fatal_error("Failed to initialize SDL2 Mixer OGG support: %s", Mix_GetError());
     if(Mix_OpenAudio(MIXER_FREQUENCY, MIXER_SAMPLE_FORMAT, MIXER_CHANNELS, MIXER_SAMPLE_SIZE) != 0)
         fatal_error("Failed to open SDL2 Mixer audio device: %s", Mix_GetError());
-    Mix_AllocateChannels(64);
+    Mix_AllocateChannels(MAX_AUDIO_CHANNELS);
 
     set_sound_volume(0.8f);
     set_music_volume(0.7f);
@@ -103,8 +105,14 @@ static void sound_destroy(Sound sound)
 
 static SoundRef sound_play(Sound sound, nkS32 loops)
 {
+    return sound_play_on_channel(sound, loops, -1);
+}
+
+static SoundRef sound_play_on_channel(Sound sound, nkS32 loops, nkS32 channel)
+{
+    NK_ASSERT(channel < MAX_AUDIO_CHANNELS);
     NK_ASSERT(sound);
-    nkS32 channel = Mix_PlayChannel(-1, sound->chunk, loops);
+    channel = Mix_PlayChannel(channel, sound->chunk, loops);
     if(channel == -1)
         printf("Failed to play sound effect: %s\n", Mix_GetError());
     return NK_CAST(SoundRef,channel);

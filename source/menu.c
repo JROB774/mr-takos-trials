@@ -18,8 +18,10 @@ NK_ENUM(MenuState, nkS32)
     MenuState_TOTAL
 };
 
-static MenuState g_menustate;
-static nkU32     g_resetsave;
+static MenuState     g_menustate;
+static const nkChar* g_menu_curr_hovered;
+static const nkChar* g_menu_prev_hovered;
+static nkU32         g_resetsave;
 
 static void change_menu_state(MenuState new_state)
 {
@@ -70,7 +72,9 @@ static void render_back_button(void)
 static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 {
     ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
-    return (cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h) && is_mouse_button_pressed(MouseButton_Left));
+    nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
+    if(hovered) g_menu_curr_hovered = text;
+    return (hovered && is_mouse_button_pressed(MouseButton_Left));
 }
 
 static void render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
@@ -118,6 +122,10 @@ static nkF32 update_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF3
                 x += segment_width;
             }
         }
+    }
+    if(hovered)
+    {
+        g_menu_curr_hovered = text;
     }
 
     return value;
@@ -387,6 +395,8 @@ static void menu_quit(void)
 
 static void menu_update(nkF32 dt)
 {
+    g_menu_curr_hovered = NULL;
+
     switch(g_menustate)
     {
         case MenuState_Title: menu_update_title(dt); break;
@@ -395,6 +405,13 @@ static void menu_update(nkF32 dt)
         case MenuState_Awards: menu_update_awards(dt); break;
         case MenuState_Credits: menu_update_credits(dt); break;
     }
+
+    // NOTE: Doesn't sound the best, if we can get a better sound then maybe we should do this...
+    //
+    // if(g_menu_curr_hovered && (g_menu_curr_hovered != g_menu_prev_hovered))
+    //     sound_play(g_asset_sfx_paper_rustle[rng_int_range(0,1)], 0);
+
+    g_menu_prev_hovered = g_menu_curr_hovered;
 }
 
 static void menu_render(void)
