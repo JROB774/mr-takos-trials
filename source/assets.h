@@ -31,6 +31,7 @@ static Sound   g_asset_sfx_paper_rustle[2];
 static Sound   g_asset_sfx_gasp_small;
 static Sound   g_asset_sfx_gasp_large;
 static Sound   g_asset_sfx_explosion;
+static Sound   g_asset_sfx_cat_meow;
 
 static void load_all_assets(void);
 static void free_all_assets(void);

@@ -46,6 +46,7 @@ static void load_all_assets(void)
     g_asset_sfx_gasp_small      = load_asset_sound  ("gasp_small.wav");
     g_asset_sfx_gasp_large      = load_asset_sound  ("gasp_large.wav");
     g_asset_sfx_explosion       = load_asset_sound  ("explosion.wav");
+    g_asset_sfx_cat_meow        = load_asset_sound  ("cat_meow.wav");
 }
 
 static void free_all_assets(void)
@@ -94,6 +95,7 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_gasp_small);
     sound_destroy  (g_asset_sfx_gasp_large);
     sound_destroy  (g_asset_sfx_explosion);
+    sound_destroy  (g_asset_sfx_cat_meow);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

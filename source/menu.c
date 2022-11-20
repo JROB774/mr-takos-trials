@@ -199,6 +199,7 @@ static void menu_update_options(nkF32 dt)
         g_resetsave++;
         if(g_resetsave == 3)
         {
+            sound_play(g_asset_sfx_cat_meow, 0);
             reset_game_data();
         }
     }
