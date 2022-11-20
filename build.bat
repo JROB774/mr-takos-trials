@@ -65,7 +65,7 @@ copy depends\sdl\bin\*.dll binary\win32\ > NUL
 
 pushd binary\win32
 rc -i ../../redist/win32/res ../../redist/win32/res/icon.rc
-cl ../../source/platform.c %cflg% %defs% %idir% -Fe:tako.exe -link %lflg% %ldir% %libs%  ../../redist/win32/res/icon.res
+cl ../../source/platform.c %cflg% %defs% %idir% -Fe:TAKO.exe -link %lflg% %ldir% %libs%  ../../redist/win32/res/icon.res
 popd
 
 goto end
