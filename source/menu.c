@@ -71,7 +71,7 @@ static void render_back_button(void)
 
 static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 {
-    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
     nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
     if(hovered) g_menu_curr_hovered = text;
     return (hovered && is_mouse_button_pressed(MouseButton_Left));
@@ -80,10 +80,10 @@ static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 static void render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 {
     FontStyle style = FontStyle_Faded;
-    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
     if(cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h))
         style = FontStyle_Rotate;
-    render_bitmap_font_aligned(text, Alignment_Center, y, scale, style);
+    render_bitmap_font_aligned(FontSize_Big, text, Alignment_Center, y, scale, style);
 }
 
 static nkBool update_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)
@@ -100,7 +100,7 @@ static nkF32 update_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF3
 {
     nkF32 segment_width = ATLAS_UI[ATLAS_UI_SLIDER_FADED_EMPTY_BODY].clip_bounds.w * scale;
 
-    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
     bounds.x -= (((segment_width * 10) + UI_SLIDER_GAP) * 0.5f);
     nkF32 x = bounds.x + bounds.w + UI_SLIDER_GAP; // The start of the slider segments.
     bounds.w += (((segment_width * 10) + UI_SLIDER_GAP));
@@ -138,7 +138,7 @@ static void render_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32
 
     nkS32 text_length = strlen(text);
 
-    ImmRect bounds = get_bitmap_font_bounds_aligned(text, Alignment_Center, y, scale, FontStyle_None);
+    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
     bounds.x -= (((segment_width * 10) + UI_SLIDER_GAP) * 0.5f);
     nkF32 x = bounds.x + bounds.w + UI_SLIDER_GAP; // The start of the slider segments.
     bounds.w += (((segment_width * 10) + UI_SLIDER_GAP));
@@ -146,7 +146,7 @@ static void render_slider_button(const nkChar* text, nkF32 value, nkF32 y, nkF32
     nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
 
     FontStyle style = (hovered) ? FontStyle_Rotate : FontStyle_Faded;
-    render_bitmap_font(text, bounds.x, y, scale, style);
+    render_bitmap_font(FontSize_Big, text, bounds.x, y, scale, style);
 
     imm_begin_texture_batch(g_asset_ui);
     for(nkS32 i=0; i<10; ++i)
@@ -242,7 +242,7 @@ static void menu_update_main(nkF32 dt)
         change_menu_state(MenuState_Title);
     }
 
-    nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
+    nkF32 y = bitmap_font_block_y_off(FontSize_Big, MainMenuOption_TOTAL, MENU_TEXT_SCALE);
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
         if(update_simple_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE))
@@ -264,17 +264,17 @@ static void menu_update_main(nkF32 dt)
                 #endif // BUILD_NATIVE
             }
         }
-        y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+        y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
     }
 }
 
 static void menu_render_main(void)
 {
-    nkF32 y = bitmap_font_block_y_off(MainMenuOption_TOTAL, MENU_TEXT_SCALE);
+    nkF32 y = bitmap_font_block_y_off(FontSize_Big, MainMenuOption_TOTAL, MENU_TEXT_SCALE);
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
         render_simple_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE);
-        y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+        y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
     }
 }
 
@@ -300,22 +300,22 @@ static void menu_update_options(nkF32 dt)
         change_menu_state(MenuState_Main);
     update_back_button();
 
-    nkF32 y = bitmap_font_block_y_off(OptionsMenuOption_TOTAL, MENU_TEXT_SCALE);
+    nkF32 y = bitmap_font_block_y_off(FontSize_Big, OptionsMenuOption_TOTAL, MENU_TEXT_SCALE);
 
     // Fullscreen toggle.
     if(update_toggle_button("WINDOWED", "FULLSCREEN", get_fullscreen(), y, MENU_TEXT_SCALE))
         set_fullscreen(!get_fullscreen());
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Sound slider.
     nkF32 sound = update_slider_button("SOUND", get_sound_volume(), y, MENU_TEXT_SCALE);
     if(sound != get_sound_volume()) set_sound_volume(sound);
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Music slider.
     nkF32 music = update_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
     if(music != get_music_volume()) set_music_volume(music);
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Reset save stages.
     if(update_simple_button(RESET_SAVE_LABELS[g_resetsave], y, MENU_TEXT_SCALE) && g_resetsave < 3)
@@ -328,30 +328,30 @@ static void menu_update_options(nkF32 dt)
             reset_game_data();
         }
     }
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 }
 
 static void menu_render_options(void)
 {
     render_back_button();
 
-    nkF32 y = bitmap_font_block_y_off(OptionsMenuOption_TOTAL, MENU_TEXT_SCALE);
+    nkF32 y = bitmap_font_block_y_off(FontSize_Big, OptionsMenuOption_TOTAL, MENU_TEXT_SCALE);
 
     // Fullscreen toggle.
     render_toggle_button("WINDOWED", "FULLSCREEN", get_fullscreen(), y, MENU_TEXT_SCALE);
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Sound slider.
     render_slider_button("SOUND", get_sound_volume(), y, MENU_TEXT_SCALE);
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Music slider.
     render_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Reset save stages.
     render_simple_button(RESET_SAVE_LABELS[g_resetsave], y, MENU_TEXT_SCALE);
-    y += bitmap_font_line_advance(MENU_TEXT_SCALE);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 }
 
 // =============================================================================

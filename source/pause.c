@@ -44,7 +44,7 @@ static void pause_update(nkF32 dt)
             g_pause.paused = NK_FALSE;
         }
 
-        y += bitmap_font_line_advance(PAUSE_TEXT_SCALE);
+        y += bitmap_font_line_advance(FontSize_Big, PAUSE_TEXT_SCALE);
 
         if(update_simple_button("MENU", y, PAUSE_TEXT_SCALE))
         {
@@ -88,12 +88,12 @@ static void pause_render(void)
     if(g_pause.paused)
     {
         // Render pause menu.
-        render_bitmap_font_aligned("PAUSED", Alignment_Center, 48.0f, 1.0f, FontStyle_None);
+        render_bitmap_font_aligned(FontSize_Big, "PAUSED", Alignment_Center, 48.0f, 1.0f, FontStyle_None);
 
         nkF32 y = 168.0f;
 
         render_simple_button("RESUME", y, PAUSE_TEXT_SCALE);
-        y += bitmap_font_line_advance(PAUSE_TEXT_SCALE);
+        y += bitmap_font_line_advance(FontSize_Big, PAUSE_TEXT_SCALE);
         render_simple_button("MENU", y, PAUSE_TEXT_SCALE);
     }
     else

@@ -4,14 +4,16 @@
 #include "codegen/atlas_particle.h"
 #include "codegen/atlas_tako.h"
 #include "codegen/atlas_ui.h"
-#include "codegen/atlas_font.h"
+#include "codegen/atlas_fontbig.h"
+#include "codegen/atlas_fontlil.h"
 #include "codegen/atlas_simon.h"
 
 static Texture g_asset_back_paper;
 static Texture g_asset_back_vignette;
 static Texture g_asset_ui;
 static Texture g_asset_particle;
-static Texture g_asset_font;
+static Texture g_asset_font_big;
+static Texture g_asset_font_lil;
 static Texture g_asset_simon;
 static Texture g_asset_whack;
 static Font    g_asset_debug_font_big;

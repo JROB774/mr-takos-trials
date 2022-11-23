@@ -23,7 +23,8 @@ static void load_all_assets(void)
     g_asset_back_vignette       = load_asset_texture("backvignette.png", SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_particle            = load_asset_texture("particle.png",     SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_ui                  = load_asset_texture("ui.png",           SamplerFilter_Linear, SamplerWrap_Clamp);
-    g_asset_font                = load_asset_texture("font.png",         SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_font_big            = load_asset_texture("fontbig.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_font_lil            = load_asset_texture("fontlil.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_simon               = load_asset_texture("simon.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_whack               = load_asset_texture("whack.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_debug_font_big      = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 48.0f);
@@ -73,7 +74,8 @@ static void free_all_assets(void)
     texture_destroy(g_asset_back_vignette);
     texture_destroy(g_asset_particle);
     texture_destroy(g_asset_ui);
-    texture_destroy(g_asset_font);
+    texture_destroy(g_asset_font_big);
+    texture_destroy(g_asset_font_lil);
     texture_destroy(g_asset_simon);
     texture_destroy(g_asset_whack);
     font_destroy   (g_asset_debug_font_big);
