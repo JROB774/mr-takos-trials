@@ -179,7 +179,7 @@ static void minigame_simon_update(nkF32 dt)
 static void minigame_simon_render(void)
 {
     // Draw the different characters.
-    imm_begin_texture_batch(g_asset_game_simon);
+    imm_begin_texture_batch(g_asset_simon);
     for(nkS32 i=0; i<SimonID_TOTAL; ++i)
     {
         nkVec4 b = SIMON_CHAR_BOUNDS[i];
@@ -196,11 +196,11 @@ static void minigame_simon_render(void)
 
         if(game_is_playing() && !g_minigame_simon.playback_pattern && cursor_in_bounds(b.x,b.y,b.z,b.w) && !game_is_in_timeout())
         {
-            render_item_ex(x,y, 1,1, g_angles_lil[0], ATLAS_GAMESIMON, index, 1.0f);
+            render_item_ex(x,y, 1,1, g_angles_lil[0], ATLAS_SIMON, index, 1.0f);
         }
         else
         {
-            render_item(x,y, ATLAS_GAMESIMON, index, 1.0f);
+            render_item(x,y, ATLAS_SIMON, index, 1.0f);
         }
     }
     imm_end_texture_batch();

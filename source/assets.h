@@ -5,14 +5,14 @@
 #include "codegen/atlas_tako.h"
 #include "codegen/atlas_ui.h"
 #include "codegen/atlas_font.h"
-#include "codegen/atlas_gamesimon.h"
+#include "codegen/atlas_simon.h"
 
 static Texture g_asset_back_paper;
 static Texture g_asset_back_vignette;
 static Texture g_asset_ui;
 static Texture g_asset_particle;
 static Texture g_asset_font;
-static Texture g_asset_game_simon;
+static Texture g_asset_simon;
 static Font    g_asset_font_big;
 static Font    g_asset_font_lil;
 static Sound   g_asset_sfx_wrong_buzzer;
