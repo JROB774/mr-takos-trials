@@ -216,11 +216,22 @@ NK_ENUM(MainMenuOption, nkS32)
     MainMenuOption_Options,
     MainMenuOption_Awards,
     MainMenuOption_Credits,
+    #if defined(BUILD_NATIVE)
     MainMenuOption_Exit,
+    #endif // BUILD_NATIVE
     MainMenuOption_TOTAL
 };
 
-static const nkChar* MAIN_MENU_OPTIONS[] = { "PLAY", "OPTIONS", "AWARDS", "CREDITS", "EXIT" };
+static const nkChar* MAIN_MENU_OPTIONS[] =
+{
+    "PLAY",
+    "OPTIONS",
+    "AWARDS",
+    "CREDITS",
+    #if defined(BUILD_NATIVE)
+    "EXIT"
+    #endif // BUILD_NATIVE
+};
 
 NK_STATIC_ASSERT(MainMenuOption_TOTAL == NK_ARRAY_SIZE(MAIN_MENU_OPTIONS), main_menu_option_size_mismatch);
 
@@ -248,7 +259,9 @@ static void menu_update_main(nkF32 dt)
                 case MainMenuOption_Awards: change_menu_state(MenuState_Awards); break;
                 case MainMenuOption_Credits: change_menu_state(MenuState_Credits); break;
 
+                #if defined(BUILD_NATIVE)
                 case MainMenuOption_Exit: terminate(); break;
+                #endif // BUILD_NATIVE
             }
         }
         y += bitmap_font_line_advance(MENU_TEXT_SCALE);
