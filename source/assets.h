@@ -7,6 +7,7 @@
 #include "codegen/atlas_fontbig.h"
 #include "codegen/atlas_fontlil.h"
 #include "codegen/atlas_simon.h"
+#include "codegen/atlas_whack.h"
 
 static Texture g_asset_back_paper;
 static Texture g_asset_back_vignette;
@@ -35,6 +36,8 @@ static Sound   g_asset_sfx_gasp_small;
 static Sound   g_asset_sfx_gasp_large;
 static Sound   g_asset_sfx_explosion;
 static Sound   g_asset_sfx_cat_meow;
+static Sound   g_asset_sfx_shovel_whack;
+static Sound   g_asset_sfx_whack[3];
 
 static void load_assets_npak(void);
 static void free_assets_npak(void);

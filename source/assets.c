@@ -66,6 +66,10 @@ static void load_all_assets(void)
     g_asset_sfx_gasp_large      = load_asset_sound  ("gasp_large.wav");
     g_asset_sfx_explosion       = load_asset_sound  ("explosion.wav");
     g_asset_sfx_cat_meow        = load_asset_sound  ("cat_meow.wav");
+    g_asset_sfx_shovel_whack    = load_asset_sound  ("shovel_whack.wav");
+    g_asset_sfx_whack[0]        = load_asset_sound  ("whack_001.wav");
+    g_asset_sfx_whack[1]        = load_asset_sound  ("whack_002.wav");
+    g_asset_sfx_whack[2]        = load_asset_sound  ("whack_003.wav");
 }
 
 static void free_all_assets(void)
@@ -117,6 +121,10 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_gasp_large);
     sound_destroy  (g_asset_sfx_explosion);
     sound_destroy  (g_asset_sfx_cat_meow);
+    sound_destroy  (g_asset_sfx_shovel_whack);
+    sound_destroy  (g_asset_sfx_whack[0]);
+    sound_destroy  (g_asset_sfx_whack[1]);
+    sound_destroy  (g_asset_sfx_whack[2]);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
