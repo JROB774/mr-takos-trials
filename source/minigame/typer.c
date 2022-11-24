@@ -56,16 +56,6 @@ static void minigame_typer_select_new_word(void)
     memset(g_minigame_typer.input, 0, sizeof(g_minigame_typer.input));
 }
 
-static void minigame_typer_init(void)
-{
-    // Nothing...
-}
-
-static void minigame_typer_quit(void)
-{
-    // Nothing...
-}
-
 static void minigame_typer_start(void)
 {
     cursor_set_type(CursorType_Arrow);

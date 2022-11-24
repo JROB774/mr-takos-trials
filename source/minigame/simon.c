@@ -57,16 +57,6 @@ static void minigame_simon_generate_new_pattern(void)
     }
 }
 
-static void minigame_simon_init(void)
-{
-    // Nothing...
-}
-
-static void minigame_simon_quit(void)
-{
-    // Nothing...
-}
-
 static void minigame_simon_start(void)
 {
     cursor_set_type(CursorType_Pointer);

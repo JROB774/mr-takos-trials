@@ -25,8 +25,6 @@ static GameState g_gamestate;
 #include "minigame/simon.c"
 #include "minigame/whack.c"
 
-typedef void(*MiniGameHook_Init  )(void );
-typedef void(*MiniGameHook_Quit  )(void );
 typedef void(*MiniGameHook_Start )(void );
 typedef void(*MiniGameHook_End   )(void );
 typedef void(*MiniGameHook_Update)(nkF32);
@@ -34,8 +32,6 @@ typedef void(*MiniGameHook_Render)(void );
 
 typedef struct MiniGameHooks
 {
-    MiniGameHook_Init   init;
-    MiniGameHook_Quit   quit;
     MiniGameHook_Start  start;
     MiniGameHook_End    end;
     MiniGameHook_Update update;
@@ -45,8 +41,6 @@ MiniGameHooks;
 
 #define REGISTER_MINIGAME(name) \
 {                               \
-    minigame_##name##_init,     \
-    minigame_##name##_quit,     \
     minigame_##name##_start,    \
     minigame_##name##_end,      \
     minigame_##name##_update,   \
@@ -64,18 +58,12 @@ NK_STATIC_ASSERT(MiniGameID_TOTAL == NK_ARRAY_SIZE(MINI_GAME_HOOKS), minigame_si
 
 static void game_init(void)
 {
-    for(nkS32 i=0; i<MiniGameID_TOTAL; ++i)
-    {
-        MINI_GAME_HOOKS[i].init();
-    }
+    // Nothing...
 }
 
 static void game_quit(void)
 {
-    for(nkS32 i=0; i<MiniGameID_TOTAL; ++i)
-    {
-        MINI_GAME_HOOKS[i].quit();
-    }
+    // Nothing...
 }
 
 static void game_start(void)

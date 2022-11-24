@@ -26,16 +26,6 @@ MiniGameWhack;
 
 static MiniGameWhack g_minigame_whack;
 
-static void minigame_whack_init(void)
-{
-    // Nothing...
-}
-
-static void minigame_whack_quit(void)
-{
-    // Nothing...
-}
-
 static void minigame_whack_start(void)
 {
     cursor_set_type(CursorType_Shovel);
