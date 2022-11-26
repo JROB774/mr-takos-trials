@@ -8,6 +8,9 @@
 
 #define WHACK_CHAR_COUNT 5
 
+#define WHACK_ANIM_SPEED  0.05f
+#define WHACK_ANIM_LENGTH 2
+
 NK_ENUM(WhackCharState, nkS32)
 {
     WhackCharState_Empty,
@@ -28,6 +31,8 @@ typedef struct MiniGameWhack
 {
     WhackCharState state[WHACK_CHAR_COUNT];
     nkF32          timer[WHACK_CHAR_COUNT];
+    nkS32          frame[WHACK_CHAR_COUNT];
+    nkF32          atime[WHACK_CHAR_COUNT];
     nkS32          combo;
 }
 MiniGameWhack;
@@ -44,6 +49,8 @@ static void minigame_whack_start(void)
     {
         g_minigame_whack.state[i] = WhackCharState_Empty;
         g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_SPAWN_TIME,WHACK_MAX_SPAWN_TIME);
+        g_minigame_whack.frame[i] = 0;
+        g_minigame_whack.atime[i] = 0.0f;
     }
 }
 
@@ -54,7 +61,38 @@ static void minigame_whack_end(void)
 
 static void minigame_whack_update(nkF32 dt)
 {
-    // @Incomplete: Randomly spawn and de-spawn creatures (faster as time goes on)...
+    // Update animations for the creatures.
+    for(nkS32 i=0; i<WHACK_CHAR_COUNT; ++i)
+    {
+        if((g_minigame_whack.state[i] != WhackCharState_Empty))
+        {
+            if(g_minigame_whack.timer[i] >= WHACK_ANIM_SPEED * 3.0f)
+            {
+                if(g_minigame_whack.frame[i] < WHACK_ANIM_LENGTH)
+                {
+                    g_minigame_whack.atime[i] += dt;
+                    if(g_minigame_whack.atime[i] >= WHACK_ANIM_SPEED)
+                    {
+                        g_minigame_whack.atime[i] -= WHACK_ANIM_SPEED;
+                        g_minigame_whack.frame[i]++;
+                    }
+                }
+            }
+            else
+            {
+                if(g_minigame_whack.frame[i] > 0)
+                {
+                    g_minigame_whack.atime[i] += dt;
+                    if(g_minigame_whack.atime[i] >= WHACK_ANIM_SPEED)
+                    {
+                        g_minigame_whack.atime[i] -= WHACK_ANIM_SPEED;
+                        g_minigame_whack.frame[i]--;
+                    }
+                }
+            }
+        }
+    }
+
     if(game_is_playing())
     {
         // Update all of the timers for spawning and de-spawning.
@@ -65,17 +103,17 @@ static void minigame_whack_update(nkF32 dt)
             {
                 sound_play(g_asset_sfx_crumple[rng_int_range(0,4)],0);
 
-                nkF32 speed_modifier = 0.0f;
-
                 if(g_minigame_whack.state[i] == WhackCharState_Empty)
                 {
                     g_minigame_whack.state[i] = rng_int_range(WhackCharState_Grumble,WhackCharState_Blobo);
-                    g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_ALIVE_TIME,WHACK_MAX_ALIVE_TIME) - speed_modifier;
+                    g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_ALIVE_TIME,WHACK_MAX_ALIVE_TIME);
+                    g_minigame_whack.frame[i] = 0;
+                    g_minigame_whack.atime[i] = 0.0f;
                 }
                 else
                 {
                     g_minigame_whack.state[i] = WhackCharState_Empty;
-                    g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_SPAWN_TIME,WHACK_MAX_SPAWN_TIME) - speed_modifier;
+                    g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_SPAWN_TIME,WHACK_MAX_SPAWN_TIME);
                 }
             }
         }
@@ -101,9 +139,6 @@ static void minigame_whack_update(nkF32 dt)
 
                     if(cursor_in_bounds(x,y,w,h))
                     {
-                        sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
-                        sound_play(g_asset_sfx_whack[rng_int_range(0,2)], 0);
-
                         if(g_minigame_whack.state[i] == WhackCharState_Grumble)
                         {
                             game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
@@ -120,6 +155,16 @@ static void minigame_whack_update(nkF32 dt)
 
                         g_minigame_whack.state[i] = WhackCharState_Empty;
                         g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_SPAWN_TIME,WHACK_MAX_SPAWN_TIME);
+
+                        sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
+                        sound_play(g_asset_sfx_whack[rng_int_range(0,2)], 0);
+
+                        x +=  5.0f;
+                        y +=  5.0f;
+                        w -= 10.0f;
+                        h -= 10.0f;
+
+                        particles_spawn(ParticleType_Star, x,y,w,h, 3,5);
                     }
                 }
             }
@@ -142,13 +187,15 @@ static void minigame_whack_render(void)
         nkVec4 b = WHACK_CHAR_BOUNDS[i];
 
         nkS32 index = NK_S32_MAX;
-        if(g_minigame_whack.state[i] == WhackCharState_Grumble) index = ATLAS_WHACK_GRUMBLE_BODY;
-        if(g_minigame_whack.state[i] == WhackCharState_Blobo) index = ATLAS_WHACK_BLOBO_BODY;
+        if(g_minigame_whack.state[i] == WhackCharState_Grumble) index = ATLAS_WHACK_GRUMBLE_SHADOW_0;
+        if(g_minigame_whack.state[i] == WhackCharState_Blobo) index = ATLAS_WHACK_BLOBO_SHADOW_0;
 
         if(index != NK_S32_MAX)
         {
             nkF32 angle_a = g_angles_lil[i] * 1.5f;
             nkF32 angle_b = g_angles_lil[i+WHACK_CHAR_COUNT] * 0.5f;
+
+            index += ((g_minigame_whack.frame[i] * 2) + 1);
 
             render_item_ex(b.x,b.y, 1,1, angle_a, ATLAS_WHACK, index, 1.0f);
             render_item_ex(b.x,b.y, 1,1, angle_b, ATLAS_WHACK, ATLAS_WHACK_DIRT_BODY, 1.0f);

@@ -4,6 +4,7 @@
 NK_ENUM(ParticleType, nkS32)
 {
     ParticleType_None,
+    ParticleType_Star,
     ParticleType_TOTAL
 };
 
@@ -20,7 +21,19 @@ Particle;
 
 typedef void(*ParticleCreate)(Particle*);
 typedef void(*ParticleUpdate)(Particle*, nkF32);
-typedef void(*ParticleRender)(Particle*);
+typedef void(*ParticleRender)(Particle*, nkU32);
+
+#define DEFINE_PARTICLE(name)                                \
+static void particle_##name##_create(Particle* p);           \
+static void particle_##name##_update(Particle* p, nkF32 dt); \
+static void particle_##name##_render(Particle* p, nkU32 i);
+
+#define REGISTER_PARTICLE(name) \
+{                               \
+    particle_##name##_create,   \
+    particle_##name##_update,   \
+    particle_##name##_render    \
+}
 
 typedef struct ParticleHooks
 {
@@ -30,9 +43,13 @@ typedef struct ParticleHooks
 }
 ParticleHooks;
 
+DEFINE_PARTICLE(none);
+DEFINE_PARTICLE(star);
+
 static const ParticleHooks PARTICLE_HOOKS[] =
 {
-{ NULL, NULL, NULL }
+    REGISTER_PARTICLE(none),
+    REGISTER_PARTICLE(star)
 };
 
 NK_STATIC_ASSERT(ParticleType_TOTAL == NK_ARRAY_SIZE(PARTICLE_HOOKS), particle_hook_array_size_mismatch);
