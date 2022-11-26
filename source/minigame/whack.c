@@ -1,10 +1,10 @@
 /*////////////////////////////////////////////////////////////////////////////*/
 
 #define WHACK_MIN_SPAWN_TIME 0.8f
-#define WHACK_MAX_SPAWN_TIME 4.3f
+#define WHACK_MAX_SPAWN_TIME 3.5f
 
 #define WHACK_MIN_ALIVE_TIME 0.6f
-#define WHACK_MAX_ALIVE_TIME 2.2f
+#define WHACK_MAX_ALIVE_TIME 1.3f
 
 #define WHACK_CHAR_COUNT 5
 
@@ -63,6 +63,8 @@ static void minigame_whack_update(nkF32 dt)
             g_minigame_whack.timer[i] -= dt;
             if(g_minigame_whack.timer[i] <= 0.0f)
             {
+                sound_play(g_asset_sfx_crumple[rng_int_range(0,4)],0);
+
                 nkF32 speed_modifier = 0.0f;
 
                 if(g_minigame_whack.state[i] == WhackCharState_Empty)
@@ -82,6 +84,8 @@ static void minigame_whack_update(nkF32 dt)
         if(is_mouse_button_pressed(MouseButton_Left) && !game_is_in_timeout())
         {
             sound_play(g_asset_sfx_shovel_whack, 0);
+
+            nkBool hit_something = NK_FALSE;
 
             // Check if we collided with any of the creatures.
             for(nkS32 i=0; i<WHACK_CHAR_COUNT; ++i)
@@ -105,6 +109,7 @@ static void minigame_whack_update(nkF32 dt)
                             game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
                             g_gamestate.game_score += 50 + (5 * g_minigame_whack.combo);
                             g_minigame_whack.combo++;
+                            hit_something = NK_TRUE;
                         }
                         if(g_minigame_whack.state[i] == WhackCharState_Blobo)
                         {
@@ -117,6 +122,12 @@ static void minigame_whack_update(nkF32 dt)
                         g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_SPAWN_TIME,WHACK_MAX_SPAWN_TIME);
                     }
                 }
+            }
+
+            // Drop the combo if the player misses.
+            if(!hit_something)
+            {
+                g_minigame_whack.combo = 0;
             }
         }
     }
