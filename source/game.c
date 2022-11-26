@@ -308,4 +308,9 @@ static nkBool game_is_in_timeout(void)
     return (g_gamestate.failure_countdown > 0.0f);
 }
 
+static nkBool game_is_in_countdown(void)
+{
+    return (g_gamestate.intro_timer > 0.0f);
+}
+
 /*////////////////////////////////////////////////////////////////////////////*/

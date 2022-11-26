@@ -18,5 +18,6 @@ static void   game_display_failure(nkF32 x, nkF32 y);
 static nkF32  game_get_timer      (void);
 static nkBool game_is_playing     (void); // Used by mini-games to see if the timer is still going.
 static nkBool game_is_in_timeout  (void);
+static nkBool game_is_in_countdown(void);
 
 #endif /* GAME_H__ ///////////////////////////////////////////////////////////*/
