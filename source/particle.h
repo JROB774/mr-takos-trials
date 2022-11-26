@@ -14,7 +14,9 @@ typedef struct Particle
     nkVec2       pos;
     nkVec2       vel;
     nkU32        frame;
-    nkF32        time;
+    nkF32        time0;
+    nkF32        time1;
+    nkF32        time2;
     nkBool       alive;
 }
 Particle;

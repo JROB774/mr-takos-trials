@@ -73,19 +73,32 @@ static void particle_none_render(Particle* p, nkU32 i)
 // Star
 //
 
-#define PARTICLE_STAR_MIN_TIME 0.3f
-#define PARTICLE_STAR_MAX_TIME 0.3f
+#define PARTICLE_STAR_MIN_TIME 0.2f
+#define PARTICLE_STAR_MAX_TIME 0.5f
+
+#define PARTICLE_STAR_ANIM_SPEED 0.15f
+
+#define PARTICLE_STAR_MAX_FRAMES 5
 
 static void particle_star_create(Particle* p)
 {
-    p->frame = ATLAS_PARTICLE_STAR_0_SHADOW + ((rng_int_range(0,4) * 2) + 1);
-    p->time = rng_num_range(PARTICLE_STAR_MIN_TIME,PARTICLE_STAR_MAX_TIME);
+    p->frame = rng_int_range(0,PARTICLE_STAR_MAX_FRAMES-1);
+    p->time0 = rng_num_range(PARTICLE_STAR_MIN_TIME,PARTICLE_STAR_MAX_TIME);
 }
 
 static void particle_star_update(Particle* p, nkF32 dt)
 {
-    p->time -= dt;
-    if(p->time <= 0.0f)
+    // Update the current frame.
+    p->time1 += dt;
+    if(p->time1 >= PARTICLE_STAR_ANIM_SPEED)
+    {
+        p->frame = (p->frame + 1) % PARTICLE_STAR_MAX_FRAMES;
+        p->time1 -= PARTICLE_STAR_ANIM_SPEED;
+    }
+
+    // Countdown to death.
+    p->time0 -= dt;
+    if(p->time0 <= 0.0f)
     {
         p->alive = NK_FALSE;
     }
@@ -93,7 +106,8 @@ static void particle_star_update(Particle* p, nkF32 dt)
 
 static void particle_star_render(Particle* p, nkU32 i)
 {
-    render_item_ex(p->pos.x,p->pos.y, 1,1, g_angles_big[i%APP_MAX_ANGLES], ATLAS_PARTICLE, p->frame, 0.5f);
+    nkS32 index = ATLAS_PARTICLE_STAR_0_SHADOW + ((p->frame * 2) + 1);
+    render_item_ex(p->pos.x,p->pos.y, 1,1, g_angles_big[i%APP_MAX_ANGLES], ATLAS_PARTICLE, index, 0.5f);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
