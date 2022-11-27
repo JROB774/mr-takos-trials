@@ -17,8 +17,8 @@ static PauseState g_pause;
 
 static void pause_update(nkF32 dt)
 {
-    // Cannot be paused in any other state but the game.
-    if(g_appstate != AppState_Game)
+    // Cannot be paused in any other state but the game, also cannot pause after the timer is done.
+    if(g_appstate != AppState_Game || game_get_timer() <= 0.0f)
     {
         g_pause.paused = NK_FALSE;
         return;
@@ -87,12 +87,13 @@ static void pause_update(nkF32 dt)
 
 static void pause_render(void)
 {
-    // Cannot be paused in any other state but the game.
-    if(g_appstate != AppState_Game)
+    // Cannot be paused in any other state but the game, also cannot pause after the timer is done.
+    if(g_appstate != AppState_Game || game_get_timer() <= 0.0f)
     {
         g_pause.paused = NK_FALSE;
         return;
     }
+
 
     // Do the pause button or menu logic.
     if(g_pause.paused)

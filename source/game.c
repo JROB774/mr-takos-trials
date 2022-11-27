@@ -9,8 +9,7 @@ typedef struct GameState
     nkF32      intro_timer;
     nkF32      game_timer;
     nkS32      game_score;
-    nkBool     played_highscore_sound;
-    nkBool     in_intro;
+    nkU64      end_state;
     nkF32      success_countdown;
     nkF32      failure_countdown;
     nkVec2     success_pos;
@@ -76,7 +75,7 @@ static void game_start(MiniGameID minigame)
 
     g_gamestate.game_score = 0;
 
-    g_gamestate.played_highscore_sound = NK_FALSE;
+    g_gamestate.end_state = 0;
 
     g_gamestate.success_countdown = 0.0f;
     g_gamestate.failure_countdown = 0.0f;
@@ -162,6 +161,34 @@ static void game_update(nkF32 dt)
         {
             game_end();
         }
+
+        // Do the end game flow...
+        if(g_gamestate.game_timer <= 0.0f)
+        {
+            if(is_mouse_button_pressed(MouseButton_Left))
+            {
+                g_gamestate.end_state++;
+
+                // On the first click fade out the alarm and display high score effects if there was one.
+                if(g_gamestate.end_state == 1)
+                {
+                    sound_fade_out(g_gamestate.alarm_sound_ref, 1.0f);
+                    g_gamestate.alarm_sound_ref = INVALID_SOUND_REF;
+
+                    if(g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score)
+                    {
+                        sound_play(g_asset_sfx_trumpet_fanfare, 0);
+                    }
+                }
+
+                // On the second click return to the main menu.
+                if(g_gamestate.end_state == 2)
+                {
+                    g_appstate = AppState_Menu;
+                    change_page();
+                }
+            }
+        }
     }
 }
 
@@ -244,16 +271,11 @@ static void game_render(void)
     }
 
     // If this score is a highscore then draw a cool crown.
-    if(g_gamestate.game_timer <= 0.0f)
+    if(g_gamestate.game_timer <= 0.0f && g_gamestate.end_state >= 1)
     {
         if(g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score)
         {
             render_item_ex(x+3.0f,y-23.0f, 1,1, 0.4f, ATLAS_UI, ATLAS_UI_CROWN_BODY, 0.7f);
-            if(!g_gamestate.played_highscore_sound)
-            {
-                g_gamestate.played_highscore_sound = NK_TRUE;
-                sound_play(g_asset_sfx_trumpet_fanfare, 0);
-            }
         }
     }
 
