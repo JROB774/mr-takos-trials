@@ -432,7 +432,6 @@ static void menu_update_games(nkF32 dt)
             g_menustate = MenuState_Main;
             game_start(minigame);
             change_page();
-            sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
         }
 
         x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
