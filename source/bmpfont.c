@@ -14,8 +14,15 @@ static nkF32 get_bitmap_font_width(FontSize size, const nkChar* text, nkF32 scal
     nkU32 text_length = strlen(text);
     for(nkU32 i=0; i<text_length; ++i)
     {
-        nkS32 index = BITMAP_FONT_SOLID_A_SHADOW + (((toupper(text[i]) - 'A') * 2) + 1);
-        width += atlas[index].clip_bounds.w * scale;
+        if(text[i] == ' ')
+        {
+            width += (atlas[BITMAP_FONT_SOLID_A_SHADOW].clip_bounds.w * 0.5f) * scale;
+        }
+        else
+        {
+            nkS32 index = BITMAP_FONT_SOLID_A_SHADOW + (((toupper(text[i]) - 'A') * 2) + 1);
+            width += atlas[index].clip_bounds.w * scale;
+        }
     }
     return width;
 }
