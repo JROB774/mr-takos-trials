@@ -16,6 +16,7 @@ typedef struct GameState
     nkVec2     success_pos;
     nkVec2     failure_pos;
     SoundRef   tick_sound_ref;
+    SoundRef   alarm_sound_ref;
 }
 GameState;
 
@@ -81,6 +82,7 @@ static void game_start(MiniGameID minigame)
     g_gamestate.failure_countdown = 0.0f;
 
     g_gamestate.tick_sound_ref = INVALID_SOUND_REF;
+    g_gamestate.alarm_sound_ref = INVALID_SOUND_REF;
 
     MINI_GAME_HOOKS[g_gamestate.current_minigame].start();
 }
@@ -88,8 +90,7 @@ static void game_start(MiniGameID minigame)
 static void game_end(void)
 {
     g_gamestate.tick_sound_ref = INVALID_SOUND_REF;
-
-    sound_play(g_asset_sfx_alarm_clock, 0);
+    g_gamestate.alarm_sound_ref = sound_play(g_asset_sfx_alarm_clock, -1);
 
     MINI_GAME_HOOKS[g_gamestate.current_minigame].end();
 

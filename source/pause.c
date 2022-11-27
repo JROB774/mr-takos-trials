@@ -48,6 +48,8 @@ static void pause_update(nkF32 dt)
 
         if(update_simple_button("MENU", y, PAUSE_TEXT_SCALE))
         {
+            if(g_gamestate.alarm_sound_ref != INVALID_SOUND_REF)
+                sound_stop(g_gamestate.alarm_sound_ref);
             change_page();
             g_pause.paused = NK_FALSE;
             g_appstate = AppState_Menu;
@@ -67,11 +69,19 @@ static void pause_update(nkF32 dt)
         }
     }
 
-    // Pause/resume the ticking sound when entering/exiting pause.
-    if(prev_paused != g_pause.paused && g_appstate == AppState_Game && g_gamestate.tick_sound_ref != INVALID_SOUND_REF)
+    // Pause/resume the timer sounds when entering/exiting pause.
+    if(prev_paused != g_pause.paused && g_appstate == AppState_Game)
     {
-        if(g_pause.paused) sound_pause(g_gamestate.tick_sound_ref);
-        else sound_resume(g_gamestate.tick_sound_ref);
+        if(g_gamestate.tick_sound_ref != INVALID_SOUND_REF)
+        {
+            if(g_pause.paused) sound_pause(g_gamestate.tick_sound_ref);
+            else sound_resume(g_gamestate.tick_sound_ref);
+        }
+        if(g_gamestate.alarm_sound_ref != INVALID_SOUND_REF)
+        {
+            if(g_pause.paused) sound_pause(g_gamestate.alarm_sound_ref);
+            else sound_resume(g_gamestate.alarm_sound_ref);
+        }
     }
 }
 
