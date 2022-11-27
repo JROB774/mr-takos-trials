@@ -2,7 +2,7 @@
 
 static void minigame_match_start(void)
 {
-    // @Incomplete: ...
+    cursor_set_type(CursorType_Magnify);
 }
 
 static void minigame_match_end(void)
