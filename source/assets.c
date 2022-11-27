@@ -26,6 +26,7 @@ static void load_all_assets(void)
     g_asset_font_lil            = load_asset_texture("fontlil.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_simon               = load_asset_texture("simon.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_whack               = load_asset_texture("whack.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_match               = load_asset_texture("match.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_debug_font_big      = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 48.0f);
     g_asset_debug_font_lil      = load_asset_font   ("TexGyreCursor-BoldItalic.otf", 28.0f);
     g_asset_sfx_wrong_buzzer    = load_asset_sound  ("wrong_buzzer.wav");
@@ -85,6 +86,7 @@ static void free_all_assets(void)
     texture_destroy(g_asset_font_lil);
     texture_destroy(g_asset_simon);
     texture_destroy(g_asset_whack);
+    texture_destroy(g_asset_match);
     font_destroy   (g_asset_debug_font_big);
     font_destroy   (g_asset_debug_font_lil);
     sound_destroy  (g_asset_sfx_wrong_buzzer);

@@ -167,6 +167,7 @@ static void game_update(nkF32 dt)
         // Do the end game flow...
         if(g_gamestate.game_timer <= 0.0f)
         {
+            // @Incomplete: Add a buffer before we start registering clicks...
             if(is_mouse_button_pressed(MouseButton_Left))
             {
                 g_gamestate.end_state++;
