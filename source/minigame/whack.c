@@ -11,6 +11,9 @@
 #define WHACK_ANIM_SPEED  0.05f
 #define WHACK_ANIM_LENGTH 2
 
+#define WHACK_HITBOX_WIDTH  70.0f
+#define WHACK_HITBOX_HEIGHT 80.0f
+
 NK_ENUM(WhackCharState, nkS32)
 {
     WhackCharState_Empty,
@@ -20,11 +23,11 @@ NK_ENUM(WhackCharState, nkS32)
 
 static const nkVec4 WHACK_CHAR_BOUNDS[WHACK_CHAR_COUNT] =
 {
-    {  81.0f,  98.0f, 60.0f, 80.0f },
-    { 239.0f,  98.0f, 60.0f, 80.0f },
-    { 397.0f,  98.0f, 60.0f, 80.0f },
-    { 160.0f, 163.0f, 60.0f, 80.0f },
-    { 318.0f, 163.0f, 60.0f, 80.0f }
+    {  81.0f,  98.0f, WHACK_HITBOX_WIDTH, WHACK_HITBOX_HEIGHT },
+    { 239.0f,  98.0f, WHACK_HITBOX_WIDTH, WHACK_HITBOX_HEIGHT },
+    { 397.0f,  98.0f, WHACK_HITBOX_WIDTH, WHACK_HITBOX_HEIGHT },
+    { 160.0f, 163.0f, WHACK_HITBOX_WIDTH, WHACK_HITBOX_HEIGHT },
+    { 318.0f, 163.0f, WHACK_HITBOX_WIDTH, WHACK_HITBOX_HEIGHT }
 };
 
 typedef struct MiniGameWhack
@@ -159,10 +162,10 @@ static void minigame_whack_update(nkF32 dt)
                         sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
                         sound_play(g_asset_sfx_whack[rng_int_range(0,2)], 0);
 
-                        x +=  5.0f;
-                        y +=  5.0f;
-                        w -= 10.0f;
-                        h -= 10.0f;
+                        // x +=  5.0f;
+                        // y +=  5.0f;
+                        // w -= 10.0f;
+                        // h -= 10.0f;
 
                         particles_spawn(ParticleType_Star, x,y,w,h, 3,5);
                     }
