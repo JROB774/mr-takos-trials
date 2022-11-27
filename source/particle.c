@@ -110,4 +110,41 @@ static void particle_star_render(Particle* p, nkU32 i)
     render_item_ex(p->pos.x,p->pos.y, 1,1, g_angles_big[i%APP_MAX_ANGLES], ATLAS_PARTICLE, index, 0.5f);
 }
 
+//
+// Smoke
+//
+
+#define PARTICLE_SMOKE_MIN_ANIM_SPEED 0.05f
+#define PARTICLE_SMOKE_MAX_ANIM_SPEED 0.18f
+
+#define PARTICLE_SMOKE_MAX_FRAMES 5
+
+static void particle_smoke_create(Particle* p)
+{
+    p->frame = rng_int_range(0,PARTICLE_SMOKE_MAX_FRAMES-1);
+    p->time0 = rng_num_range(PARTICLE_SMOKE_MIN_ANIM_SPEED,PARTICLE_SMOKE_MAX_ANIM_SPEED);
+}
+
+static void particle_smoke_update(Particle* p, nkF32 dt)
+{
+    // Update the current frame until death.
+    p->time0 -= dt;
+    if(p->time0 <= 0.0f)
+    {
+        if(p->frame == 0)
+            p->alive = NK_FALSE;
+        else
+        {
+            p->time0 = rng_num_range(PARTICLE_SMOKE_MIN_ANIM_SPEED,PARTICLE_SMOKE_MAX_ANIM_SPEED);
+            p->frame--;
+        }
+    }
+}
+
+static void particle_smoke_render(Particle* p, nkU32 i)
+{
+    nkS32 index = ATLAS_PARTICLE_SMOKE_0_SHADOW + ((p->frame * 2) + 1);
+    render_item_ex(p->pos.x,p->pos.y, 1,1, g_angles_big[i%APP_MAX_ANGLES], ATLAS_PARTICLE, index, 0.5f);
+}
+
 /*////////////////////////////////////////////////////////////////////////////*/
