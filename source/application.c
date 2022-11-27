@@ -18,6 +18,14 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
     imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], BODY_COLOR);
 }
 
+static void change_page(void)
+{
+    nkS32 old_background = g_background;
+    while(old_background == g_background)
+        g_background = rng_int() % APP_MAX_BACKGROUNDS;
+    sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
+}
+
 static void app_init(void)
 {
     rng_init(time(NULL));
@@ -30,6 +38,8 @@ static void app_init(void)
     game_init();
 
     g_appstate = AppState_Menu;
+
+    g_background = rng_int() % APP_MAX_BACKGROUNDS;
 
     // Setup the initial angles.
     for(nkS32 i=0; i<APP_MAX_ANGLES; ++i)
@@ -96,7 +106,9 @@ static void app_render(void)
     set_blend_mode(BlendMode_Alpha);
 
     #if 1
-    imm_texture(g_asset_back_paper, hsw,hsh, NULL, NK_V4_WHITE);
+    ImmRect clip = { 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT };
+    clip.y = SCREEN_HEIGHT * g_background;
+    imm_texture(g_asset_back_paper, hsw,hsh, &clip, NK_V4_WHITE);
     #else
     imm_texture(g_asset_back_vignette, hsw,hsh, NULL, NK_V4_WHITE);
     #endif

@@ -26,7 +26,7 @@ static nkU32         g_resetsave;
 
 static void change_menu_state(MenuState new_state)
 {
-    sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
+    change_page();
     g_menustate = new_state;
     g_resetsave = 0; // Revert the "reset save" button clicks value.
 }
@@ -431,6 +431,7 @@ static void menu_update_games(nkF32 dt)
             g_appstate = AppState_Game;
             g_menustate = MenuState_Main;
             game_start(minigame);
+            change_page();
             sound_play(g_asset_sfx_page_flip[rng_int_range(0,10)], 0);
         }
 
