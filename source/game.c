@@ -24,6 +24,7 @@ static GameState g_gamestate;
 #include "minigame/typer.c"
 #include "minigame/simon.c"
 #include "minigame/whack.c"
+#include "minigame/match.c"
 
 typedef void(*MiniGameHook_Start )(void );
 typedef void(*MiniGameHook_End   )(void );
@@ -51,7 +52,8 @@ static const MiniGameHooks MINI_GAME_HOOKS[] =
 {
     REGISTER_MINIGAME(typer),
     REGISTER_MINIGAME(simon),
-    REGISTER_MINIGAME(whack)
+    REGISTER_MINIGAME(whack),
+    REGISTER_MINIGAME(match),
 };
 
 NK_STATIC_ASSERT(MiniGameID_TOTAL == NK_ARRAY_SIZE(MINI_GAME_HOOKS), minigame_size_mismatch);

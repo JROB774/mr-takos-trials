@@ -396,7 +396,7 @@ static void menu_render_credits(void)
 #define GAME_THUMB_HEIGHT  50.0f
 #define GAME_THUMB_PADDING 10.0f
 
-#define GAME_ROW_MAX_LENGTH 3
+#define GAME_ROW_MAX_LENGTH 4
 
 static void menu_update_games(nkF32 dt)
 {
