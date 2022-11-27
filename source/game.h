@@ -9,8 +9,20 @@ NK_ENUM(MiniGameID, nkS32)
     MiniGameID_TOTAL
 };
 
+static const nkChar* MINIGAME_TITLES[] =
+{
+    "TYPING TROUBLE",
+    "BLOBO SING ALONG",
+    "WHACK A GRUMBLE",
+    "RANDOM"
+};
+
+NK_STATIC_ASSERT(MiniGameID_TOTAL+1 == NK_ARRAY_SIZE(MINIGAME_TITLES), minigame_title_size_mismatch);
+
 static void   game_init           (void);
 static void   game_quit           (void);
+static void   game_start          (MiniGameID minigame);
+static void   game_end            (void);
 static void   game_update         (nkF32 dt);
 static void   game_render         (void);
 static void   game_display_success(nkF32 x, nkF32 y);

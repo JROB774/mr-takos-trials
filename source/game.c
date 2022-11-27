@@ -66,9 +66,9 @@ static void game_quit(void)
     // Nothing...
 }
 
-static void game_start(void)
+static void game_start(MiniGameID minigame)
 {
-    g_gamestate.current_minigame = rng_int() % MiniGameID_TOTAL;
+    g_gamestate.current_minigame = minigame;
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;

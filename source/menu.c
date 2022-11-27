@@ -15,6 +15,7 @@ NK_ENUM(MenuState, nkS32)
     MenuState_Options,
     MenuState_Awards,
     MenuState_Credits,
+    MenuState_Games,
     MenuState_TOTAL
 };
 
@@ -249,12 +250,7 @@ static void menu_update_main(nkF32 dt)
         {
             switch(i)
             {
-                case MainMenuOption_Play:
-                {
-                    g_appstate = AppState_Game;
-                    game_start();
-                } break;
-
+                case MainMenuOption_Play: change_menu_state(MenuState_Games); break;
                 case MainMenuOption_Options: change_menu_state(MenuState_Options); break;
                 case MainMenuOption_Awards: change_menu_state(MenuState_Awards); break;
                 case MainMenuOption_Credits: change_menu_state(MenuState_Credits); break;
@@ -393,6 +389,95 @@ static void menu_render_credits(void)
 }
 
 // =============================================================================
+// Games
+// =============================================================================
+
+#define GAME_THUMB_WIDTH   80.0f
+#define GAME_THUMB_HEIGHT  50.0f
+#define GAME_THUMB_PADDING 10.0f
+
+#define GAME_ROW_MAX_LENGTH 3
+
+static void menu_update_games(nkF32 dt)
+{
+    if(is_key_pressed(KeyCode_Escape))
+        change_menu_state(MenuState_Main);
+    update_back_button();
+
+    // Go to the game if any of the thumbnails are hit.
+    nkS32 game_count = MiniGameID_TOTAL + 1; // +1 for random thumb.
+    nkS32 row_count = ceilf(NK_CAST(nkF32,game_count) / GAME_ROW_MAX_LENGTH);
+
+    nkF32 block_width = ((GAME_THUMB_WIDTH * GAME_ROW_MAX_LENGTH) + (GAME_THUMB_PADDING * (GAME_ROW_MAX_LENGTH-1)));
+    nkF32 block_height = ((GAME_THUMB_HEIGHT * row_count) + (GAME_THUMB_PADDING * (row_count-1)));
+
+    nkF32 x = (SCREEN_WIDTH - block_width) * 0.5f;
+    nkF32 y = (SCREEN_HEIGHT - block_height) * 0.5f;
+
+    for(nkS32 i=0; i<game_count; ++i)
+    {
+        if((i != 0) && (i % GAME_ROW_MAX_LENGTH) == 0)
+        {
+            // Extra calculation to center thumbnails if a row has less than the max items.
+            nkS32 row_items = nk_min(GAME_ROW_MAX_LENGTH, (game_count - i));
+            nkF32 row_width = ((GAME_THUMB_WIDTH * row_items) + (GAME_THUMB_PADDING * (row_items-1)));
+            x = (SCREEN_WIDTH - row_width) * 0.5f;
+            y += (GAME_THUMB_HEIGHT + GAME_THUMB_PADDING);
+        }
+
+        if(cursor_in_bounds(x,y,GAME_THUMB_WIDTH,GAME_THUMB_HEIGHT) && is_mouse_button_pressed(MouseButton_Left))
+        {
+            MiniGameID minigame = ((i == MiniGameID_TOTAL) ? rng_int_range(0,MiniGameID_TOTAL-1) : i);
+            g_appstate = AppState_Game;
+            g_menustate = MenuState_Main;
+            game_start(minigame);
+        }
+
+        x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
+    }
+}
+
+static void menu_render_games(void)
+{
+    render_back_button();
+
+    render_bitmap_font_aligned(FontSize_Lil, "PICK A GAME", Alignment_Center, 20.0f, 1.0f, FontStyle_None);
+
+    // Render the grid of games.
+    nkS32 game_count = MiniGameID_TOTAL + 1; // +1 for random thumb.
+    nkS32 row_count = ceilf(NK_CAST(nkF32,game_count) / GAME_ROW_MAX_LENGTH);
+
+    nkF32 block_width = ((GAME_THUMB_WIDTH * GAME_ROW_MAX_LENGTH) + (GAME_THUMB_PADDING * (GAME_ROW_MAX_LENGTH-1)));
+    nkF32 block_height = ((GAME_THUMB_HEIGHT * row_count) + (GAME_THUMB_PADDING * (row_count-1)));
+
+    nkF32 x = (SCREEN_WIDTH - block_width) * 0.5f;
+    nkF32 y = (SCREEN_HEIGHT - block_height) * 0.5f;
+
+    for(nkS32 i=0; i<game_count; ++i)
+    {
+        if((i != 0) && (i % GAME_ROW_MAX_LENGTH) == 0)
+        {
+            // Extra calculation to center thumbnails if a row has less than the max items.
+            nkS32 row_items = nk_min(GAME_ROW_MAX_LENGTH, (game_count - i));
+            nkF32 row_width = ((GAME_THUMB_WIDTH * row_items) + (GAME_THUMB_PADDING * (row_items-1)));
+            x = (SCREEN_WIDTH - row_width) * 0.5f;
+            y += (GAME_THUMB_HEIGHT + GAME_THUMB_PADDING);
+        }
+
+        imm_rect_filled(x,y,GAME_THUMB_WIDTH,GAME_THUMB_HEIGHT, NK_V4_RED);
+
+        // If hovered then draw the game's title at the bottom of the screen.
+        if(cursor_in_bounds(x,y,GAME_THUMB_WIDTH,GAME_THUMB_HEIGHT))
+        {
+            render_bitmap_font_aligned(FontSize_Lil, MINIGAME_TITLES[i], Alignment_Center, SCREEN_HEIGHT - 30.0f, 1.0f, FontStyle_None);
+        }
+
+        x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
+    }
+}
+
+
+// =============================================================================
 // Menu System
 // =============================================================================
 
@@ -417,6 +502,7 @@ static void menu_update(nkF32 dt)
         case MenuState_Options: menu_update_options(dt); break;
         case MenuState_Awards: menu_update_awards(dt); break;
         case MenuState_Credits: menu_update_credits(dt); break;
+        case MenuState_Games: menu_update_games(dt); break;
     }
 
     // NOTE: Doesn't sound the best, if we can get a better sound then maybe we should do this...
@@ -436,6 +522,7 @@ static void menu_render(void)
         case MenuState_Options: menu_render_options(); break;
         case MenuState_Awards: menu_render_awards(); break;
         case MenuState_Credits: menu_render_credits(); break;
+        case MenuState_Games: menu_render_games(); break;
     }
 }
 
