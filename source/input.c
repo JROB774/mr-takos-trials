@@ -216,4 +216,32 @@ static nkBool is_mouse_button_released(MouseButton button)
             g_input.prev_button_state[button] != 0);
 }
 
+static nkBool is_any_mouse_button_down(void)
+{
+    for(nkS32 i=0; i<NK_CAST(nkS32, MouseButton_TOTAL); ++i)
+        if(is_mouse_button_down(NK_CAST(MouseButton, i))) return NK_TRUE;
+    return NK_FALSE;
+}
+
+static nkBool is_any_mouse_button_up(void)
+{
+    for(nkS32 i=0; i<NK_CAST(nkS32, MouseButton_TOTAL); ++i)
+        if(is_mouse_button_up(NK_CAST(MouseButton, i))) return NK_TRUE;
+    return NK_FALSE;
+}
+
+static nkBool is_any_mouse_button_pressed(void)
+{
+    for(nkS32 i=0; i<NK_CAST(nkS32, MouseButton_TOTAL); ++i)
+        if(is_mouse_button_pressed(NK_CAST(MouseButton, i))) return NK_TRUE;
+    return NK_FALSE;
+}
+
+static nkBool is_any_mouse_button_released(void)
+{
+    for(nkS32 i=0; i<NK_CAST(nkS32, MouseButton_TOTAL); ++i)
+        if(is_mouse_button_released(NK_CAST(MouseButton, i))) return NK_TRUE;
+    return NK_FALSE;
+}
+
 /*////////////////////////////////////////////////////////////////////////////*/

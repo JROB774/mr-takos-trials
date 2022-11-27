@@ -61,4 +61,9 @@ static nkBool is_mouse_button_up      (MouseButton button);
 static nkBool is_mouse_button_pressed (MouseButton button);
 static nkBool is_mouse_button_released(MouseButton button);
 
+static nkBool is_any_mouse_button_down    (void);
+static nkBool is_any_mouse_button_up      (void);
+static nkBool is_any_mouse_button_pressed (void);
+static nkBool is_any_mouse_button_released(void);
+
 #endif /* INPUT_H__ //////////////////////////////////////////////////////////*/
