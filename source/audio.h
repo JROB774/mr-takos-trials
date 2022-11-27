@@ -33,6 +33,7 @@ static SoundRef sound_play_on_channel (Sound sound, nkS32 loop, nkS32 channel);
 static void     sound_resume          (SoundRef sound_ref);
 static void     sound_pause           (SoundRef sound_ref);
 static void     sound_stop            (SoundRef sound_ref);
+static void     sound_fade_out        (SoundRef sound_ref, nkF32 seconds);
 
 static Music music_create_from_file(const nkChar* file_name);
 static Music music_create_from_data(void* data, nkU64 size);

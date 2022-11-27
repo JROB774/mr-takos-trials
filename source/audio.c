@@ -147,6 +147,12 @@ static void sound_stop(SoundRef sound_ref)
     Mix_HaltChannel(sound_ref);
 }
 
+static void sound_fade_out(SoundRef sound_ref, nkF32 seconds)
+{
+    nkS32 ms = NK_CAST(nkS32, seconds * 1000.0f);
+    Mix_FadeOutChannel(sound_ref, ms);
+}
+
 static Music music_create_from_file(const nkChar* file_name)
 {
     Music music = ALLOCATE_AUDIO_TYPE(Music);
