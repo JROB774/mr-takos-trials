@@ -162,11 +162,6 @@ static void minigame_whack_update(nkF32 dt)
                         sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
                         sound_play(g_asset_sfx_whack[rng_int_range(0,2)], 0);
 
-                        // x +=  5.0f;
-                        // y +=  5.0f;
-                        // w -= 10.0f;
-                        // h -= 10.0f;
-
                         particles_spawn(ParticleType_Star, x,y,w,h, 3,5);
                     }
                 }
