@@ -9,8 +9,7 @@
 #include "codegen/atlas_simon.h"
 #include "codegen/atlas_whack.h"
 
-static Texture g_asset_back_paper;
-static Texture g_asset_back_vignette;
+static Texture g_asset_background;
 static Texture g_asset_ui;
 static Texture g_asset_particle;
 static Texture g_asset_font_big;

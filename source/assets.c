@@ -19,8 +19,7 @@ static void free_assets_npak(void)
 
 static void load_all_assets(void)
 {
-    g_asset_back_paper          = load_asset_texture("backpaper.png",    SamplerFilter_Linear, SamplerWrap_Clamp);
-    g_asset_back_vignette       = load_asset_texture("backvignette.png", SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_background          = load_asset_texture("background.png",   SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_particle            = load_asset_texture("particle.png",     SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_ui                  = load_asset_texture("ui.png",           SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_font_big            = load_asset_texture("fontbig.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
@@ -79,8 +78,7 @@ static void load_all_assets(void)
 
 static void free_all_assets(void)
 {
-    texture_destroy(g_asset_back_paper);
-    texture_destroy(g_asset_back_vignette);
+    texture_destroy(g_asset_background);
     texture_destroy(g_asset_particle);
     texture_destroy(g_asset_ui);
     texture_destroy(g_asset_font_big);

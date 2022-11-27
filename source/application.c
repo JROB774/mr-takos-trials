@@ -105,13 +105,9 @@ static void app_render(void)
 
     set_blend_mode(BlendMode_Alpha);
 
-    #if 1
     ImmRect clip = { 0.0f, 0.0f, SCREEN_WIDTH, SCREEN_HEIGHT };
     clip.y = SCREEN_HEIGHT * g_background;
-    imm_texture(g_asset_back_paper, hsw,hsh, &clip, NK_V4_WHITE);
-    #else
-    imm_texture(g_asset_back_vignette, hsw,hsh, NULL, NK_V4_WHITE);
-    #endif
+    imm_texture(g_asset_background, hsw,hsh, &clip, NK_V4_WHITE);
 
     if(!is_game_paused())
     {
