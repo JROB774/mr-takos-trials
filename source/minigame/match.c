@@ -2,10 +2,12 @@
 
 #define MATCH_FACE_SCALE 0.7f
 
-#define MATCH_BOARD_MIN_X (96)
-#define MATCH_BOARD_MIN_Y (96)
-#define MATCH_BOARD_MAX_X (SCREEN_WIDTH-96)
-#define MATCH_BOARD_MAX_Y (SCREEN_HEIGHT-96)
+#define MATCH_FACE_OVERLAP_LENIENCE 35.0f
+
+#define MATCH_BOARD_MIN_X (48)
+#define MATCH_BOARD_MIN_Y (64)
+#define MATCH_BOARD_MAX_X (SCREEN_WIDTH-48)
+#define MATCH_BOARD_MAX_Y (SCREEN_HEIGHT-64)
 
 NK_ENUM(MatchFaceID, nkS32)
 {
@@ -47,16 +49,62 @@ static void minigame_match_pick_new_face(void)
     }
 
     // Generate board of faces.
-    g_minigame_match.face_total = 5; // @Incomplete: Scale with the current stage...
+    g_minigame_match.face_total = 5 + (g_minigame_match.stage * 2);
     for(nkU32 i=0; i<g_minigame_match.face_total; ++i)
     {
         MatchFace* f = &g_minigame_match.faces[i];
-        f->x = rng_int_range(MATCH_BOARD_MIN_X, MATCH_BOARD_MAX_X);
-        f->y = rng_int_range(MATCH_BOARD_MIN_Y, MATCH_BOARD_MAX_Y);
+
         f->type = g_minigame_match.face_to_find;
         while(f->type == g_minigame_match.face_to_find)
         {
             f->type = rng_int_range(0,MatchFaceID_TOTAL-1);
+        }
+
+        // Make sure faces don't overlap too much.
+        nkS32 attempts = 0;
+
+        nkBool valid_pos = NK_FALSE;
+        while(!valid_pos)
+        {
+            f->x = rng_int_range(MATCH_BOARD_MIN_X, MATCH_BOARD_MAX_X);
+            f->y = rng_int_range(MATCH_BOARD_MIN_Y, MATCH_BOARD_MAX_Y);
+
+            valid_pos = NK_TRUE;
+
+            if(i > 0)
+            {
+                for(nkU32 j=0; j<(i-1); ++j)
+                {
+                    MatchFace* o = &g_minigame_match.faces[j];
+
+                    nkF32 ax0 = f->x - 20.0f;
+                    nkF32 ay0 = f->y - 20.0f;
+                    nkF32 ax1 = f->x + 20.0f;
+                    nkF32 ay1 = f->y + 20.0f;
+
+                    nkF32 bx0 = o->x - 20.0f;
+                    nkF32 by0 = o->y - 20.0f;
+                    nkF32 bx1 = o->x + 20.0f;
+                    nkF32 by1 = o->y + 20.0f;
+
+                    nkF32 x_dist = nk_min(ax1, bx1) - nk_max(ax0, bx0);
+                    nkF32 y_dist = nk_min(ay1, by1) - nk_max(ay0, by0);
+
+                    if((x_dist >= MATCH_FACE_OVERLAP_LENIENCE && y_dist > 0.0f) ||
+                       (y_dist >= MATCH_FACE_OVERLAP_LENIENCE && x_dist > 0.0f))
+                    {
+                        valid_pos = NK_FALSE;
+                        break;
+                    }
+                }
+
+                // If we can't find a good positiion after 5 attempts just exit.
+                attempts++;
+                if(attempts > 5)
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -88,6 +136,7 @@ static void minigame_match_update(nkF32 dt)
         if(is_mouse_button_pressed(MouseButton_Left))
         {
             nkBool found_the_face = NK_FALSE;
+            nkBool any_faces_hit = NK_FALSE;
 
             for(nkU32 i=0; i<g_minigame_match.face_total; ++i)
             {
@@ -98,23 +147,40 @@ static void minigame_match_update(nkF32 dt)
                 nkF32 w = 40.0f;
                 nkF32 h = 40.0f;
 
-                if(f->type == g_minigame_match.face_to_find && cursor_in_bounds(x,y,w,h))
+                if(cursor_in_bounds(x,y,w,h))
                 {
-                    found_the_face = NK_TRUE;
-                    break;
+                    any_faces_hit = NK_TRUE;
+                    if(f->type == g_minigame_match.face_to_find)
+                    {
+                        found_the_face = NK_TRUE;
+                        break;
+                    }
                 }
             }
 
-            if(found_the_face)
+            if(any_faces_hit)
             {
-                game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
-            }
-            else
-            {
-                game_display_failure((SCREEN_WIDTH * 0.5f), (SCREEN_HEIGHT * 0.5f));
-            }
+                if(found_the_face)
+                {
+                    game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
 
-            minigame_match_pick_new_face();
+                    g_minigame_match.stage++;
+
+                    g_gamestate.game_score += 100 + (50 * g_minigame_match.stage);
+                    g_gamestate.game_score += 10 * g_minigame_match.combo;
+
+                    g_minigame_match.combo++;
+                }
+                else
+                {
+                    game_display_failure((SCREEN_WIDTH * 0.5f), (SCREEN_HEIGHT * 0.5f));
+
+                    g_minigame_match.combo = 0;
+                    g_gamestate.game_score -= 200;
+                }
+
+                minigame_match_pick_new_face();
+            }
         }
     }
 }
