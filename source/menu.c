@@ -78,13 +78,15 @@ static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
     return (hovered && is_mouse_button_pressed(MouseButton_Left));
 }
 
-static void render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+static nkBool render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
 {
     FontStyle style = FontStyle_Faded;
     ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
-    if(cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h))
+    nkBool in_bounds = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
+    if(in_bounds)
         style = FontStyle_Rotate;
     render_bitmap_font_aligned(FontSize_Big, text, Alignment_Center, y, scale, style);
+    return in_bounds;
 }
 
 static nkBool update_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)
@@ -236,6 +238,25 @@ static const nkChar* MAIN_MENU_OPTIONS[] =
 
 NK_STATIC_ASSERT(MainMenuOption_TOTAL == NK_ARRAY_SIZE(MAIN_MENU_OPTIONS), main_menu_option_size_mismatch);
 
+static const nkVec2 MAIN_MENU_TAKO_POSITIONS[] =
+{
+    #if defined(BUILD_NATIVE)
+    { 411.0f,  66.0f },
+    {  68.0f, 100.0f },
+    { 410.0f, 119.0f },
+    {  71.0f, 175.0f },
+    { 396.0f, 203.0f }
+    #endif // BUILD_NATIVE
+    #if defined(BUILD_WEB)
+    { 411.0f,  90.0f },
+    {  68.0f, 124.0f },
+    { 410.0f, 143.0f },
+    {  71.0f, 199.0f }
+    #endif // BUILD_WEB
+};
+
+NK_STATIC_ASSERT(MainMenuOption_TOTAL == NK_ARRAY_SIZE(MAIN_MENU_TAKO_POSITIONS), main_menu_tako_size_mismatch);
+
 static void menu_update_main(nkF32 dt)
 {
     if(is_key_pressed(KeyCode_Escape))
@@ -269,7 +290,15 @@ static void menu_render_main(void)
     nkF32 y = bitmap_font_block_y_off(FontSize_Big, MainMenuOption_TOTAL, MENU_TEXT_SCALE);
     for(nkS32 i=0; i<MainMenuOption_TOTAL; ++i)
     {
-        render_simple_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE);
+        if(render_simple_button(MAIN_MENU_OPTIONS[i], y, MENU_TEXT_SCALE))
+        {
+            nkS32 index = ATLAS_TAKO_MENU_PLAY_SHADOW + ((i * 2) + 1);
+            nkF32 tx = MAIN_MENU_TAKO_POSITIONS[i].x;
+            nkF32 ty = MAIN_MENU_TAKO_POSITIONS[i].y;
+            imm_begin_texture_batch(g_asset_tako);
+            render_item_ex(tx,ty, 1,1, g_angles_lil[APP_MAX_ANGLES-1], ATLAS_TAKO, index, 1.0f);
+            imm_end_texture_batch();
+        }
         y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
     }
 }

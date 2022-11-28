@@ -15,6 +15,7 @@ static Texture g_asset_ui;
 static Texture g_asset_particle;
 static Texture g_asset_font_big;
 static Texture g_asset_font_lil;
+static Texture g_asset_tako;
 static Texture g_asset_simon;
 static Texture g_asset_whack;
 static Texture g_asset_match;

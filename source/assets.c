@@ -24,6 +24,7 @@ static void load_all_assets(void)
     g_asset_ui                  = load_asset_texture("ui.png",           SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_font_big            = load_asset_texture("fontbig.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_font_lil            = load_asset_texture("fontlil.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_tako                = load_asset_texture("tako.png",         SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_simon               = load_asset_texture("simon.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_whack               = load_asset_texture("whack.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_match               = load_asset_texture("match.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
@@ -84,6 +85,7 @@ static void free_all_assets(void)
     texture_destroy(g_asset_ui);
     texture_destroy(g_asset_font_big);
     texture_destroy(g_asset_font_lil);
+    texture_destroy(g_asset_tako);
     texture_destroy(g_asset_simon);
     texture_destroy(g_asset_whack);
     texture_destroy(g_asset_match);
