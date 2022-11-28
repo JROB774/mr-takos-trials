@@ -4,10 +4,10 @@
 
 #define MATCH_FACE_OVERLAP_LENIENCE 35.0f
 
-#define MATCH_BOARD_MIN_X (48)
-#define MATCH_BOARD_MIN_Y (64)
-#define MATCH_BOARD_MAX_X (SCREEN_WIDTH-48)
-#define MATCH_BOARD_MAX_Y (SCREEN_HEIGHT-64)
+#define MATCH_BOARD_MIN_X (56)
+#define MATCH_BOARD_MIN_Y (72)
+#define MATCH_BOARD_MAX_X (SCREEN_WIDTH-56)
+#define MATCH_BOARD_MAX_Y (SCREEN_HEIGHT-72)
 
 NK_ENUM(MatchFaceID, nkS32)
 {
@@ -34,6 +34,7 @@ typedef struct MiniGameMatch
     nkU32       face_total;
     nkS32       stage;
     nkS32       combo;
+    nkBool      started;
 }
 MiniGameMatch;
 
@@ -41,6 +42,9 @@ static MiniGameMatch g_minigame_match;
 
 static void minigame_match_pick_new_face(void)
 {
+    // Play a sound for placing all of the faces.
+    sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
+
     // Pick a new face to find.
     MatchFaceID old_face = g_minigame_match.face_to_find;
     while(old_face == g_minigame_match.face_to_find)
@@ -117,10 +121,12 @@ static void minigame_match_start(void)
 {
     cursor_set_type(CursorType_Magnify);
 
+    g_minigame_match.face_total = 0;
+
     g_minigame_match.stage = 0;
     g_minigame_match.combo = 0;
 
-    minigame_match_pick_new_face();
+    g_minigame_match.started = NK_FALSE;
 }
 
 static void minigame_match_end(void)
@@ -132,6 +138,13 @@ static void minigame_match_update(nkF32 dt)
 {
     if(game_is_playing())
     {
+        // Spawn the first board once the countdown is done.
+        if(!g_minigame_match.started)
+        {
+            g_minigame_match.started = NK_TRUE;
+            minigame_match_pick_new_face();
+        }
+
         // Check if the user has clicked on the correct face or not.
         if(is_mouse_button_pressed(MouseButton_Left))
         {
@@ -198,10 +211,13 @@ static void minigame_match_render(void)
     }
 
     // Draw the face to find in the top-left corner.
-    nkS32 index = ATLAS_MATCH_0_SHADOW + ((g_minigame_match.face_to_find * 2) + 1);
-    nkF32 x = 28.0f;
-    nkF32 y = 32.0f;
-    render_item_ex(x,y, MATCH_FACE_SCALE,MATCH_FACE_SCALE, 0.0f, ATLAS_MATCH, index, 1.0f);
+    if(g_minigame_match.started)
+    {
+        nkS32 index = ATLAS_MATCH_0_SHADOW + ((g_minigame_match.face_to_find * 2) + 1);
+        nkF32 x = 28.0f;
+        nkF32 y = 32.0f;
+        render_item_ex(x,y, MATCH_FACE_SCALE,MATCH_FACE_SCALE, 0.0f, ATLAS_MATCH, index, 1.0f);
+    }
 
     imm_end_texture_batch();
 }
