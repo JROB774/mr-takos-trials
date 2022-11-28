@@ -203,7 +203,7 @@ static void menu_render_title(void)
 
     // Render the "click to start" prompt.
     imm_begin_texture_batch(g_asset_ui);
-    render_item(SCREEN_WIDTH * 0.5f, 220.0f, ATLAS_UI, ATLAS_UI_START_BODY, 1.0f);
+    render_item_ex(SCREEN_WIDTH * 0.5f, 220.0f, 1,1, g_angles_lil[0], ATLAS_UI, ATLAS_UI_START_BODY, 1.0f);
     imm_end_texture_batch();
 }
 
