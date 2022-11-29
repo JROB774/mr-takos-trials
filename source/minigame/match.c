@@ -206,17 +206,18 @@ static void minigame_match_render(void)
     for(nkU32 i=0; i<g_minigame_match.face_total; ++i)
     {
         MatchFace* f = &g_minigame_match.faces[i];
-        nkS32 index = ATLAS_MATCH_0_SHADOW + ((f->type * 2) + 1);
+        nkS32 index = ATLAS_MATCH_FACES_0_SHADOW + ((f->type * 2) + 1);
         render_item_ex(f->x,f->y, MATCH_FACE_SCALE,MATCH_FACE_SCALE, 0.0f, ATLAS_MATCH, index, 1.0f);
     }
 
     // Draw the face to find in the top-left corner.
     if(g_minigame_match.started)
     {
-        nkS32 index = ATLAS_MATCH_0_SHADOW + ((g_minigame_match.face_to_find * 2) + 1);
+        nkS32 index = ATLAS_MATCH_FACES_0_SHADOW + ((g_minigame_match.face_to_find * 2) + 1);
         nkF32 x = 28.0f;
         nkF32 y = 32.0f;
         render_item_ex(x,y, MATCH_FACE_SCALE,MATCH_FACE_SCALE, 0.0f, ATLAS_MATCH, index, 1.0f);
+        render_item(x+10.0f,y+10.0f, ATLAS_MATCH, ATLAS_MATCH_DIVIDER_BODY, 0.5f);
     }
 
     imm_end_texture_batch();
