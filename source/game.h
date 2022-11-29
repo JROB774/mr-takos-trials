@@ -7,6 +7,7 @@ NK_ENUM(MiniGameID, nkS32)
     MiniGameID_Simon,
     MiniGameID_Whack,
     MiniGameID_Match,
+    MiniGameID_Catch,
     MiniGameID_TOTAL
 };
 
@@ -16,6 +17,7 @@ static const nkChar* MINIGAME_TITLES[] =
     "BLOBO SING ALONG",
     "WHACK A GRUMBLE",
     "FIND THAT FACE",
+    "APPLE PICKING",
     "RANDOM"
 };
 
