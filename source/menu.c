@@ -70,23 +70,37 @@ static void render_back_button(void)
     imm_end_texture_batch();
 }
 
-static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+static nkBool update_simple_button_aligned(const nkChar* text, nkF32 y, nkF32 scale, Alignment alignment)
 {
-    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
+    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, alignment, y, scale, FontStyle_None);
+    if(alignment == Alignment_Left) bounds.x += 32.0f;
+    if(alignment == Alignment_Right) bounds.x -= 32.0f;
     nkBool hovered = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
     if(hovered) g_menu_curr_hovered = text;
     return (hovered && is_mouse_button_pressed(MouseButton_Left));
 }
 
-static nkBool render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+static nkBool update_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+{
+    return update_simple_button_aligned(text, y, scale, Alignment_Center);
+}
+
+static nkBool render_simple_button_aligned(const nkChar* text, nkF32 y, nkF32 scale, Alignment alignment)
 {
     FontStyle style = FontStyle_Faded;
-    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, Alignment_Center, y, scale, FontStyle_None);
+    ImmRect bounds = get_bitmap_font_bounds_aligned(FontSize_Big, text, alignment, y, scale, FontStyle_None);
+    if(alignment == Alignment_Left) bounds.x += 32.0f;
+    if(alignment == Alignment_Right) bounds.x -= 32.0f;
     nkBool in_bounds = cursor_in_bounds(bounds.x,bounds.y,bounds.w,bounds.h);
     if(in_bounds)
         style = FontStyle_Rotate;
-    render_bitmap_font_aligned(FontSize_Big, text, Alignment_Center, y, scale, style);
+    render_bitmap_font(FontSize_Big, text, bounds.x, y, scale, style);
     return in_bounds;
+}
+
+static nkBool render_simple_button(const nkChar* text, nkF32 y, nkF32 scale)
+{
+    return render_simple_button_aligned(text, y, scale, Alignment_Center);
 }
 
 static nkBool update_toggle_button(const nkChar* text_a, const nkChar* text_b, nkBool toggle, nkF32 y, nkF32 scale)

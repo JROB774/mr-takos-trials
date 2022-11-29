@@ -38,7 +38,7 @@ static void pause_update(nkF32 dt)
     {
         // Update pause menu.
         nkF32 y = 168.0f;
-        if(update_simple_button("RESUME", y, PAUSE_TEXT_SCALE))
+        if(update_simple_button_aligned("RESUME", y, PAUSE_TEXT_SCALE, Alignment_Left))
         {
             change_page();
             g_pause.paused = NK_FALSE;
@@ -46,7 +46,7 @@ static void pause_update(nkF32 dt)
 
         y += bitmap_font_line_advance(FontSize_Big, PAUSE_TEXT_SCALE);
 
-        if(update_simple_button("MENU", y, PAUSE_TEXT_SCALE))
+        if(update_simple_button_aligned("MENU", y, PAUSE_TEXT_SCALE, Alignment_Left))
         {
             if(g_gamestate.alarm_sound_ref != INVALID_SOUND_REF)
                 sound_stop(g_gamestate.alarm_sound_ref);
@@ -94,7 +94,6 @@ static void pause_render(void)
         return;
     }
 
-
     // Do the pause button or menu logic.
     if(g_pause.paused)
     {
@@ -103,9 +102,13 @@ static void pause_render(void)
 
         nkF32 y = 168.0f;
 
-        render_simple_button("RESUME", y, PAUSE_TEXT_SCALE);
+        render_simple_button_aligned("RESUME", y, PAUSE_TEXT_SCALE, Alignment_Left);
         y += bitmap_font_line_advance(FontSize_Big, PAUSE_TEXT_SCALE);
-        render_simple_button("MENU", y, PAUSE_TEXT_SCALE);
+        render_simple_button_aligned("MENU", y, PAUSE_TEXT_SCALE, Alignment_Left);
+
+        imm_begin_texture_batch(g_asset_tako);
+        render_item_ex(380.0f,188.0f, 1,1, g_angles_lil[APP_MAX_ANGLES-1], ATLAS_TAKO, ATLAS_TAKO_PAUSE_BODY, 1.0f);
+        imm_end_texture_batch();
     }
     else
     {
