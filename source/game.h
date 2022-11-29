@@ -17,7 +17,7 @@ static const nkChar* MINIGAME_TITLES[] =
     "BLOBO SING ALONG",
     "WHACK A GRUMBLE",
     "FIND THAT FACE",
-    "APPLE PICKING",
+    "SPIKY APPLE PICKING",
     "RANDOM"
 };
 

@@ -9,6 +9,7 @@
 #include "codegen/atlas_simon.h"
 #include "codegen/atlas_whack.h"
 #include "codegen/atlas_match.h"
+#include "codegen/atlas_catch.h"
 
 static Texture g_asset_background;
 static Texture g_asset_ui;
@@ -19,6 +20,7 @@ static Texture g_asset_tako;
 static Texture g_asset_simon;
 static Texture g_asset_whack;
 static Texture g_asset_match;
+static Texture g_asset_catch;
 static Font    g_asset_debug_font_big;
 static Font    g_asset_debug_font_lil;
 static Sound   g_asset_sfx_wrong_buzzer;
