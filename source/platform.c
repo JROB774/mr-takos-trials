@@ -127,6 +127,11 @@ static const nkChar* get_base_path(void)
     return g_ctx.base_path;
 }
 
+static void* get_window(void)
+{
+    return g_ctx.window;
+}
+
 static void terminate(void)
 {
     g_ctx.running = NK_FALSE;

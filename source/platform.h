@@ -2,6 +2,7 @@
 #define PLATFORM_H__
 
 static const nkChar* get_base_path    (void);
+static void*         get_window       (void);
 static void          terminate        (void);
 static void          fatal_error      (const nkChar* fmt, ...);
 static void          user_error       (const nkChar* fmt, ...);
