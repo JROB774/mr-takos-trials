@@ -7,6 +7,7 @@ typedef struct Cursor
     nkVec2     pos;
     nkF32      idle_time;
     CursorType type;
+    nkBool     hidden;
 }
 Cursor;
 
@@ -42,6 +43,7 @@ static void cursor_update(nkF32 dt)
 static void cursor_render(void)
 {
     if(g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT) return; // Hide the cursor after a bit of inactivity.
+    if(g_cursor.hidden) return; // Do not draw the cursor if it has been explicitly hidden.
 
     nkF32 p_off = (is_mouse_button_down(MouseButton_Left)) ? 1.0f : 0.0f;
     nkF32 s_off = (is_mouse_button_down(MouseButton_Left)) ? 0.6f : 1.0f;
@@ -73,12 +75,12 @@ static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
 
 static void cursor_hide(void)
 {
-    g_cursor.idle_time = CURSOR_IDLE_TIMEOUT;
+    g_cursor.hidden = NK_TRUE;
 }
 
 static void cursor_show(void)
 {
-    g_cursor.idle_time = 0.0f;
+    g_cursor.hidden = NK_FALSE;
 }
 
 static ImmRect cursor_get_bounds(void)
