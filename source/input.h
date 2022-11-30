@@ -52,9 +52,13 @@ NK_ENUM(MouseButton, nkS32)
     MouseButton_TOTAL
 };
 
-static nkVec2 get_window_mouse_pos  (void);
-static nkVec2 get_relative_mouse_pos(void);
-static nkVec2 get_screen_mouse_pos  (void);
+static void   set_mouse_to_relative        (nkBool enable);
+static nkBool is_mouse_relative            (void);
+static void   set_mouse_position           (nkF32 x, nkF32 y);
+static nkVec2 get_window_mouse_pos         (void);
+static nkVec2 get_relative_mouse_pos       (void);
+static nkVec2 get_screen_mouse_pos         (void);
+static nkVec2 get_relative_screen_mouse_pos(void);
 
 static nkBool is_mouse_button_down    (MouseButton button);
 static nkBool is_mouse_button_up      (MouseButton button);

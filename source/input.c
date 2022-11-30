@@ -148,6 +148,22 @@ static nkChar* get_current_text_input(void)
     return g_input.text_input;
 }
 
+static void set_mouse_to_relative(nkBool enable)
+{
+    SDL_SetRelativeMouseMode(enable);
+}
+
+static nkBool is_mouse_relative(void)
+{
+    return SDL_GetRelativeMouseMode();
+}
+
+static void set_mouse_position(nkF32 x, nkF32 y)
+{
+    SDL_Window* window = NK_CAST(SDL_Window*, get_window());
+    SDL_WarpMouseInWindow(window, NK_CAST(nkS32,x), NK_CAST(nkS32,y));
+}
+
 static nkVec2 get_window_mouse_pos(void)
 {
     return g_input.mouse_pos;
@@ -158,12 +174,12 @@ static nkVec2 get_relative_mouse_pos(void)
     return g_input.mouse_pos_relative;
 }
 
-static nkVec2 get_screen_mouse_pos(void)
+static nkVec2 mouse_pos_to_screen(nkVec2 pos, nkBool apply_offset)
 {
     nkF32 ww = NK_CAST(nkF32, window_get_width());
     nkF32 wh = NK_CAST(nkF32, window_get_height());
 
-    nkVec2 screen_mouse = get_window_mouse_pos();
+    nkVec2 screen_mouse = pos;
 
     nkF32 scaledw = SCREEN_WIDTH;
     nkF32 scaledh = SCREEN_HEIGHT;
@@ -184,10 +200,26 @@ static nkVec2 get_screen_mouse_pos(void)
 
     if(s < 1.0f) s = 1.0f; // Avoid scale of zero.
 
-    screen_mouse.x = (screen_mouse.x - scaledx) / floorf(s);
-    screen_mouse.y = (screen_mouse.y - scaledy) / floorf(s);
+    if(apply_offset)
+    {
+        screen_mouse.x -= scaledx;
+        screen_mouse.y -= scaledy;
+    }
+
+    screen_mouse.x /= floorf(s);
+    screen_mouse.y /= floorf(s);
 
     return screen_mouse;
+}
+
+static nkVec2 get_screen_mouse_pos(void)
+{
+    return mouse_pos_to_screen(get_window_mouse_pos(), NK_TRUE);
+}
+
+static nkVec2 get_relative_screen_mouse_pos(void)
+{
+    return mouse_pos_to_screen(get_relative_mouse_pos(), NK_FALSE);
 }
 
 static nkBool is_mouse_button_down(MouseButton button)
