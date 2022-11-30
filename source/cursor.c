@@ -73,6 +73,11 @@ static nkBool cursor_in_bounds(nkF32 x, nkF32 y, nkF32 w, nkF32 h)
     return ((b.x < (x+w)) && ((b.x+b.h) > x) && (b.y < (y+h)) && ((b.y+b.h) > y));
 }
 
+static nkBool cursor_is_hidden(void)
+{
+    return (g_cursor.hidden || (g_cursor.idle_time >= CURSOR_IDLE_TIMEOUT));
+}
+
 static void cursor_hide(void)
 {
     g_cursor.hidden = NK_TRUE;

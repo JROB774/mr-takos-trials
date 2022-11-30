@@ -62,7 +62,7 @@ static void pause_update(nkF32 dt)
         nkF32 w = PAUSE_BUTTON_W;
         nkF32 h = PAUSE_BUTTON_H;
 
-        if(cursor_in_bounds(x,y,w,h) && is_mouse_button_pressed(MouseButton_Left))
+        if(cursor_in_bounds(x,y,w,h) && !cursor_is_hidden() && is_mouse_button_pressed(MouseButton_Left))
         {
             change_page();
             g_pause.paused = NK_TRUE;
@@ -122,7 +122,7 @@ static void pause_render(void)
         nkF32 py = y + (h * 0.5f);
 
         imm_begin_texture_batch(g_asset_ui);
-        if(cursor_in_bounds(x,y,w,h))
+        if(cursor_in_bounds(x,y,w,h) && !cursor_is_hidden())
         {
             nkF32 scale = (is_mouse_button_pressed(MouseButton_Left)) ? 1.3f : 1.1f;
             render_item_ex(px,py, scale,scale, g_angles_big[APP_MAX_ANGLES-3], ATLAS_UI, ATLAS_UI_PAUSE_BODY, 1.0f);

@@ -24,7 +24,7 @@ static void minigame_catch_start(void)
 
 static void minigame_catch_end(void)
 {
-    // @Incomplete: ...
+    // Nothing...
 }
 
 static void minigame_catch_update(nkF32 dt)
