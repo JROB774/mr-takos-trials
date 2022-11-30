@@ -12,6 +12,20 @@ MiniGameCatch;
 
 static MiniGameCatch g_minigame_catch;
 
+static void minigame_catch_grab_basket(void)
+{
+    g_minigame_catch.basket_grabbed = NK_TRUE;
+    cursor_hide();
+    set_mouse_to_relative(NK_TRUE);
+}
+
+static void minigame_catch_release_basket(void)
+{
+    g_minigame_catch.basket_grabbed = NK_FALSE;
+    cursor_show();
+    set_mouse_to_relative(NK_FALSE);
+}
+
 static void minigame_catch_start(void)
 {
     cursor_set_type(CursorType_Grabber);
@@ -43,31 +57,29 @@ static void minigame_catch_update(nkF32 dt)
 
                 if(cursor_in_bounds(bx,by,bw,bh))
                 {
-                    g_minigame_catch.basket_grabbed = NK_TRUE;
-                    cursor_hide();
-                    set_mouse_to_relative(NK_TRUE);
+                    minigame_catch_grab_basket();
                 }
             }
         }
         else
         {
+            // Make the basket follow the mouse horizontally.
+            g_minigame_catch.basket_pos.x += get_relative_screen_mouse_pos().x;
+            g_minigame_catch.basket_pos.x = nk_clamp(g_minigame_catch.basket_pos.x, 0.0f, SCREEN_WIDTH);
+
             // Release the basket.
             if(is_mouse_button_released(MouseButton_Left))
             {
-                g_minigame_catch.basket_grabbed = NK_FALSE;
-                cursor_show();
-                set_mouse_to_relative(NK_FALSE);
+                minigame_catch_release_basket();
             }
-
-            // Make the basket follow the mouse horizontally.
-            g_minigame_catch.basket_pos.x += get_relative_screen_mouse_pos().x;
         }
     }
     else
     {
-        // Make sure we exit relative mouse mode and show the cursor.
-        set_mouse_to_relative(NK_FALSE);
-        cursor_show();
+        if(g_minigame_catch.basket_grabbed)
+        {
+            minigame_catch_release_basket();
+        }
     }
 }
 
