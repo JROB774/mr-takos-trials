@@ -2,7 +2,7 @@
 
 static void minigame_catch_start(void)
 {
-    // @Incomplete: ...
+    cursor_set_type(CursorType_Grabber);
 }
 
 static void minigame_catch_end(void)

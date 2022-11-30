@@ -7,6 +7,7 @@ NK_ENUM(CursorType, nkS32)
     CursorType_Pointer,
     CursorType_Shovel,
     CursorType_Magnify,
+    CursorType_Grabber,
     CursorType_TOTAL
 };
 
