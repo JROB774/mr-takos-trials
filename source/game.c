@@ -261,19 +261,10 @@ static void game_render(void)
     }
 
     // Render the score.
-    nkChar score_buffer[16] = NK_ZERO_MEM;
-    sprintf(score_buffer, "%05d", g_gamestate.game_score);
-
-    x = (SCREEN_WIDTH - (LETTER_WIDTH*strlen(score_buffer))) * 0.5f;
+    x = SCREEN_WIDTH * 0.5f;
     y = SCREEN_HEIGHT - 32.0f;
 
-    for(nkU32 i=0,n=strlen(score_buffer); i<n; ++i)
-    {
-        nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((score_buffer[i] - '0') * 2) + 1);
-        x += LETTER_WIDTH * 0.5f;
-        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 0.7f);
-        x += LETTER_WIDTH * 0.5f;
-    }
+    x = render_score(x,y, g_gamestate.game_score);
 
     // If this score is a highscore then draw a cool crown.
     if(g_gamestate.game_timer <= 0.0f && g_gamestate.end_state >= 1)

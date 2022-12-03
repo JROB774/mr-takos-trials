@@ -8,6 +8,12 @@
 #define MENU_TEXT_SCALE 0.7f
 #define UI_SLIDER_GAP  12.0f
 
+#define GAME_THUMB_WIDTH   80.0f
+#define GAME_THUMB_HEIGHT  65.0f
+#define GAME_THUMB_PADDING 12.0f
+
+#define GAME_ROW_MAX_LENGTH 5
+
 NK_ENUM(MenuState, nkS32)
 {
     MenuState_Title,
@@ -402,14 +408,57 @@ static void menu_update_awards(nkF32 dt)
     if(is_key_pressed(KeyCode_Escape))
         change_menu_state(MenuState_Main);
     update_back_button();
-
-    // @Incomplete: ...
 }
 
 static void menu_render_awards(void)
 {
     render_back_button();
-    // @Incomplete: ...
+
+    // Render the grid of games.
+    nkS32 game_count = MiniGameID_TOTAL;
+    nkS32 row_count = ceilf(NK_CAST(nkF32,game_count) / GAME_ROW_MAX_LENGTH);
+
+    nkF32 block_width = ((GAME_THUMB_WIDTH * GAME_ROW_MAX_LENGTH) + (GAME_THUMB_PADDING * (GAME_ROW_MAX_LENGTH-1)));
+    nkF32 block_height = ((GAME_THUMB_HEIGHT * row_count) + (GAME_THUMB_PADDING * (row_count-1)));
+
+    nkF32 x = (SCREEN_WIDTH - block_width) * 0.5f;
+    nkF32 y = ((SCREEN_HEIGHT - block_height) * 0.5f) - 16.0f;
+
+    nkS32 hovered = NK_S32_MAX;
+
+    imm_begin_texture_batch(g_asset_thumbs);
+    for(nkS32 i=0; i<game_count; ++i)
+    {
+        if((i != 0) && (i % GAME_ROW_MAX_LENGTH) == 0)
+        {
+            // Extra calculation to center thumbnails if a row has less than the max items.
+            nkS32 row_items = nk_min(GAME_ROW_MAX_LENGTH, (game_count - i));
+            nkF32 row_width = ((GAME_THUMB_WIDTH * row_items) + (GAME_THUMB_PADDING * (row_items-1)));
+            x = (SCREEN_WIDTH - row_width) * 0.5f;
+            y += (GAME_THUMB_HEIGHT + GAME_THUMB_PADDING);
+        }
+
+        // Draw the thumbnail (with rotation if hovered).
+        nkF32 tx = x + (GAME_THUMB_WIDTH * 0.5f);
+        nkF32 ty = y + (GAME_THUMB_HEIGHT * 0.5f);
+        render_item(tx,ty, ATLAS_THUMBS, ((i*2)+1), 1.0f);
+
+        x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
+    }
+    imm_end_texture_batch();
+
+    // Render the highscores for each game.
+    x = (SCREEN_WIDTH - block_width) * 0.5f;
+    y += (GAME_THUMB_HEIGHT * 1.5f);
+
+    imm_begin_texture_batch(g_asset_ui);
+    for(nkS32 i=0; i<game_count; ++i)
+    {
+        nkF32 sx = x + (GAME_THUMB_WIDTH * 0.5f);
+        render_score(sx,y, g_save.highscore[i]);
+        x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
+    }
+    imm_end_texture_batch();
 }
 
 // =============================================================================
@@ -421,8 +470,6 @@ static void menu_update_credits(nkF32 dt)
     if(is_key_pressed(KeyCode_Escape))
         change_menu_state(MenuState_Main);
     update_back_button();
-
-    // @Incomplete: ...
 }
 
 static void menu_render_credits(void)
@@ -434,12 +481,6 @@ static void menu_render_credits(void)
 // =============================================================================
 // Games
 // =============================================================================
-
-#define GAME_THUMB_WIDTH   80.0f
-#define GAME_THUMB_HEIGHT  65.0f
-#define GAME_THUMB_PADDING 12.0f
-
-#define GAME_ROW_MAX_LENGTH 5
 
 static void menu_update_games(nkF32 dt)
 {

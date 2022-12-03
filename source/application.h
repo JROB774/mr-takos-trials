@@ -26,8 +26,9 @@ static const nkVec4 SHADOW_COLOR  = { 1.0f,1.0f,1.0f,0.6f };
 static const nkVec4 BODY_COLOR    = { 1.0f,1.0f,1.0f,1.0f };
 static const nkVec2 SHADOW_OFFSET = { 4.0f,4.0f };
 
-static void render_item   (nkF32 x, nkF32 y,                                  const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier);
-static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier);
+static void  render_item   (nkF32 x, nkF32 y,                                  const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier);
+static void  render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier);
+static nkF32 render_score  (nkF32 x, nkF32 y, nkS32 score);
 
 static void change_page(void);
 

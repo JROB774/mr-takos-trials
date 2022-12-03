@@ -18,6 +18,28 @@ static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, co
     imm_atlas_batched_ex(x,y, sx,sy, angle, NULL, &atlas_clips[atlas_clip_index], BODY_COLOR);
 }
 
+static nkF32 render_score(nkF32 x, nkF32 y, nkS32 score)
+{
+    static const nkF32 LETTER_WIDTH = 15.0f;
+
+    nkChar score_buffer[16] = NK_ZERO_MEM;
+    sprintf(score_buffer, "%05d", score);
+
+    x -= ((LETTER_WIDTH*strlen(score_buffer)) * 0.5f);
+
+    nkF32 new_x = x;
+
+    for(nkU32 i=0,n=strlen(score_buffer); i<n; ++i)
+    {
+        nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((score_buffer[i] - '0') * 2) + 1);
+        x += LETTER_WIDTH * 0.5f;
+        render_item_ex(x,y, 0.7f,0.7f, 0.0f, ATLAS_UI, index, 0.7f);
+        x += LETTER_WIDTH * 0.5f;
+    }
+
+    return new_x;
+}
+
 static void change_page(void)
 {
     nkS32 old_background = g_background;
