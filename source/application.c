@@ -2,6 +2,9 @@
 
 static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier)
 {
+    x = roundf(x);
+    y = roundf(y);
+
     nkF32 sx = x + (SHADOW_OFFSET.x * shadow_offset_multiplier);
     nkF32 sy = y + (SHADOW_OFFSET.y * shadow_offset_multiplier);
 
@@ -11,6 +14,9 @@ static void render_item(nkF32 x, nkF32 y, const ImmAtlasClip* atlas_clips, nkU32
 
 static void render_item_ex(nkF32 x, nkF32 y, nkF32 sx, nkF32 sy, nkF32 angle, const ImmAtlasClip* atlas_clips, nkU32 atlas_clip_index, nkF32 shadow_offset_multiplier)
 {
+    x = roundf(x);
+    y = roundf(y);
+
     nkF32 xs = x + (SHADOW_OFFSET.x * shadow_offset_multiplier);
     nkF32 ys = y + (SHADOW_OFFSET.y * shadow_offset_multiplier);
 
