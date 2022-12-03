@@ -27,8 +27,6 @@ static nkF32 render_score(nkF32 x, nkF32 y, nkS32 score)
 
     x -= ((LETTER_WIDTH*strlen(score_buffer)) * 0.5f);
 
-    nkF32 new_x = x;
-
     for(nkU32 i=0,n=strlen(score_buffer); i<n; ++i)
     {
         nkS32 index = ATLAS_UI_TIMER_0_SHADOW + (((score_buffer[i] - '0') * 2) + 1);
@@ -37,7 +35,7 @@ static nkF32 render_score(nkF32 x, nkF32 y, nkS32 score)
         x += LETTER_WIDTH * 0.5f;
     }
 
-    return new_x;
+    return x;
 }
 
 static void change_page(void)
