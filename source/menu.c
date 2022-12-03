@@ -19,7 +19,7 @@ NK_ENUM(MenuState, nkS32)
     MenuState_Title,
     MenuState_Main,
     MenuState_Options,
-    MenuState_Awards,
+    MenuState_Scores,
     MenuState_Credits,
     MenuState_Games,
     MenuState_TOTAL
@@ -237,7 +237,7 @@ NK_ENUM(MainMenuOption, nkS32)
 {
     MainMenuOption_Play,
     MainMenuOption_Options,
-    MainMenuOption_Awards,
+    MainMenuOption_Scores,
     MainMenuOption_Credits,
     #if defined(BUILD_NATIVE)
     MainMenuOption_Exit,
@@ -249,7 +249,7 @@ static const nkChar* MAIN_MENU_OPTIONS[] =
 {
     "PLAY",
     "OPTIONS",
-    "AWARDS",
+    "SCORES",
     "CREDITS",
     #if defined(BUILD_NATIVE)
     "EXIT"
@@ -293,7 +293,7 @@ static void menu_update_main(nkF32 dt)
             {
                 case MainMenuOption_Play: change_menu_state(MenuState_Games); break;
                 case MainMenuOption_Options: change_menu_state(MenuState_Options); break;
-                case MainMenuOption_Awards: change_menu_state(MenuState_Awards); break;
+                case MainMenuOption_Scores: change_menu_state(MenuState_Scores); break;
                 case MainMenuOption_Credits: change_menu_state(MenuState_Credits); break;
 
                 #if defined(BUILD_NATIVE)
@@ -400,17 +400,17 @@ static void menu_render_options(void)
 }
 
 // =============================================================================
-// Awards
+// Scores
 // =============================================================================
 
-static void menu_update_awards(nkF32 dt)
+static void menu_update_scores(nkF32 dt)
 {
     if(is_key_pressed(KeyCode_Escape))
         change_menu_state(MenuState_Main);
     update_back_button();
 }
 
-static void menu_render_awards(void)
+static void menu_render_scores(void)
 {
     render_back_button();
 
@@ -595,7 +595,7 @@ static void menu_update(nkF32 dt)
         case MenuState_Title: menu_update_title(dt); break;
         case MenuState_Main: menu_update_main(dt); break;
         case MenuState_Options: menu_update_options(dt); break;
-        case MenuState_Awards: menu_update_awards(dt); break;
+        case MenuState_Scores: menu_update_scores(dt); break;
         case MenuState_Credits: menu_update_credits(dt); break;
         case MenuState_Games: menu_update_games(dt); break;
     }
@@ -615,7 +615,7 @@ static void menu_render(void)
         case MenuState_Title: menu_render_title(); break;
         case MenuState_Main: menu_render_main(); break;
         case MenuState_Options: menu_render_options(); break;
-        case MenuState_Awards: menu_render_awards(); break;
+        case MenuState_Scores: menu_render_scores(); break;
         case MenuState_Credits: menu_render_credits(); break;
         case MenuState_Games: menu_render_games(); break;
     }
