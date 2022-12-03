@@ -2,18 +2,20 @@
 #define ASSETS_H__
 
 #include "codegen/atlas_particle.h"
-#include "codegen/atlas_tako.h"
 #include "codegen/atlas_ui.h"
+#include "codegen/atlas_thumbs.h"
 #include "codegen/atlas_fontbig.h"
 #include "codegen/atlas_fontlil.h"
+#include "codegen/atlas_tako.h"
 #include "codegen/atlas_simon.h"
 #include "codegen/atlas_whack.h"
 #include "codegen/atlas_match.h"
 #include "codegen/atlas_catch.h"
 
 static Texture g_asset_background;
-static Texture g_asset_ui;
 static Texture g_asset_particle;
+static Texture g_asset_ui;
+static Texture g_asset_thumbs;
 static Texture g_asset_font_big;
 static Texture g_asset_font_lil;
 static Texture g_asset_tako;

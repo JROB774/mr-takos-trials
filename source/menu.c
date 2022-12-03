@@ -436,8 +436,8 @@ static void menu_render_credits(void)
 // =============================================================================
 
 #define GAME_THUMB_WIDTH   80.0f
-#define GAME_THUMB_HEIGHT  50.0f
-#define GAME_THUMB_PADDING 10.0f
+#define GAME_THUMB_HEIGHT  65.0f
+#define GAME_THUMB_PADDING 12.0f
 
 #define GAME_ROW_MAX_LENGTH 5
 
@@ -455,7 +455,7 @@ static void menu_update_games(nkF32 dt)
     nkF32 block_height = ((GAME_THUMB_HEIGHT * row_count) + (GAME_THUMB_PADDING * (row_count-1)));
 
     nkF32 x = (SCREEN_WIDTH - block_width) * 0.5f;
-    nkF32 y = (SCREEN_HEIGHT - block_height) * 0.5f;
+    nkF32 y = ((SCREEN_HEIGHT - block_height) * 0.5f) + 10.0f;
 
     for(nkS32 i=0; i<game_count; ++i)
     {
@@ -495,8 +495,11 @@ static void menu_render_games(void)
     nkF32 block_height = ((GAME_THUMB_HEIGHT * row_count) + (GAME_THUMB_PADDING * (row_count-1)));
 
     nkF32 x = (SCREEN_WIDTH - block_width) * 0.5f;
-    nkF32 y = (SCREEN_HEIGHT - block_height) * 0.5f;
+    nkF32 y = ((SCREEN_HEIGHT - block_height) * 0.5f) + 10.0f;
 
+    nkS32 hovered = NK_S32_MAX;
+
+    imm_begin_texture_batch(g_asset_thumbs);
     for(nkS32 i=0; i<game_count; ++i)
     {
         if((i != 0) && (i % GAME_ROW_MAX_LENGTH) == 0)
@@ -508,15 +511,26 @@ static void menu_render_games(void)
             y += (GAME_THUMB_HEIGHT + GAME_THUMB_PADDING);
         }
 
-        imm_rect_filled(x,y,GAME_THUMB_WIDTH,GAME_THUMB_HEIGHT, NK_V4_RED);
-
-        // If hovered then draw the game's title at the bottom of the screen.
         if(cursor_in_bounds(x,y,GAME_THUMB_WIDTH,GAME_THUMB_HEIGHT))
         {
-            render_bitmap_font_aligned(FontSize_Lil, MINIGAME_TITLES[i], Alignment_Center, SCREEN_HEIGHT - 30.0f, 1.0f, FontStyle_None);
+            hovered = i;
         }
 
+        nkF32 tx = x + (GAME_THUMB_WIDTH * 0.5f);
+        nkF32 ty = y + (GAME_THUMB_HEIGHT * 0.5f);
+
+        nkF32 angle = (hovered != i) ? 0.0f : g_angles_lil[i];
+
+        render_item_ex(tx,ty, 1,1, angle, ATLAS_THUMBS, ((i*2)+1), 1.0f);
+
         x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
+    }
+    imm_end_texture_batch();
+
+    // If hovered then draw the game's title at the bottom of the screen.
+    if(hovered != NK_S32_MAX)
+    {
+        render_bitmap_font_aligned(FontSize_Lil, MINIGAME_TITLES[hovered], Alignment_Center, SCREEN_HEIGHT - 30.0f, 1.0f, FontStyle_None);
     }
 }
 
