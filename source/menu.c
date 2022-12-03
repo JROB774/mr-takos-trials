@@ -511,23 +511,19 @@ static void menu_render_games(void)
             y += (GAME_THUMB_HEIGHT + GAME_THUMB_PADDING);
         }
 
+        // Draw the thumbnail (with rotation if hovered).
         if(cursor_in_bounds(x,y,GAME_THUMB_WIDTH,GAME_THUMB_HEIGHT))
-        {
             hovered = i;
-        }
-
         nkF32 tx = x + (GAME_THUMB_WIDTH * 0.5f);
         nkF32 ty = y + (GAME_THUMB_HEIGHT * 0.5f);
-
         nkF32 angle = (hovered != i) ? 0.0f : g_angles_lil[i];
-
         render_item_ex(tx,ty, 1,1, angle, ATLAS_THUMBS, ((i*2)+1), 1.0f);
 
         x += (GAME_THUMB_WIDTH + GAME_THUMB_PADDING);
     }
     imm_end_texture_batch();
 
-    // If hovered then draw the game's title at the bottom of the screen.
+    // If we have a hovered thumbanil then draw the game's title at the bottom of the screen.
     if(hovered != NK_S32_MAX)
     {
         render_bitmap_font_aligned(FontSize_Lil, MINIGAME_TITLES[hovered], Alignment_Center, SCREEN_HEIGHT - 30.0f, 1.0f, FontStyle_None);
