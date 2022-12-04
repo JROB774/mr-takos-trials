@@ -83,6 +83,8 @@ static void load_all_assets(void)
     g_asset_sfx_twig_snap[1]    = load_asset_sound  ("twig_snap_002.wav");
     g_asset_sfx_twig_snap[2]    = load_asset_sound  ("twig_snap_003.wav");
     g_asset_sfx_twig_snap[3]    = load_asset_sound  ("twig_snap_004.wav");
+    g_asset_sfx_shing           = load_asset_sound  ("shing.wav");
+    g_asset_sfx_apple_munch     = load_asset_sound  ("apple_munch.wav");
 }
 
 static void free_all_assets(void)
@@ -151,6 +153,8 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_twig_snap[1]);
     sound_destroy  (g_asset_sfx_twig_snap[2]);
     sound_destroy  (g_asset_sfx_twig_snap[3]);
+    sound_destroy  (g_asset_sfx_shing);
+    sound_destroy  (g_asset_sfx_apple_munch);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/

@@ -210,15 +210,22 @@ static void minigame_catch_update(nkF32 dt)
                     if(o->type == ObjectType_Apple)
                     {
                         game_display_success((SCREEN_WIDTH * 0.5f) + 80.0f, (SCREEN_HEIGHT - 32.0f));
+
                         g_gamestate.game_score += 100 + (10 * g_minigame_catch.combo);
                         g_minigame_catch.combo++;
+
+                        sound_play(g_asset_sfx_apple_munch, 0);
                     }
                     if(o->type == ObjectType_Spiky)
                     {
                         game_display_failure((SCREEN_WIDTH * 0.5f), (SCREEN_HEIGHT * 0.5f));
-                        sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
+
                         g_minigame_catch.combo = 0;
                         g_gamestate.game_score -= 200;
+
+                        sound_play(g_asset_sfx_whack[rng_int_range(0,2)], 0);
+                        sound_play(g_asset_sfx_smack[rng_int_range(0,2)], 0);
+                        sound_play(g_asset_sfx_shing, 0);
                     }
                 }
             }

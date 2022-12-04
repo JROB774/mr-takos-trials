@@ -47,6 +47,8 @@ static Sound   g_asset_sfx_whack[3];
 static Sound   g_asset_sfx_crumple[5];
 static Sound   g_asset_sfx_leaves_rustle;
 static Sound   g_asset_sfx_twig_snap[4];
+static Sound   g_asset_sfx_shing;
+static Sound   g_asset_sfx_apple_munch;
 
 static void load_assets_npak(void);
 static void free_assets_npak(void);
