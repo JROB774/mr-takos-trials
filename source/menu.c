@@ -477,7 +477,17 @@ static void menu_update_credits(nkF32 dt)
 static void menu_render_credits(void)
 {
     render_back_button();
-    // @Incomplete: ...
+
+    nkF32 h0 = bitmap_font_block_height(FontSize_Lil, 1, 1.0f);
+    nkF32 h1 = bitmap_font_block_height(FontSize_Big, 2, MENU_TEXT_SCALE);
+
+    nkF32 y = (SCREEN_HEIGHT - (h0 + h1)) * 0.5f;
+
+    render_bitmap_font_aligned(FontSize_Lil, "A Game Made By", Alignment_Center, y, 1.0f, FontStyle_None);
+    y += bitmap_font_line_advance(FontSize_Lil, 1.0f);
+    render_bitmap_font_aligned(FontSize_Big, "Joshua", Alignment_Center, y, MENU_TEXT_SCALE, FontStyle_None);
+    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
+    render_bitmap_font_aligned(FontSize_Big, "Robertson", Alignment_Center, y, MENU_TEXT_SCALE, FontStyle_None);
 }
 
 // =============================================================================
