@@ -336,7 +336,7 @@ NK_ENUM(OptionsMenuOption, nkS32)
 {
     OptionsMenuOption_Window,
     OptionsMenuOption_Sound,
-    OptionsMenuOption_Music,
+    // OptionsMenuOption_Music,
     OptionsMenuOption_Reset,
     OptionsMenuOption_TOTAL
 };
@@ -359,10 +359,11 @@ static void menu_update_options(nkF32 dt)
     if(sound != get_sound_volume()) set_sound_volume(sound);
     y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
+    // NOTE: We don't have any music so let's just get rid of this...
     // Music slider.
-    nkF32 music = update_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
-    if(music != get_music_volume()) set_music_volume(music);
-    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
+    // nkF32 music = update_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
+    // if(music != get_music_volume()) set_music_volume(music);
+    // y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Reset save stages.
     if(update_simple_button(RESET_SAVE_LABELS[g_resetsave], y, MENU_TEXT_SCALE) && g_resetsave < 3)
@@ -392,9 +393,10 @@ static void menu_render_options(void)
     render_slider_button("SOUND", get_sound_volume(), y, MENU_TEXT_SCALE);
     y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
+    // NOTE: We don't have any music so let's just get rid of this...
     // Music slider.
-    render_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
-    y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
+    // render_slider_button("MUSIC", get_music_volume(), y, MENU_TEXT_SCALE);
+    // y += bitmap_font_line_advance(FontSize_Big, MENU_TEXT_SCALE);
 
     // Reset save stages.
     render_simple_button(RESET_SAVE_LABELS[g_resetsave], y, MENU_TEXT_SCALE);
