@@ -78,6 +78,11 @@ static void load_all_assets(void)
     g_asset_sfx_crumple[2]      = load_asset_sound  ("crumple_003.wav");
     g_asset_sfx_crumple[3]      = load_asset_sound  ("crumple_004.wav");
     g_asset_sfx_crumple[4]      = load_asset_sound  ("crumple_005.wav");
+    g_asset_sfx_leaves_rustle   = load_asset_sound  ("leaves_rustle.wav");
+    g_asset_sfx_twig_snap[0]    = load_asset_sound  ("twig_snap_001.wav");
+    g_asset_sfx_twig_snap[1]    = load_asset_sound  ("twig_snap_002.wav");
+    g_asset_sfx_twig_snap[2]    = load_asset_sound  ("twig_snap_003.wav");
+    g_asset_sfx_twig_snap[3]    = load_asset_sound  ("twig_snap_004.wav");
 }
 
 static void free_all_assets(void)
@@ -141,6 +146,11 @@ static void free_all_assets(void)
     sound_destroy  (g_asset_sfx_crumple[2]);
     sound_destroy  (g_asset_sfx_crumple[3]);
     sound_destroy  (g_asset_sfx_crumple[4]);
+    sound_destroy  (g_asset_sfx_leaves_rustle);
+    sound_destroy  (g_asset_sfx_twig_snap[0]);
+    sound_destroy  (g_asset_sfx_twig_snap[1]);
+    sound_destroy  (g_asset_sfx_twig_snap[2]);
+    sound_destroy  (g_asset_sfx_twig_snap[3]);
 }
 
 /*////////////////////////////////////////////////////////////////////////////*/
