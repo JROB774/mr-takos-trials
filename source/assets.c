@@ -21,6 +21,7 @@ static void load_all_assets(void)
 {
     g_asset_background          = load_asset_texture("background.png",   SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_particle            = load_asset_texture("particle.png",     SamplerFilter_Linear, SamplerWrap_Clamp);
+    g_asset_title               = load_asset_texture("title.png",        SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_ui                  = load_asset_texture("ui.png",           SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_thumbs              = load_asset_texture("thumbs.png",       SamplerFilter_Linear, SamplerWrap_Clamp);
     g_asset_font_big            = load_asset_texture("fontbig.png",      SamplerFilter_Linear, SamplerWrap_Clamp);
@@ -91,6 +92,7 @@ static void free_all_assets(void)
 {
     texture_destroy(g_asset_background);
     texture_destroy(g_asset_particle);
+    texture_destroy(g_asset_title);
     texture_destroy(g_asset_ui);
     texture_destroy(g_asset_thumbs);
     texture_destroy(g_asset_font_big);

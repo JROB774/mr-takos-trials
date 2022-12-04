@@ -2,6 +2,7 @@
 #define ASSETS_H__
 
 #include "codegen/atlas_particle.h"
+#include "codegen/atlas_title.h"
 #include "codegen/atlas_ui.h"
 #include "codegen/atlas_thumbs.h"
 #include "codegen/atlas_fontbig.h"
@@ -14,6 +15,7 @@
 
 static Texture g_asset_background;
 static Texture g_asset_particle;
+static Texture g_asset_title;
 static Texture g_asset_ui;
 static Texture g_asset_thumbs;
 static Texture g_asset_font_big;
