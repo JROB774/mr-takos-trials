@@ -108,7 +108,9 @@ static void minigame_whack_update(nkF32 dt)
 
                 if(g_minigame_whack.state[i] == WhackCharState_Empty)
                 {
-                    g_minigame_whack.state[i] = rng_int_range(WhackCharState_Grumble,WhackCharState_Blobo);
+                    nkF32 rng = rng_num();
+
+                    g_minigame_whack.state[i] = ((rng <= 0.33f) ? WhackCharState_Blobo : WhackCharState_Grumble);
                     g_minigame_whack.timer[i] = rng_num_range(WHACK_MIN_ALIVE_TIME,WHACK_MAX_ALIVE_TIME);
                     g_minigame_whack.frame[i] = 0;
                     g_minigame_whack.atime[i] = 0.0f;
