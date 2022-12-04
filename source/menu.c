@@ -14,18 +14,6 @@
 
 #define GAME_ROW_MAX_LENGTH 5
 
-NK_ENUM(MenuState, nkS32)
-{
-    MenuState_Title,
-    MenuState_Main,
-    MenuState_Options,
-    MenuState_Scores,
-    MenuState_Credits,
-    MenuState_Games,
-    MenuState_TOTAL
-};
-
-static MenuState     g_menustate;
 static const nkChar* g_menu_curr_hovered;
 static const nkChar* g_menu_prev_hovered;
 static nkU32         g_resetsave;

@@ -190,6 +190,7 @@ static void game_update(nkF32 dt)
                 if(g_gamestate.end_state == 2)
                 {
                     g_appstate = AppState_Menu;
+                    g_menustate = MenuState_Games;
                     change_page();
                 }
             }
