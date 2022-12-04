@@ -14,6 +14,18 @@
 
 #define GAME_ROW_MAX_LENGTH 5
 
+NK_ENUM(MenuState, nkS32)
+{
+    MenuState_Title,
+    MenuState_Main,
+    MenuState_Options,
+    MenuState_Scores,
+    MenuState_Credits,
+    MenuState_Games,
+    MenuState_TOTAL
+};
+
+static MenuState     g_menustate;
 static const nkChar* g_menu_curr_hovered;
 static const nkChar* g_menu_prev_hovered;
 static nkU32         g_resetsave;
@@ -515,7 +527,6 @@ static void menu_update_games(nkF32 dt)
         {
             MiniGameID minigame = ((i == MiniGameID_TOTAL) ? rng_int_range(0,MiniGameID_TOTAL-1) : i);
             g_appstate = AppState_Game;
-            g_menustate = MenuState_Main;
             game_start(minigame);
             change_page();
         }

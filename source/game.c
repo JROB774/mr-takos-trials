@@ -8,6 +8,7 @@ typedef struct GameState
     MiniGameID current_minigame;
     nkF32      intro_timer;
     nkF32      game_timer;
+    nkF32      input_timer;
     nkS32      game_score;
     nkU64      end_state;
     nkF32      success_countdown;
@@ -76,6 +77,7 @@ static void game_start(MiniGameID minigame)
 
     g_gamestate.intro_timer = 3.25f;
     g_gamestate.game_timer = 20.0f;
+    g_gamestate.input_timer = 1.0f;
 
     g_gamestate.game_score = 0;
 
@@ -169,29 +171,34 @@ static void game_update(nkF32 dt)
         // Do the end game flow...
         if(g_gamestate.game_timer <= 0.0f)
         {
-            // @Incomplete: Add a buffer before we start registering clicks...
-            if(is_mouse_button_pressed(MouseButton_Left))
+            if(g_gamestate.input_timer > 0.0f)
+                g_gamestate.input_timer -= dt;
+            else
             {
-                g_gamestate.end_state++;
-
-                // On the first click fade out the alarm and display high score effects if there was one.
-                if(g_gamestate.end_state == 1)
+                if(is_mouse_button_pressed(MouseButton_Left))
                 {
-                    sound_fade_out(g_gamestate.alarm_sound_ref, 1.0f);
-                    g_gamestate.alarm_sound_ref = INVALID_SOUND_REF;
+                    g_gamestate.end_state++;
 
-                    if(g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score)
+                    // On the first click fade out the alarm and display high score effects if there was one.
+                    nkBool had_highscore = NK_FALSE;
+                    if(g_gamestate.end_state == 1)
                     {
-                        sound_play(g_asset_sfx_trumpet_fanfare, 0);
-                    }
-                }
+                        sound_fade_out(g_gamestate.alarm_sound_ref, 1.0f);
+                        g_gamestate.alarm_sound_ref = INVALID_SOUND_REF;
 
-                // On the second click return to the main menu.
-                if(g_gamestate.end_state == 2)
-                {
-                    g_appstate = AppState_Menu;
-                    g_menustate = MenuState_Games;
-                    change_page();
+                        if(g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score)
+                        {
+                            sound_play(g_asset_sfx_trumpet_fanfare, 0);
+                            had_highscore = NK_TRUE;
+                        }
+                    }
+
+                    // On the second click return to the main menu.
+                    if(g_gamestate.end_state == 2 || (g_gamestate.end_state == 1 && !had_highscore))
+                    {
+                        g_appstate = AppState_Menu;
+                        change_page();
+                    }
                 }
             }
         }
