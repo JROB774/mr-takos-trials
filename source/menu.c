@@ -215,19 +215,19 @@ static void menu_update_title(nkF32 dt)
 
 static void menu_render_title(void)
 {
-    imm_begin_texture_batch(g_asset_title);
-
-    // Render the title and Tako.
     nkF32 tx = SCREEN_WIDTH * 0.5f;
     nkF32 ty = 110.0f;
-    render_item_ex(tx,ty, 1,1, g_angles_lil[0], ATLAS_TITLE, ATLAS_TITLE_LOGO_TAKO_BODY, 1.0f);
-    render_item_ex(tx,ty, 1,1, g_angles_lil[1], ATLAS_TITLE, ATLAS_TITLE_LOGO_V2_BODY, 1.0f);
-
-    // Render the "click to start" prompt.
     nkF32 px = SCREEN_WIDTH * 0.5f;
     nkF32 py = 230.0f;
-    render_item_ex(px,py, 1,1, g_angles_lil[2], ATLAS_TITLE, ATLAS_TITLE_PROMPT_BODY, 1.0f);
+    nkF32 cx = SCREEN_WIDTH * 0.5f;
+    nkF32 cy = SCREEN_HEIGHT * 0.5f;
 
+    imm_begin_texture_batch(g_asset_title);
+    render_item_ex(tx,ty,  1.00f,1.00f, g_angles_lil[0], ATLAS_TITLE, ATLAS_TITLE_LOGO_TAKO_BODY, 1.0f);
+    render_item_ex(tx,ty,  1.00f,1.00f, g_angles_lil[1], ATLAS_TITLE, ATLAS_TITLE_LOGO_BODY,      1.0f);
+    render_item_ex(px,py,  0.75f,0.75f, g_angles_lil[2], ATLAS_TITLE, ATLAS_TITLE_PROMPT_BODY,    0.7f);
+    render_item_ex(cx,cy,  1.00f,1.00f, 0.0f,            ATLAS_TITLE, ATLAS_TITLE_CURTAIN_BODY,   1.0f);
+    render_item_ex(cx,cy, -1.00f,1.00f, 0.0f,            ATLAS_TITLE, ATLAS_TITLE_CURTAIN_BODY,  -1.0f);
     imm_end_texture_batch();
 }
 
