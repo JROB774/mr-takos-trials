@@ -186,7 +186,7 @@ static void game_update(nkF32 dt)
                         sound_fade_out(g_gamestate.alarm_sound_ref, 1.0f);
                         g_gamestate.alarm_sound_ref = INVALID_SOUND_REF;
 
-                        if(g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score)
+                        if((g_save.highscore[g_gamestate.current_minigame] <= g_gamestate.game_score) && (g_gamestate.game_score != 0))
                         {
                             sound_play(g_asset_sfx_trumpet_fanfare, 0);
                             had_highscore = NK_TRUE;
