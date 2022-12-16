@@ -9,7 +9,7 @@
 #define STB_TRUETYPE_IMPLEMENTATION
 #define NK_MATH_IMPLEMENTATION
 #define NK_FILESYS_IMPLEMENTATION
-#define NK_PACK_IMPLEMENTATION
+#define NK_NPAK_IMPLEMENTATION
 
 #if defined(BUILD_WEB)
 #include <emscripten.h>
@@ -24,7 +24,7 @@
 #include <nk_define.h>
 #include <nk_math.h>
 #include <nk_filesys.h>
-#include <nk_pack.h>
+#include <nk_npak.h>
 
 #include <stb_image.h>
 #include <stb_truetype.h>

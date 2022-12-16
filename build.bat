@@ -34,7 +34,7 @@ echo ----------------------------------------
 if not exist tools mkdir tools
 
 pushd tools
-cl ../source/tools/packer.c -I ../depends/nksdk/nklibs -Fe:packer.exe
+cl ../source/tools/packer.c -I ../depends/nksdk -Fe:packer.exe
 del *.obj
 popd
 
@@ -44,7 +44,7 @@ goto end
 echo ----------------------------------------
 
 set defs=-D BUILD_NATIVE
-set idir=-I ../../depends/sdl/include -I ../../depends/sdl_mixer/include -I ../../depends/nksdk/nklibs -I ../../depends/glew/include -I ../../depends/glew/source -I ../../depends/stb
+set idir=-I ../../depends/sdl/include -I ../../depends/sdl_mixer/include -I ../../depends/nksdk -I ../../depends/glew/include -I ../../depends/glew/source -I ../../depends/stb
 set ldir=-libpath:../../depends/sdl/lib -libpath:../../depends/sdl_mixer/lib
 set libs=SDL2main.lib SDL2.lib SDL2_mixer.lib opengl32.lib shell32.lib
 set cflg=
@@ -78,7 +78,7 @@ call depends\emsdk\emsdk activate latest
 call depends\emsdk\emsdk_env.bat
 
 set defs=-D BUILD_WEB
-set idir=-I ../../depends/nksdk/nklibs -I ../../depends/stb
+set idir=-I ../../depends/nksdk -I ../../depends/stb
 set libs=-s WASM=1 -s USE_SDL=2 -s USE_SDL_MIXER=2 -s USE_OGG=1 -s USE_VORBIS=1 -s MIN_WEBGL_VERSION=2 -s MAX_WEBGL_VERSION=2 -lidbfs.js
 set cflg=
 set lflg=--preload-file assets -s EXPORTED_FUNCTIONS="['_main', '_main_callback']" -s EXPORTED_RUNTIME_METHODS="['ccall']" -s ALLOW_MEMORY_GROWTH
